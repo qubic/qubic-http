@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
-	"qubic-api-sidecar/foundation/web"
 
 	"github.com/0xluk/go-qubic"
 )

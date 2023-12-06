@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/0xluk/go-qubic"
 	"github.com/pkg/errors"
+	"github.com/qubic/qubic-http/app/server/handlers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"qubic-api-sidecar/app/server/handlers"
 	"syscall"
 	"time"
 
