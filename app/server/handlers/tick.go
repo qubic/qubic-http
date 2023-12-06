@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"net/http"
-	"qubic-api-sidecar/foundation/web"
+	"github.com/qubic/qubic-http/foundation/web"
 	"strconv"
 )
 

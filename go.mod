@@ -1,4 +1,4 @@
-module qubic-api-sidecar
+module github.com/qubic/qubic-http
 
 go 1.21.3
 
