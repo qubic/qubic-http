@@ -1,12 +1,6 @@
 <br /><br />
 
-<div align="center">
-  <h1>qubic/api-sidecar</h1>
-  <h4> REST service that makes it easy to interact with
-    <a href="https://docs.qubic.world/">Qubic</a> network nodes.</h4>
-  <h4>The sidecar api is used to interact with the Qubic network and it currently supports fetching information related to identity balances, with ongoing development to add additional functionalities exposed by Qubic nodes.</h4>
-  <h4>It's using the <a href="https://github.com/0xluk/go-qubic"> go-qubic</a> sdk to interact with the Qubic network</h4>
-</div>
+qubic-http
 
 <br /><br />
 
