@@ -11,16 +11,16 @@ import (
 )
 
 type identitiesHandler struct {
-	client qubic.Client
+	client *qubic.Client
 }
 
 func (h *identitiesHandler) One(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	identity := vars["identity"]
 
-	res, err := h.client.GetBalance(context.Background(), identity)
+	res, err := qubic.GetBalance(context.Background(), h.client.Qc, identity)
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "parsing input"), http.StatusInternalServerError)
+		web.RespondError(w, errors.Wrap(err, "getting balance"), http.StatusInternalServerError)
 		return
 	}
 

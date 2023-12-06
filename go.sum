@@ -1,9 +1,12 @@
-github.com/0xluk/go-qubic v0.0.0-20231120172212-b9de3215c9e3 h1:8Sav9msgVtGqj0KwJ+Tk8NUvjtfmwIyzwUdeVGunmxY=
-github.com/0xluk/go-qubic v0.0.0-20231120172212-b9de3215c9e3/go.mod h1:OfFTrvl7CeAcVlTCtmML0+7bqR+/YGZZbZiPFS3m4ZE=
+github.com/0xluk/go-qubic v0.0.0-20231206202923-1068e2a9ad1e h1:HMj+jhED0x9OmX8BYVa7uXpWzSBTLxwd5rWAd5sSi2I=
+github.com/0xluk/go-qubic v0.0.0-20231206202923-1068e2a9ad1e/go.mod h1:2YE61U+le5Sl3G0WIWWGsH6r9oEsaY0KepQe6zENnuk=
+github.com/0xluk/go-qubic v0.0.0-20231206205257-482c9b14a4dd h1:pY+RautrTj7puB0vmWTs6Xc2/zIHlZj9ZjeDD+N6ZzI=
+github.com/0xluk/go-qubic v0.0.0-20231206205257-482c9b14a4dd/go.mod h1:2YE61U+le5Sl3G0WIWWGsH6r9oEsaY0KepQe6zENnuk=
 github.com/ardanlabs/conf v1.5.0 h1:5TwP6Wu9Xi07eLFEpiCUF3oQXh9UzHMDVnD3u/I5d5c=
 github.com/ardanlabs/conf v1.5.0/go.mod h1:ILsMo9dMqYzCxDjDXTiwMI0IgxOJd0MOiucbQY2wlJw=
-github.com/google/go-cmp v0.3.1 h1:Xye71clBPdm5HgqGwUkwhbynsUJZhDbS20FvLhQ2izg=
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
 github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
