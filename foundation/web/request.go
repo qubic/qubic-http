@@ -2,20 +2,106 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
-	"io"
+	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
+	"strings"
+
+	"github.com/dimfeld/httptreemux/v5"
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
+	"gopkg.in/go-playground/validator.v9"
+	entranslations "gopkg.in/go-playground/validator.v9/translations/en"
 )
 
-func Decode(r *http.Request, val interface{}) error {
-	b, err := io.ReadAll(r.Body)
-	if err != nil {
-		return errors.Wrap(err, "reading request body")
-	}
+// validate holds the settings and caches for validating request struct values.
+var validate = validator.New()
 
-	err = json.Unmarshal(b, val)
+// translator is a cache of locale and translation information.
+var translator *ut.UniversalTranslator
+
+func init() {
+
+	// Instantiate the english locale for the validator library.
+	enLocale := en.New()
+
+	// CreateHlr a value using English as the fallback locale (first argument).
+	// Provide one or more arguments for additional supported locales.
+	translator = ut.New(enLocale, enLocale)
+
+	// Register the english error messages for validation errors.
+	lang, _ := translator.GetTranslator("en")
+	entranslations.RegisterDefaultTranslations(validate, lang)
+
+	// Use JSON tag names for errors instead of Go struct names.
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+}
+
+// Params returns the web call parameters from the request.
+func Params(r *http.Request) map[string]string {
+	return httptreemux.ContextParams(r.Context())
+}
+
+// Decode reads the body of an HTTP request looking for a JSON document. The
+// body is decoded into the provided value.
+//
+// If the provided value is a struct then it is checked for validation tags.
+func Decode(r *http.Request, val interface{}) error {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(val); err != nil {
+		switch t := err.(type) {
+		case *json.UnmarshalTypeError:
+			return &FieldsError{
+				Err: errors.New("field validation error"),
+				Fields: []FieldError{
+					{
+						Field: t.Field,
+						Error: fmt.Sprintf("cannot use field %s of type %s", t.Field, t.Value),
+					},
+				},
+			}
+		default:
+			return NewRequestError(err, http.StatusBadRequest)
+		}
+
+	}
+	var err error
+
+	err = validate.Struct(val)
+
 	if err != nil {
-		return errors.Wrap(err, "unmarshalling request body data")
+
+		// Use a type assertion to get the real error value.
+		verrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return err
+		}
+
+		// lang controls the language of the error messages. You could look at the
+		// Accept-Language header if you intend to support multiple languages.
+		lang, _ := translator.GetTranslator("en")
+
+		var fields []FieldError
+		for _, verror := range verrors {
+			field := FieldError{
+				Field: verror.Field(),
+				Error: verror.Translate(lang),
+			}
+			fields = append(fields, field)
+		}
+
+		return &FieldsError{
+			Err:    errors.New("field validation error"),
+			Fields: fields,
+		}
 	}
 
 	return nil

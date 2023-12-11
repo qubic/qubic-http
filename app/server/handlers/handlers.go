@@ -1,21 +1,29 @@
 package handlers
 
 import (
-	"github.com/0xluk/go-qubic"
-	"github.com/gorilla/mux"
+	_ "github.com/qubic/qubic-http/app/server/docs"
+	mid2 "github.com/qubic/qubic-http/business/mid"
+	"github.com/qubic/qubic-http/foundation/nodes"
+	"github.com/qubic/qubic-http/foundation/web"
+	"log"
 	"net/http"
+	"os"
 )
 
-func New(client *qubic.Client) http.Handler {
-	router := mux.NewRouter()
+func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool) http.Handler {
+	app := web.NewApp(shutdown, mid2.Logger(log), mid2.Errors(log), mid2.Metrics(), mid2.Panics(log))
 
-	ih := identitiesHandler{client: client}
-	router.HandleFunc("/identities/{identity}", ih.One).Methods(http.MethodGet)
+	ih := identitiesHandler{pool: pool}
+	app.Handle(http.MethodGet, "/v1/identities/:identity", ih.One)
 
-	th := tickHandler{client: client}
-	router.HandleFunc("/tick-info", th.GetTickInfo).Methods(http.MethodGet)
-	router.HandleFunc("/tick-transactions/{tick}", th.GetTickTransactions).Methods(http.MethodGet)
-	router.HandleFunc("/tick-data/{tick}", th.GetTickData).Methods(http.MethodGet)
+	th := tickHandler{pool: pool}
+	app.Handle(http.MethodGet, "/v1/tick-info", th.GetTickInfo)
+	app.Handle(http.MethodGet, "/v1/tick-transactions/:tick", th.GetTickTransactions)
+	app.Handle(http.MethodGet, "/v1/tick-data/:tick", th.GetTickData)
 
-	return router
+	txH := txHandler{pool: pool}
+	app.Handle(http.MethodPost, "/v1/send-tx", txH.SendSignedTx)
+	app.Handle(http.MethodPost, "/v1/get-tx-status", txH.GetTxStatus)
+
+	return app
 }

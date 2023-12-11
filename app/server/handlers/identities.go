@@ -2,27 +2,31 @@ package handlers
 
 import (
 	"context"
-	"github.com/gorilla/mux"
+	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
+	"github.com/qubic/qubic-http/business/data/identity"
+	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
-
-	"github.com/0xluk/go-qubic"
 )
 
 type identitiesHandler struct {
-	client *qubic.Client
+	pool *nodes.Pool
 }
 
-func (h *identitiesHandler) One(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	identity := vars["identity"]
-
-	res, err := qubic.GetBalance(context.Background(), h.client.Qc, identity)
+func (h *identitiesHandler) One(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	ip := h.pool.GetRandomIP()
+	qc, err := tcp.NewQubicConnection(ctx, ip, "21841")
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "getting balance"), http.StatusInternalServerError)
-		return
+		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
+	}
+	params := web.Params(r)
+	id := params["identity"]
+
+	res, err := identity.GetIdentity(ctx, qc, id)
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting balance"))
 	}
 
-	web.Respond(w, res)
+	return web.Respond(ctx, w, res, http.StatusOK)
 }

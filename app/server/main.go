@@ -1,10 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/0xluk/go-qubic"
 	"github.com/pkg/errors"
 	"github.com/qubic/qubic-http/app/server/handlers"
+	"github.com/qubic/qubic-http/foundation/nodes"
 	"log"
 	"net/http"
 	"os"
@@ -18,12 +19,13 @@ import (
 const prefix = "QUBIC_API_SIDECAR"
 
 func main() {
-	if err := run(); err != nil {
+	log := log.New(os.Stdout, prefix, log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	if err := run(log); err != nil {
 		log.Fatalf("main: exited with error: %s", err.Error())
 	}
 }
 
-func run() error {
+func run(log *log.Logger) error {
 	var cfg struct {
 		Web struct {
 			Host            string        `conf:"default:0.0.0.0:8080"`
@@ -32,8 +34,8 @@ func run() error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 		}
 		Qubic struct {
-			NodeIP   string `conf:"default:65.21.10.217"`
-			NodePort string `conf:"default:21841"`
+			NodeIps  []string `conf:"default:65.21.10.217;148.251.184.163"`
+			NodePort string   `conf:"default:21841"`
 		}
 	}
 
@@ -63,7 +65,7 @@ func run() error {
 	}
 	log.Printf("main: Config :\n%v\n", out)
 
-	qubicClient, err := qubic.NewClient(cfg.Qubic.NodeIP, cfg.Qubic.NodePort)
+	pool := nodes.NewPool(cfg.Qubic.NodeIps)
 	if err != nil {
 		return errors.Wrap(err, "creating qubic client")
 	}
@@ -71,18 +73,37 @@ func run() error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
+	api := http.Server{
+		Addr:         cfg.Web.Host,
+		Handler:      handlers.New(shutdown, log, pool),
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+	}
+
 	serverErrors := make(chan error, 1)
 	// Start the service listening for requests.
 	go func() {
 		log.Printf("main: API listening on %s", cfg.Web.Host)
-		serverErrors <- http.ListenAndServe(cfg.Web.Host, handlers.New(qubicClient))
+		serverErrors <- api.ListenAndServe()
 	}()
 
 	select {
 	case err := <-serverErrors:
-		return err
+		return errors.Wrap(err, "server error")
 
-	case <-shutdown:
-		return errors.New("shutdown initialized")
+	case sig := <-shutdown:
+		log.Printf("main: %v : Start shutdown", sig)
+
+		// Give outstanding requests a deadline for completion.
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
+		defer cancel()
+
+		// Asking listener to shutdown and shed load.
+		if err := api.Shutdown(ctx); err != nil {
+			api.Close()
+			return errors.Wrap(err, "could not stop server gracefully")
+		}
 	}
+
+	return nil
 }

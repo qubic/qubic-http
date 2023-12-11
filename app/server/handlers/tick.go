@@ -2,58 +2,71 @@ package handlers
 
 import (
 	"context"
-	"github.com/0xluk/go-qubic"
-	"github.com/gorilla/mux"
+	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
-	"net/http"
+	"github.com/qubic/qubic-http/business/data/tick"
+	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
+	"net/http"
 	"strconv"
 )
 
 type tickHandler struct {
-	client *qubic.Client
+	pool *nodes.Pool
 }
 
-func (h *tickHandler) GetTickInfo(w http.ResponseWriter, r *http.Request) {
-	res, err := qubic.GetTickInfo(context.Background(), h.client.Qc)
+func (h *tickHandler) GetTickInfo(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "getting tick info"), http.StatusInternalServerError)
-		return
+		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
 
-	web.Respond(w, res)
+	res, err := tick.GetTickInfo(ctx, qc)
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting tick info"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
 }
 
-func (h *tickHandler) GetTickTransactions(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	tick := vars["tick"]
-	tickNumber, err := strconv.ParseInt(tick, 10, 32)
+func (h *tickHandler) GetTickTransactions(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "parsing input"), http.StatusInternalServerError)
+		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
 
-	res, err := qubic.GetTickTransactions(context.Background(), h.client.Qc, uint32(tickNumber))
+	params := web.Params(r)
+	tickNr := params["tick"]
+	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "getting tick transactions"), http.StatusInternalServerError)
-		return
+		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
 	}
 
-	web.Respond(w, res)
+	res, err := tick.GetTickTxs(ctx, qc, uint32(tickNumber))
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting tick transactions"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
 }
 
-func (h *tickHandler) GetTickData(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	tick := vars["tick"]
-	tickNumber, err := strconv.ParseInt(tick, 10, 32)
+func (h *tickHandler) GetTickData(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "parsing input"), http.StatusInternalServerError)
+		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
 
-	res, err := qubic.GetTickData(context.Background(), h.client.Qc, uint32(tickNumber))
+	params := web.Params(r)
+	tickNr := params["tick"]
+	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		web.RespondError(w, errors.Wrap(err, "getting tick data"), http.StatusInternalServerError)
-		return
+		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
 	}
 
-	web.Respond(w, res)
+	res, err := tick.GetTickData(ctx, qc, uint32(tickNumber))
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting tick data"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
 }
