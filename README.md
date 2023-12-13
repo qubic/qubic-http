@@ -22,7 +22,13 @@ $ ./server --qubic-node-ips="65.21.10.217;148.251.184.163"
 2023/11/20 20:05:05 main: API listening on 0.0.0.0:8080
 ```
 
-## Sending requests to the server:
+## Docker usage:
+```bash
+$ docker build -t ghcr.io/qubic/qubic-http:latest .
+$ docker run -p 8080:8080 -e QUBIC_API_SIDECAR_QUBIC_NODE_IPS="65.21.10.217;148.251.184.163" ghcr.io/qubic/qubic-http:latest
+```
+
+## Getting identity info:
 ```bash
 $ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJISHFFYBBFDVGHRJQF"
 {
@@ -35,35 +41,70 @@ $ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJ
   "latest_outgoing_transfer_tick": 11330319,
   "siblings": [
     "2a5af1c66af3ef4a294e09f27aed030d3faeffb9a1910012468b9c7f3e46bd9f",
-    "1231fc9579e4a19c0568ea2ddcf5e6133397111f93a3910b6036dfc299580799",
-    "17f6c2d15b2cdc00e0bb33e961c7c376b72d9f477c0e047bdd1524a0c4e771b1",
-    "39217be72dad406e99910c70c082a32c59092b818d70c0aaab9b0bcc79a94f5c",
-    "419c90c65a584a9a28b5bf0fdb1d43e7e62be60513177cccb4a590a14987324d",
     ...
   ]
 }
 ```
 
-## Docker usage:
+## Getting latest tick info:
 ```bash
-$ docker build -t ghcr.io/qubic/qubic-http:latest .
-$ docker run -p 8080:8080 -e QUBIC_API_SIDECAR_QUBIC_NODE_IPS="65.21.10.217;148.251.184.163" ghcr.io/qubic/qubic-http:latest
-$ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJISHFFYBBFDVGHRJQF"
+$ curl "localhost:8080/v1/tick-info"
 {
-  "public_key": "4f27dc1b6a1a76d479833e5f1bed0d6d77c705a0290a632de94794dbee670dfa",
-  "incoming_amount": 1479299940,
-  "outgoing_amount": 1479289940,
-  "number_of_incoming_transfers": 125981,
-  "number_of_outgoing_transfers": 2612,
-  "latest_incoming_transfer_tick": 10894487,
-  "latest_outgoing_transfer_tick": 11330319,
-  "siblings": [
-        "2a5af1c66af3ef4a294e09f27aed030d3faeffb9a1910012468b9c7f3e46bd9f",
-    "1231fc9579e4a19c0568ea2ddcf5e6133397111f93a3910b6036dfc299580799",
-    "17f6c2d15b2cdc00e0bb33e961c7c376b72d9f477c0e047bdd1524a0c4e771b1",
-    "39217be72dad406e99910c70c082a32c59092b818d70c0aaab9b0bcc79a94f5c",
-    "419c90c65a584a9a28b5bf0fdb1d43e7e62be60513177cccb4a590a14987324d",
-    ...
-  ]
+  "tick_duration": 2,
+  "epoch": 86,
+  "tick": 11368700,
+  "number_of_aligned_votes": 0,
+  "number_of_misaligned_votes": 0
 }
 ```
+
+## Getting tick data:
+```bash
+$ curl "localhost:8080/v1/tick-data/11356544"
+{
+  "computor_index": 420,
+  "epoch": 86,
+  "tick": 11356544,
+  "millisecond": 0,
+  "second": 4,
+  "minute": 16,
+  "hour": 15,
+  "day": 12,
+  "month": 12,
+  "year": 23,
+  "hex_union_data": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "hex_timelock": "7262190d095c8507d9077688d1892683236857c8c7bd556a1c26cc47f098d778",
+  "transaction_digests": [
+    "25a9a37da318564cae50aa67bf9af04948685736d2710338dc71467426c8a6ef",
+    ...
+  ],
+  "contract_fees": null,
+  "signature": "ae1e9cbbae7dc7895659d44c2828c77bca9e61b2de8c2a07e4df2e19dcad40b2fdf79b878c6decf8868d557105cc0a552688cc9e03f08e6b0d8e846844fa2700"
+}
+```
+
+## Getting tick transactions:
+```bash
+$ curl "localhost:8080/v1/tick-transactions/11356544"
+[
+  {
+    "source_public_key": "c57a0c6fd9451e5d89b9332e9ca24477565cd9a24812e706fd6ae36ebcac980b",
+    "destination_public_key": "3c018968cdf65e3ba8681bdcc476ad3f3cba0f526d0dd06d2860fdb610383916",
+    "amount": 2488276165,
+    "tick": 11356544,
+    "input_type": 0,
+    "input_size": 0
+  },
+  {
+    "source_public_key": "3852a585cf4f1966d594a14d946b4976978889e86949822796a46acf9c915036",
+    "destination_public_key": "9e1a100cfb556def7bcc6252e47ddf0985428637c3d1b3caa16f33fd98438d94",
+    "amount": 0,
+    "tick": 11356544,
+    "input_type": 0,
+    "input_size": 32
+  },
+]
+```
+
+
+
