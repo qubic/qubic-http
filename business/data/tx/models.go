@@ -8,8 +8,8 @@ import (
 
 type GetTxStatusInput struct {
 	Tick      uint32 `json:"tick" validate:"required"`
-	HexDigest string `json:"digest" validate:"min=32,max=32"`
-	Signature string `json:"signature" validate:"min=64,max=64"`
+	HexDigest string `json:"digest" validate:"min=64,max=64"`
+	Signature string `json:"signature"`
 }
 
 func (i *GetTxStatusInput) toQubicModel() (tx.RequestTxStatus, error) {
@@ -28,9 +28,9 @@ func (i *GetTxStatusInput) toQubicModel() (tx.RequestTxStatus, error) {
 	if err != nil {
 		return tx.RequestTxStatus{}, errors.Wrap(err, "hex decoding sig")
 	}
-	if len(signature) != 64 {
-		return tx.RequestTxStatus{}, errors.Errorf("Hex signature input expected 64 chars. Got: %d", len(signature))
-	}
+	//if len(signature) != 64 {
+	//	return tx.RequestTxStatus{}, errors.Errorf("Hex signature input expected 64 chars. Got: %d", len(signature))
+	//}
 
 	var qubicSignature [64]byte
 	copy(qubicSignature[:], signature)
@@ -47,7 +47,7 @@ type GetTxStatusOutput struct {
 	Tick              uint32 `json:"tick"`
 	MoneyFlew         bool   `json:"money_flew"`
 	Executed          bool   `json:"executed"`
-	HexPadding        string `json:"hex_padding"`
+	Notfound          bool   `json:"not_found"`
 	HexDigest         string `json:"hex_digest"`
 }
 
@@ -57,14 +57,14 @@ func (o GetTxStatusOutput) fromQubicModel(model tx.ResponseTxStatus) GetTxStatus
 		Tick:              model.TickOfTx,
 		MoneyFlew:         model.MoneyFlew,
 		Executed:          model.Executed,
-		HexPadding:        hex.EncodeToString(model.Padding[:]),
+		Notfound:          model.NotFound,
 		HexDigest:         hex.EncodeToString(model.Digest[:]),
 	}
 }
 
 type SendSignedTxInput struct {
 	HexRawTx       string `json:"hex_raw_tx" validate:"required"`
-	HexTxSignature string `json:"hex_tx_signature" validate:"min=64,max=64"`
+	HexTxSignature string `json:"hex_tx_signature" validate:"min=64,max=128"`
 }
 
 func (input *SendSignedTxInput) toQubicModel() (tx.SignedTransaction, error) {
@@ -87,4 +87,6 @@ func (input *SendSignedTxInput) toQubicModel() (tx.SignedTransaction, error) {
 	}, nil
 }
 
-
+type SendRawTxInput struct {
+	HexRawTx string `json:"hex_raw_tx"`
+}

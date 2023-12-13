@@ -2,6 +2,7 @@ package tx
 
 import (
 	"context"
+	"encoding/hex"
 	"github.com/0xluk/go-qubic"
 	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
@@ -23,8 +24,8 @@ func GetTxStatus(ctx context.Context, qc *tcp.QubicConnection, input GetTxStatus
 	return output.fromQubicModel(res), nil
 }
 
-func SendSignedTx(ctx context.Context, qc *tcp.QubicConnection, input SendSignedTxInput) error {
-	qubicModel, err := input.toQubicModel()
+func SendRawTx(ctx context.Context, qc *tcp.QubicConnection, input SendRawTxInput) error {
+	qubicModel, err := hex.DecodeString(input.HexRawTx)
 	if err != nil {
 		return errors.Wrap(err, "converting input to qubic model")
 	}

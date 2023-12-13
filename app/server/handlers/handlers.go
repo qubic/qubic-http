@@ -22,7 +22,7 @@ func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool) http.Handle
 	app.Handle(http.MethodGet, "/v1/tick-data/:tick", th.GetTickData)
 
 	txH := txHandler{pool: pool}
-	app.Handle(http.MethodPost, "/v1/send-tx", txH.SendSignedTx)
+	app.Handle(http.MethodPost, "/v1/send-raw-tx", txH.SendRawTx)
 	app.Handle(http.MethodPost, "/v1/get-tx-status", txH.GetTxStatus)
 
 	return app

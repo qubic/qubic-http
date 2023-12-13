@@ -1,5 +1,5 @@
-github.com/0xluk/go-qubic v0.0.0-20231211221327-db03ed9be632 h1:4/T28MMHzuEz1BtVG4OeCOG5+em/11pCYEJFUOa5IWg=
-github.com/0xluk/go-qubic v0.0.0-20231211221327-db03ed9be632/go.mod h1:2YE61U+le5Sl3G0WIWWGsH6r9oEsaY0KepQe6zENnuk=
+github.com/0xluk/go-qubic v0.0.0-20231213213120-b363d7c3ccaf h1:1j2eMta/PJvCkzeDw/EOH61ab+c9fNr9fyePFS678js=
+github.com/0xluk/go-qubic v0.0.0-20231213213120-b363d7c3ccaf/go.mod h1:2YE61U+le5Sl3G0WIWWGsH6r9oEsaY0KepQe6zENnuk=
 github.com/ardanlabs/conf v1.5.0 h1:5TwP6Wu9Xi07eLFEpiCUF3oQXh9UzHMDVnD3u/I5d5c=
 github.com/ardanlabs/conf v1.5.0/go.mod h1:ILsMo9dMqYzCxDjDXTiwMI0IgxOJd0MOiucbQY2wlJw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

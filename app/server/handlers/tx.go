@@ -14,19 +14,19 @@ type txHandler struct {
 	pool *nodes.Pool
 }
 
-func (h *txHandler) SendSignedTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (h *txHandler) SendRawTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
 	if err != nil {
 		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
 
-	var payload tx.SendSignedTxInput
+	var payload tx.SendRawTxInput
 	err = web.Decode(r, &payload)
 	if err != nil {
 		return web.RespondError(ctx, w, err)
 	}
 
-	err = tx.SendSignedTx(ctx, qc, payload)
+	err = tx.SendRawTx(ctx, qc, payload)
 	if err != nil {
 		return web.RespondError(ctx, w, errors.Wrap(err, "sending raw tx"))
 	}

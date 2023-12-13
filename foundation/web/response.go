@@ -63,6 +63,7 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 		res = ErrorResponse{Error: v.Err.Error()}
 		code = v.Status
 	default:
+		res = ErrorResponse{Error: err.Error()}
 		code = http.StatusInternalServerError
 	}
 

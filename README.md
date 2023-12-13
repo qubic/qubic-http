@@ -106,5 +106,23 @@ $ curl "localhost:8080/v1/tick-transactions/11356544"
 ]
 ```
 
+## Getting tx status:
+```bash
+$ curl "localhost:8080/v1/get-tx-status" --json '{"tick": 11400055, "digest": "c5cea11f54ca18317aef20287e3b33b2e0c9a6c94aeec91c30fe793be1d27fec"}'
+{
+  "current_tick_of_node": 11406937,
+  "tick": 11400055,
+  "money_flew": false,
+  "executed": true,
+  "not_found": false,
+  "hex_digest": "c5cea11f54ca18317aef20287e3b33b2e0c9a6c94aeec91c30fe793be1d27fec"
+}
+```
+
+## Send raw tx:
+```bash
+$ curl "localhost:8080/v1/send-raw-tx" --json '{"hex_raw_tx": "C872E68E1C0ECCCE3BC6A87BC32E187C59BBA99AB81D7CC37E7D22F7423672A70E4EAF16A2218457BA8B46991B5CCA63E65AE65FF65C575A06743E40E8DA982A0100000000000000C60DAE0000000000A1C0B21A5C15D72275F7968D30A4F0520075F85A0232E180A5FC6C0137CC414F402404CF40773F444A25BCF30B6455B18A18FF7DD105F3223EECA8C566781A00"}'
+```
+
 
 

@@ -34,7 +34,7 @@ func run(log *log.Logger) error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 		}
 		Qubic struct {
-			NodeIps  []string `conf:"default:65.21.10.217;148.251.184.163"`
+			NodeIps  []string `conf:"default:167.235.118.235"`
 			NodePort string   `conf:"default:21841"`
 		}
 	}

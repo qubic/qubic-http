@@ -14,7 +14,7 @@ func TestGetTxStatusInput_ToQubicModel(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Got err when generating random digest. err: %s", err.Error())
 	}
-	
+
 	var expectedSignature [64]byte
 	_, err = rand.Read(expectedSignature[:])
 	if err != nil {
@@ -25,7 +25,7 @@ func TestGetTxStatusInput_ToQubicModel(t *testing.T) {
 		Digest:    expectedDigest,
 		Signature: expectedSignature,
 	}
-	
+
 	input := GetTxStatusInput{
 		Tick:      1,
 		HexDigest: hex.EncodeToString(expectedDigest[:]),
@@ -48,18 +48,13 @@ func TestTxStatusOutput_FromQubicModel(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Got err when generating random digest. err :%s", err.Error())
 	}
-	var padding [2]byte
-	_, err = rand.Read(padding[:])
-	if err != nil {
-		t.Fatalf("Got err when generating padding. err: %s", err.Error())
-	}
 
 	expected := GetTxStatusOutput{
 		CurrentTickOfNode: 15,
 		Tick:              20,
 		MoneyFlew:         false,
 		Executed:          true,
-		HexPadding:        hex.EncodeToString(padding[:]),
+		Notfound:          false,
 		HexDigest:         hex.EncodeToString(digest[:]),
 	}
 
@@ -68,7 +63,7 @@ func TestTxStatusOutput_FromQubicModel(t *testing.T) {
 		TickOfTx:          20,
 		MoneyFlew:         false,
 		Executed:          true,
-		Padding:           padding,
+		NotFound:          false,
 		Digest:            digest,
 	}
 
@@ -82,7 +77,7 @@ func TestTxStatusOutput_FromQubicModel(t *testing.T) {
 
 func TestSendSignedTxInput_ToQubicModel(t *testing.T) {
 	input := SendSignedTxInput{
-		HexRawTx:       "68656c6c6f20776f726c64", // "hello world"
+		HexRawTx:       "68656c6c6f20776f726c64",     // "hello world"
 		HexTxSignature: "746573745369676e6174757265", // "testSignature"
 	}
 
