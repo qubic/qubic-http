@@ -33,6 +33,7 @@ $ docker run -p 8080:8080 -e QUBIC_API_SIDECAR_QUBIC_NODE_IPS="65.21.10.217;148.
 $ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJISHFFYBBFDVGHRJQF"
 {
   "public_key": "4f27dc1b6a1a76d479833e5f1bed0d6d77c705a0290a632de94794dbee670dfa",
+  "tick": 10894487,
   "incoming_amount": 1479299940,
   "outgoing_amount": 1479289940,
   "number_of_incoming_transfers": 125981,

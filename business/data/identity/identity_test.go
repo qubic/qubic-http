@@ -25,6 +25,7 @@ func TestGetIdentityOutput_FromQubicModel(t *testing.T) {
 			LatestIncomingTransferTick: 123,
 			LatestOutgoingTransferTick: 456,
 		},
+		Tick: 123,
 		Siblings: [identity.SpectrumDepth][32]byte{
 			{1, 2, 3}, // replace with your sibling data
 			{4, 5, 6}, // replace with your sibling data
@@ -35,6 +36,7 @@ func TestGetIdentityOutput_FromQubicModel(t *testing.T) {
 	// Expected output after conversion
 	expectedOutput := GetIdentityOutput{
 		PublicKey:                  hex.EncodeToString(qubicModel.Entity.PublicKey[:]),
+		Tick:                       qubicModel.Tick,
 		IncomingAmount:             qubicModel.Entity.IncomingAmount,
 		OutgoingAmount:             qubicModel.Entity.OutgoingAmount,
 		NumberOfIncomingTransfers:  qubicModel.Entity.NumberOfIncomingTransfers,
