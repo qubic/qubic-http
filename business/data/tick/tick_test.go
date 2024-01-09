@@ -100,20 +100,30 @@ func TestGetTickTransactionsOutput_FromQubicModel(t *testing.T) {
 
 	qubicModel := []tick.Transaction{
 		{
-			SourcePublicKey:      sourcePubKey,
-			DestinationPublicKey: destPubKey,
-			Amount:               15,
-			Tick:                 10,
-			InputType:            7,
-			InputSize:            9,
+			Data: tick.TransactionData{
+				Header: tick.TransactionHeader{
+					SourcePublicKey:      sourcePubKey,
+					DestinationPublicKey: destPubKey,
+					Amount:               15,
+					Tick:                 10,
+					InputType:            7,
+					InputSize:            9,
+				},
+			},
+			Hash: tick.TransactionHash{},
 		},
 		{
-			SourcePublicKey:      destPubKey,
-			DestinationPublicKey: sourcePubKey,
-			Amount:               6,
-			Tick:                 1,
-			InputType:            9,
-			InputSize:            7,
+			Data: tick.TransactionData{
+				Header: tick.TransactionHeader{
+					SourcePublicKey:      destPubKey,
+					DestinationPublicKey: sourcePubKey,
+					Amount:               6,
+					Tick:                 1,
+					InputType:            9,
+					InputSize:            7,
+				},
+			},
+			Hash: tick.TransactionHash{},
 		},
 	}
 
@@ -125,6 +135,7 @@ func TestGetTickTransactionsOutput_FromQubicModel(t *testing.T) {
 			Tick:                 10,
 			InputType:            7,
 			InputSize:            9,
+			Hash:                 "",
 		},
 		{
 			SourcePublicKey:      hex.EncodeToString(destPubKey[:]),
@@ -133,6 +144,7 @@ func TestGetTickTransactionsOutput_FromQubicModel(t *testing.T) {
 			Tick:                 1,
 			InputType:            9,
 			InputSize:            7,
+			Hash:                 "",
 		},
 	}
 

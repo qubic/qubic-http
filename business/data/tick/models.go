@@ -70,6 +70,7 @@ type Transaction struct {
 	Tick                 uint32 `json:"tick"`
 	InputType            uint16 `json:"input_type"`
 	InputSize            uint16 `json:"input_size"`
+	Hash                 string `json:"hash"`
 }
 
 type GetTickTransactionsOutput []Transaction
@@ -79,12 +80,13 @@ func (o *GetTickTransactionsOutput) fromQubicModel(tickTxs []tick.Transaction) G
 
 	for _, tx := range tickTxs {
 		txs = append(txs, Transaction{
-			SourcePublicKey:      hex.EncodeToString(tx.SourcePublicKey[:]),
-			DestinationPublicKey: hex.EncodeToString(tx.DestinationPublicKey[:]),
-			Amount:               tx.Amount,
-			Tick:                 tx.Tick,
-			InputType:            tx.InputType,
-			InputSize:            tx.InputSize,
+			SourcePublicKey:      hex.EncodeToString(tx.Data.Header.SourcePublicKey[:]),
+			DestinationPublicKey: hex.EncodeToString(tx.Data.Header.DestinationPublicKey[:]),
+			Amount:               tx.Data.Header.Amount,
+			Tick:                 tx.Data.Header.Tick,
+			InputType:            tx.Data.Header.InputType,
+			InputSize:            tx.Data.Header.InputSize,
+			Hash:                 byteArrayToString(tx.Hash),
 		})
 	}
 
@@ -107,4 +109,14 @@ func (o *GetTickInfoOutput) fromQubicModel(model tick.CurrentTickInfo) GetTickIn
 		NumberOfAlignedVotes:    model.NumberOfAlignedVotes,
 		NumberOfMisalignedVotes: model.NumberOfMisalignedVotes,
 	}
+}
+
+func byteArrayToString(arr [60]byte) string {
+	var zeroArray [60]byte
+
+	if arr == zeroArray {
+		return ""
+	}
+
+	return string(arr[:])
 }

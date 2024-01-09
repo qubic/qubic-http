@@ -86,15 +86,16 @@ $ curl "localhost:8080/v1/tick-data/11356544"
 
 ## Getting tick transactions:
 ```bash
-$ curl "localhost:8080/v1/tick-transactions/11356544"
+$ curl "localhost:8080/v1/tick-transactions/11922277"
 [
   {
-    "source_public_key": "c57a0c6fd9451e5d89b9332e9ca24477565cd9a24812e706fd6ae36ebcac980b",
-    "destination_public_key": "3c018968cdf65e3ba8681bdcc476ad3f3cba0f526d0dd06d2860fdb610383916",
-    "amount": 2488276165,
-    "tick": 11356544,
+    "source_public_key": "cf1fc50a6ecd7706aee39a90efb2e94b623714f715049419c940528dd939d9bd",
+    "destination_public_key": "86ef6705ee15ca15915dff635a10a04b55614ee05f0108e63a94238b009bca7e",
+    "amount": 200000,
+    "tick": 11922277,
     "input_type": 0,
-    "input_size": 0
+    "input_size": 0,
+    "hash": "qttuixqwdopyggptwulggmltsikavawlsssmzrlyobrcenqzndjlhivbzdtn"
   },
   {
     "source_public_key": "3852a585cf4f1966d594a14d946b4976978889e86949822796a46acf9c915036",
@@ -102,7 +103,8 @@ $ curl "localhost:8080/v1/tick-transactions/11356544"
     "amount": 0,
     "tick": 11356544,
     "input_type": 0,
-    "input_size": 32
+    "input_size": 32,
+    "hash": "piypdgfhmjbppdcezurkaiybuvtbitnpculrvgqdebkqgywbejxifuzenvxk"
   },
 ]
 ```
