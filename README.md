@@ -11,7 +11,7 @@ $ go build -o "server" "./app/server"
 
 ## Running the server:
 ```bash
-$ ./server --qubic-node-ips="65.21.10.217;148.251.184.163"
+$ ./server --qubic-node-ips="65.21.10.217;148.251.184.163" --opensearch-host="http://93.190.139.223:9200"
 2023/11/20 20:05:05 main: Config :
 --web-host=0.0.0.0:8080
 --web-read-timeout=5s
@@ -19,13 +19,14 @@ $ ./server --qubic-node-ips="65.21.10.217;148.251.184.163"
 --web-shutdown-timeout=5s
 --qubic-node-ips=[65.21.10.217 148.251.184.163]
 --qubic-node-port=21841
+--opensearch-host=http://93.190.139.223:9200
 2023/11/20 20:05:05 main: API listening on 0.0.0.0:8080
 ```
 
 ## Docker usage:
 ```bash
 $ docker build -t ghcr.io/qubic/qubic-http:latest .
-$ docker run -p 8080:8080 -e QUBIC_API_SIDECAR_QUBIC_NODE_IPS="65.21.10.217;148.251.184.163" ghcr.io/qubic/qubic-http:latest
+$ docker run -p 8080:8080 -e QUBIC_API_SIDECAR_QUBIC_NODE_IPS="65.21.10.217;148.251.184.163" -e QUBIC_API_SIDECAR_OPENSEARCH_HOST="http://93.190.139.223:9200" ghcr.io/qubic/qubic-http:latest
 ```
 
 ## Getting identity info:
