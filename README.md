@@ -80,6 +80,30 @@ $ curl "localhost:8080/v1/bx/bacab66e7cbbb950c8b80facef94c5f0bf478ee3ab8ac270f54
 }
 ```
 
+## Getting bx by id:
+```bash
+$ curl "localhost:8080/v1/status"
+{
+  "epoch": 91,
+  "bxid": [
+    91,
+    12017682
+  ],
+  "txid": [
+    91,
+    12017336
+  ],
+  "quorum": [
+    91,
+    12017688
+  ],
+  "tick": [
+    91,
+    12017336
+  ]
+}
+```
+
 ## Getting latest tick info:
 ```bash
 $ curl "localhost:8080/v1/tick-info"
@@ -140,19 +164,6 @@ $ curl "localhost:8080/v1/tick-transactions/11922277"
     "hash": "piypdgfhmjbppdcezurkaiybuvtbitnpculrvgqdebkqgywbejxifuzenvxk"
   },
 ]
-```
-
-## Getting tx status:
-```bash
-$ curl "localhost:8080/v1/get-tx-status" --json '{"tick": 11400055, "digest": "c5cea11f54ca18317aef20287e3b33b2e0c9a6c94aeec91c30fe793be1d27fec"}'
-{
-  "current_tick_of_node": 11406937,
-  "tick": 11400055,
-  "money_flew": false,
-  "executed": true,
-  "not_found": false,
-  "hex_digest": "c5cea11f54ca18317aef20287e3b33b2e0c9a6c94aeec91c30fe793be1d27fec"
-}
 ```
 
 ## Send raw tx:

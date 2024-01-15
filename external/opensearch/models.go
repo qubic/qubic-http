@@ -41,3 +41,11 @@ type BxResponse struct {
 	Destination string `json:"dest"`
 	Amount      string `json:"amount"`
 }
+
+type StatusResponse struct {
+	Epoch  int `json:"epoch"`
+	BxID   []int  `json:"bxid"`
+	TxID   []int  `json:"txid"`
+	Quorum []int  `json:"quorum"`
+	Tick   []int  `json:"tick"`
+}

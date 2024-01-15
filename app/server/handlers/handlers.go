@@ -26,9 +26,12 @@ func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool, osclient *o
 
 	txH := txHandler{pool: pool, opensearchClient: osclient}
 	app.Handle(http.MethodPost, "/v1/send-raw-tx", txH.SendRawTx)
-	app.Handle(http.MethodPost, "/v1/get-tx-status", txH.GetTxStatus)
+	//app.Handle(http.MethodPost, "/v1/get-tx-status", txH.GetTxStatus)
 	app.Handle(http.MethodGet, "/v1/tx/:txID", txH.GetTx)
 	app.Handle(http.MethodGet, "/v1/bx/:bxID", txH.GetBx)
+
+	sh := statusHandler{opensearchClient: osclient}
+	app.Handle(http.MethodGet, "/v1/status", sh.GetStatus)
 
 
 	return app

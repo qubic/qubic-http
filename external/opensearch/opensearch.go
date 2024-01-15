@@ -59,6 +59,18 @@ func (c *Client) GetBx(ctx context.Context, id string) (BxResponse, error) {
 	return bx, nil
 }
 
+func (c *Client) GetStatus(ctx context.Context) (StatusResponse, error) {
+	url := c.Host + "/status/_doc/api"
+
+	var status StatusResponse
+	err := c.performRequest(ctx,url, http.MethodGet, nil, http.StatusOK, &status)
+	if err != nil {
+		return StatusResponse{}, errors.Wrap(err, "performing request")
+	}
+
+	return status, nil
+}
+
 func (c *Client) performRequest(ctx context.Context, url string, method string, payload io.Reader, expectedStatusCode int, responseDest interface{}) error {
 	req, err := http.NewRequestWithContext(ctx, method, url, payload)
 	if err != nil {
