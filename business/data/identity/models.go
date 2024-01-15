@@ -8,6 +8,7 @@ import (
 type GetIdentityOutput struct {
 	PublicKey                  string   `json:"public_key"`
 	Tick                       uint32   `json:"tick"`
+	Balance                    int64    `json:"balance"` // incoming_amount - outgoing_amount
 	IncomingAmount             int64    `json:"incoming_amount"`
 	OutgoingAmount             int64    `json:"outgoing_amount"`
 	NumberOfIncomingTransfers  uint32   `json:"number_of_incoming_transfers"`
@@ -21,6 +22,7 @@ func (o *GetIdentityOutput) fromQubicModel(model identity.GetIdentityResponse) G
 	return GetIdentityOutput{
 		PublicKey:                  hex.EncodeToString(model.Entity.PublicKey[:]),
 		Tick:                       model.Tick,
+		Balance:                    model.Entity.IncomingAmount - model.Entity.OutgoingAmount,
 		IncomingAmount:             model.Entity.IncomingAmount,
 		OutgoingAmount:             model.Entity.OutgoingAmount,
 		NumberOfIncomingTransfers:  model.Entity.NumberOfIncomingTransfers,

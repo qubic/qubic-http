@@ -3,24 +3,25 @@ package tick
 import (
 	"encoding/hex"
 	"github.com/0xluk/go-qubic/data/tick"
+	"github.com/qubic/qubic-http/external/opensearch"
 )
 
 type GetTickDataOutput struct {
-	ComputorIndex      uint16   `json:"computor_index"`
-	Epoch              uint16   `json:"epoch"`
-	Tick               uint32   `json:"tick"`
-	Millisecond        uint16   `json:"millisecond"`
-	Second             uint8    `json:"second"`
-	Minute             uint8    `json:"minute"`
-	Hour               uint8    `json:"hour"`
-	Day                uint8    `json:"day"`
-	Month              uint8    `json:"month"`
-	Year               uint8    `json:"year"`
-	HexUnionData       string   `json:"hex_union_data"`
+	ComputorIndex uint16 `json:"computor_index"`
+	Epoch         uint16 `json:"epoch"`
+	Tick          uint32 `json:"tick"`
+	Millisecond   uint16 `json:"millisecond"`
+	Second        uint8  `json:"second"`
+	Minute        uint8  `json:"minute"`
+	Hour          uint8  `json:"hour"`
+	Day           uint8  `json:"day"`
+	Month         uint8  `json:"month"`
+	Year          uint8  `json:"year"`
+	//HexUnionData       string   `json:"hex_union_data"`
 	HexTimelock        string   `json:"hex_timelock"`
 	TransactionDigests []string `json:"transaction_digests"`
-	ContractFees       []int64  `json:"contract_fees"`
-	Signature          string   `json:"signature"`
+	//ContractFees       []int64  `json:"contract_fees"`
+	Signature string `json:"signature"`
 }
 
 func (o *GetTickDataOutput) fromQubicModel(model tick.TickData) GetTickDataOutput {
@@ -32,21 +33,40 @@ func (o *GetTickDataOutput) fromQubicModel(model tick.TickData) GetTickDataOutpu
 	}
 
 	return GetTickDataOutput{
-		ComputorIndex:      model.ComputorIndex,
-		Epoch:              model.Epoch,
-		Tick:               model.Tick,
-		Millisecond:        model.Millisecond,
-		Second:             model.Second,
-		Minute:             model.Minute,
-		Hour:               model.Hour,
-		Day:                model.Day,
-		Month:              model.Month,
-		Year:               model.Year,
-		HexUnionData:       hex.EncodeToString(model.UnionData[:]),
+		ComputorIndex: model.ComputorIndex,
+		Epoch:         model.Epoch,
+		Tick:          model.Tick,
+		Millisecond:   model.Millisecond,
+		Second:        model.Second,
+		Minute:        model.Minute,
+		Hour:          model.Hour,
+		Day:           model.Day,
+		Month:         model.Month,
+		Year:          model.Year,
+		//HexUnionData:       hex.EncodeToString(model.UnionData[:]),
 		HexTimelock:        hex.EncodeToString(model.Timelock[:]),
 		TransactionDigests: byteArraysToHexStrings(model.TransactionDigests[:]),
-		ContractFees:       contractFees,
-		Signature:          hex.EncodeToString(model.Signature[:]),
+		//ContractFees:       contractFees,
+		Signature: hex.EncodeToString(model.Signature[:]),
+	}
+}
+
+func (o *GetTickDataOutput) fromOpensearchModel(model opensearch.TickDataResponse) GetTickDataOutput {
+	timeArr := timeSliceTArr(model.Time)
+	return GetTickDataOutput{
+		ComputorIndex:      uint16(model.Computor),
+		Epoch:              uint16(model.Epoch),
+		Tick:               model.Tick,
+		Millisecond:        uint16(timeArr[0]),
+		Second:             uint8(timeArr[1]),
+		Minute:             uint8(timeArr[2]),
+		Hour:               uint8(timeArr[3]),
+		Day:                uint8(timeArr[4]),
+		Month:              uint8(timeArr[5]),
+		Year:               uint8(timeArr[6]),
+		HexTimelock:        model.Timelock,
+		TransactionDigests: model.TransactionIDs,
+		Signature:          model.Signature,
 	}
 }
 
@@ -119,4 +139,14 @@ func byteArrayToString(arr [60]byte) string {
 	}
 
 	return string(arr[:])
+}
+
+func timeSliceTArr(slice []int) [7]int {
+	var arr [7]int
+
+	for i, t := range slice {
+		arr[i] = t
+	}
+
+	return arr
 }

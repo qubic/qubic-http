@@ -34,6 +34,7 @@ $ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJ
 {
   "public_key": "4f27dc1b6a1a76d479833e5f1bed0d6d77c705a0290a632de94794dbee670dfa",
   "tick": 10894487,
+  "balance": 10000,
   "incoming_amount": 1479299940,
   "outgoing_amount": 1479289940,
   "number_of_incoming_transfers": 125981,
@@ -44,6 +45,37 @@ $ curl "localhost:8080/v1/identities/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJ
     "2a5af1c66af3ef4a294e09f27aed030d3faeffb9a1910012468b9c7f3e46bd9f",
     ...
   ]
+}
+```
+
+## Getting tx by id:
+```bash
+$ curl "localhost:8080/v1/tx/qdnwqignkprgrbkdlbpsrprikjagdnzaafsbxngbtfczcfjnsvgelivfxoem"
+{
+  "bxid": "bacab66e7cbbb950c8b80facef94c5f0bf478ee3ab8ac270f541b1aba71cb8a7",
+  "utime": "1704973083",
+  "epoch": "91",
+  "tick": "11963307",
+  "type": "0",
+  "src": "AMITKEPEADJMEBOKSXLFNNCQLQTCAAWIDNCKTDZGYEUCYCNOEEDJHMACPPTG",
+  "dest": "DCHWKUZLNYTDYBFZTELHWEDQDQCBBKTKYUITIKCDKACHDUBFYRHGDZSFQLBG",
+  "amount": "7357247517",
+  "extra": "",
+  "sig": "b6f330e9713047321de9ff3506078726a06119115ab27e8d805a9ebd2828a8189e96bd1a31d1a72702ba1ee5abebd130cf43e25ee68109f01c6f9cc42d100f00"
+}
+```
+
+## Getting bx by id:
+```bash
+$ curl "localhost:8080/v1/bx/bacab66e7cbbb950c8b80facef94c5f0bf478ee3ab8ac270f541b1aba71cb8a7"
+{
+  "utime": "1704973097",
+  "epoch": "91",
+  "tick": "11963307",
+  "type": "1",
+  "src": "AMITKEPEADJMEBOKSXLFNNCQLQTCAAWIDNCKTDZGYEUCYCNOEEDJHMACPPTG",
+  "dest": "DCHWKUZLNYTDYBFZTELHWEDQDQCBBKTKYUITIKCDKACHDUBFYRHGDZSFQLBG",
+  "amount": "7357247517"
 }
 ```
 

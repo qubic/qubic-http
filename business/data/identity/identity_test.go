@@ -37,6 +37,7 @@ func TestGetIdentityOutput_FromQubicModel(t *testing.T) {
 	expectedOutput := GetIdentityOutput{
 		PublicKey:                  hex.EncodeToString(qubicModel.Entity.PublicKey[:]),
 		Tick:                       qubicModel.Tick,
+		Balance:                    qubicModel.Entity.IncomingAmount - qubicModel.Entity.OutgoingAmount,
 		IncomingAmount:             qubicModel.Entity.IncomingAmount,
 		OutgoingAmount:             qubicModel.Entity.OutgoingAmount,
 		NumberOfIncomingTransfers:  qubicModel.Entity.NumberOfIncomingTransfers,

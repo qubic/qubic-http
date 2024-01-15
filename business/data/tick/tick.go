@@ -5,6 +5,7 @@ import (
 	"github.com/0xluk/go-qubic"
 	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
+	"github.com/qubic/qubic-http/external/opensearch"
 )
 
 func GetTickData(ctx context.Context, qc *tcp.QubicConnection, tick uint32) (GetTickDataOutput, error) {
@@ -15,6 +16,16 @@ func GetTickData(ctx context.Context, qc *tcp.QubicConnection, tick uint32) (Get
 
 	var output GetTickDataOutput
 	return output.fromQubicModel(res), nil
+}
+
+func GetTickDataV2(ctx context.Context, osClient *opensearch.Client, tick uint32) (GetTickDataOutput, error) {
+	res, err := osClient.GetTickData(ctx, tick)
+	if err != nil {
+		return GetTickDataOutput{}, errors.Wrap(err, "getting tick data from opensearch")
+	}
+
+	var output GetTickDataOutput
+	return output.fromOpensearchModel(res), nil
 }
 
 func GetTickTxs(ctx context.Context, qc *tcp.QubicConnection, tick uint32) (GetTickTransactionsOutput, error) {

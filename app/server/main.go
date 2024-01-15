@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/qubic/qubic-http/app/server/handlers"
+	"github.com/qubic/qubic-http/external/opensearch"
 	"github.com/qubic/qubic-http/foundation/nodes"
 	"log"
 	"net/http"
@@ -34,8 +35,11 @@ func run(log *log.Logger) error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 		}
 		Qubic struct {
-			NodeIps  []string `conf:"default:167.235.118.235"`
+			NodeIps  []string `conf:"default:62.2.219.174"`
 			NodePort string   `conf:"default:21841"`
+		}
+		Opensearch struct {
+			Host string `conf:"default:http://93.190.139.223:9200"`
 		}
 	}
 
@@ -70,12 +74,13 @@ func run(log *log.Logger) error {
 		return errors.Wrap(err, "creating qubic client")
 	}
 
+	osClient := opensearch.NewClient(cfg.Opensearch.Host)
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
 	api := http.Server{
 		Addr:         cfg.Web.Host,
-		Handler:      handlers.New(shutdown, log, pool),
+		Handler:      handlers.New(shutdown, log, pool, osClient),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}

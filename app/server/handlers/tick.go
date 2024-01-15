@@ -5,6 +5,7 @@ import (
 	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
 	"github.com/qubic/qubic-http/business/data/tick"
+	"github.com/qubic/qubic-http/external/opensearch"
 	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 type tickHandler struct {
 	pool *nodes.Pool
+	opensearchClient *opensearch.Client
 }
 
 func (h *tickHandler) GetTickInfo(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -64,6 +66,22 @@ func (h *tickHandler) GetTickData(ctx context.Context, w http.ResponseWriter, r 
 	}
 
 	res, err := tick.GetTickData(ctx, qc, uint32(tickNumber))
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting tick data"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
+}
+
+func (h *tickHandler) GetTickDataV2(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	params := web.Params(r)
+	tickNr := params["tick"]
+	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+	}
+
+	res, err := tick.GetTickDataV2(ctx, h.opensearchClient, uint32(tickNumber))
 	if err != nil {
 		return web.RespondError(ctx, w, errors.Wrap(err, "getting tick data"))
 	}

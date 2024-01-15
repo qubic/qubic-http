@@ -69,10 +69,10 @@ func TestGetTickDataOutput_FromQubicModel(t *testing.T) {
 		Day:                15,
 		Month:              11,
 		Year:               22,
-		HexUnionData:       hex.EncodeToString(union[:]),
+		//HexUnionData:       hex.EncodeToString(union[:]),
 		HexTimelock:        hex.EncodeToString(qubicModel.Timelock[:]),
 		TransactionDigests: byteArraysToHexStrings(qubicModel.TransactionDigests[:]),
-		ContractFees:       []int64{100, 200, 300},
+		//ContractFees:       []int64{100, 200, 300},
 		Signature:          hex.EncodeToString(qubicModel.Signature[:]),
 	}
 
