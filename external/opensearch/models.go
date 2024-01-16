@@ -43,9 +43,35 @@ type BxResponse struct {
 }
 
 type StatusResponse struct {
-	Epoch  int `json:"epoch"`
-	BxID   []int  `json:"bxid"`
-	TxID   []int  `json:"txid"`
-	Quorum []int  `json:"quorum"`
-	Tick   []int  `json:"tick"`
+	Epoch  int   `json:"epoch"`
+	BxID   []int `json:"bxid"`
+	TxID   []int `json:"txid"`
+	Quorum []int `json:"quorum"`
+	Tick   []int `json:"tick"`
+}
+
+type QuorumResponse struct {
+	Computor                      int      `json:"computor"`
+	Epoch                         int      `json:"epoch"`
+	Tick                          uint32   `json:"tick"`
+	Time                          []int    `json:"time"`
+	PreviousResourceTestingDigest string   `json:"prevRTD"`
+	SaltedResourceTestingDigest   string   `json:"saltRTD"`
+	Digests                       []string `json:"digests"`
+	Signature                     string   `json:"sig"`
+	Diffs                         []Diff   `json:"diffs"`
+	NumVotes                      int      `json:"numvotes"`
+}
+
+type Diff struct {
+	Computor                    int      `json:"computor"`
+	SaltedResourceTestingDigest string   `json:"saltRTD"`
+	Digests                     []string `json:"digests"`
+	Signature                   string   `json:"sig"`
+}
+
+type ComputorsResponse struct {
+	Epoch      string   `json:"epoch"`
+	Identities []string `json:"pubkeys"`
+	Signature  string   `json:"sig"`
 }

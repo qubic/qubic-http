@@ -88,3 +88,35 @@ func (h *tickHandler) GetTickDataV2(ctx context.Context, w http.ResponseWriter, 
 
 	return web.Respond(ctx, w, res, http.StatusOK)
 }
+
+func (h *tickHandler) GetQuorum(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	params := web.Params(r)
+	tickNr := params["tick"]
+	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+	}
+
+	res, err := h.opensearchClient.GetQuorum(ctx, int(tickNumber))
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting quorum data"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
+}
+
+func (h *tickHandler) GetComputors(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	params := web.Params(r)
+	epoch := params["epoch"]
+	epochNr, err := strconv.ParseInt(epoch, 10, 32)
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+	}
+
+	res, err := h.opensearchClient.GetComputors(ctx, int(epochNr))
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting computors data"))
+	}
+
+	return web.Respond(ctx, w, res, http.StatusOK)
+}

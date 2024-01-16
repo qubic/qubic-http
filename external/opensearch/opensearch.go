@@ -71,6 +71,30 @@ func (c *Client) GetStatus(ctx context.Context) (StatusResponse, error) {
 	return status, nil
 }
 
+func (c *Client) GetComputors(ctx context.Context, epoch int) (ComputorsResponse, error) {
+	url := c.Host + "/computors/_doc/" + strconv.Itoa(epoch)
+
+	var computors ComputorsResponse
+	err := c.performRequest(ctx,url, http.MethodGet, nil, http.StatusOK, &computors)
+	if err != nil {
+		return ComputorsResponse{}, errors.Wrap(err, "performing request")
+	}
+
+	return computors, nil
+}
+
+func (c *Client) GetQuorum(ctx context.Context, tick int) (QuorumResponse, error) {
+	url := c.Host + "/quorum/_doc/" + strconv.Itoa(tick)
+
+	var quorum QuorumResponse
+	err := c.performRequest(ctx,url, http.MethodGet, nil, http.StatusOK, &quorum)
+	if err != nil {
+		return QuorumResponse{}, errors.Wrap(err, "performing request")
+	}
+
+	return quorum, nil
+}
+
 func (c *Client) performRequest(ctx context.Context, url string, method string, payload io.Reader, expectedStatusCode int, responseDest interface{}) error {
 	req, err := http.NewRequestWithContext(ctx, method, url, payload)
 	if err != nil {

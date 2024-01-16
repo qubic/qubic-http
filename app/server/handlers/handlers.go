@@ -15,14 +15,16 @@ func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool, osclient *o
 	app := web.NewApp(shutdown, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics(log))
 
 	ih := identitiesHandler{pool: pool}
-	app.Handle(http.MethodGet, "/v1/identities/:identity", ih.One)
+	app.Handle(http.MethodGet, "/v1/address/:identity", ih.One)
 
 	th := tickHandler{pool: pool, opensearchClient: osclient}
-	app.Handle(http.MethodGet, "/v1/tick-info", th.GetTickInfo)
-	app.Handle(http.MethodGet, "/v1/tick-transactions/:tick", th.GetTickTransactions)
+	//app.Handle(http.MethodGet, "/v1/tick-info", th.GetTickInfo)
+	//app.Handle(http.MethodGet, "/v1/tick-transactions/:tick", th.GetTickTransactions)
 	//app.Handle(http.MethodGet, "/v1/tick-data/:tick", th.GetTickData)
 
 	app.Handle(http.MethodGet, "/v1/tick-data/:tick", th.GetTickDataV2)
+	app.Handle(http.MethodGet, "/v1/quorum/:tick", th.GetQuorum)
+	app.Handle(http.MethodGet, "/v1/computors/:epoch", th.GetComputors)
 
 	txH := txHandler{pool: pool, opensearchClient: osclient}
 	app.Handle(http.MethodPost, "/v1/send-raw-tx", txH.SendRawTx)
