@@ -125,7 +125,14 @@ $ curl "localhost:8080/v1/tick-data/11356544"
     ...
   ],
   "contract_fees": null,
-  "signature": "ae1e9cbbae7dc7895659d44c2828c77bca9e61b2de8c2a07e4df2e19dcad40b2fdf79b878c6decf8868d557105cc0a552688cc9e03f08e6b0d8e846844fa2700"
+  "signature": "ae1e9cbbae7dc7895659d44c2828c77bca9e61b2de8c2a07e4df2e19dcad40b2fdf79b878c6decf8868d557105cc0a552688cc9e03f08e6b0d8e846844fa2700",
+  "potentialBx": [
+    {
+      "index": 35,
+      "dest": "YOANRGAZNOPBCBYTYQFBFYEARPKDZEEIBYZORWQTTDOKCIEGLZZMACGDOEKA",
+      "amount": "1203390386"
+    }
+  ]
 }
 ```
 

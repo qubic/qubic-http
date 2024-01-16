@@ -8,15 +8,22 @@ type Response struct {
 }
 
 type TickDataResponse struct {
-	Computor       int      `json:"computor"`
-	Epoch          int      `json:"epoch"`
-	Tick           uint32   `json:"tick"`
-	Time           []int    `json:"time"`
-	VarStruct      string   `json:"varStruct"`
-	Timelock       string   `json:"timelock"`
-	Signature      string   `json:"sig"`
-	NumTx          int      `json:"numtx"`
-	TransactionIDs []string `json:"txids"`
+	Computor       int           `json:"computor"`
+	Epoch          int           `json:"epoch"`
+	Tick           uint32        `json:"tick"`
+	Time           []int         `json:"time"`
+	VarStruct      string        `json:"varStruct"`
+	Timelock       string        `json:"timelock"`
+	Signature      string        `json:"sig"`
+	NumTx          int           `json:"numtx"`
+	TransactionIDs []string      `json:"txids"`
+	PotentialBxs   []PotentialBx `json:"potentialBx"`
+}
+
+type PotentialBx struct {
+	Index       int    `json:"index"`
+	Destination string `json:"dest"`
+	Amount      string `json:"amount"`
 }
 
 type TxResponse struct {

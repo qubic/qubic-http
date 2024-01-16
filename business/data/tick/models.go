@@ -21,7 +21,14 @@ type GetTickDataOutput struct {
 	HexTimelock        string   `json:"hex_timelock"`
 	TransactionDigests []string `json:"transaction_digests"`
 	//ContractFees       []int64  `json:"contract_fees"`
-	Signature string `json:"signature"`
+	Signature    string                   `json:"signature"`
+	PotentialBxs []opensearch.PotentialBx `json:"potentialBx"`
+}
+
+type PotentialBx struct {
+	Index       int    `json:"index"`
+	Destination string `json:"dest"`
+	Amount      string `json:"amount"`
 }
 
 func (o *GetTickDataOutput) fromQubicModel(model tick.TickData) GetTickDataOutput {
@@ -67,6 +74,7 @@ func (o *GetTickDataOutput) fromOpensearchModel(model opensearch.TickDataRespons
 		HexTimelock:        model.Timelock,
 		TransactionDigests: model.TransactionIDs,
 		Signature:          model.Signature,
+		PotentialBxs:       model.PotentialBxs,
 	}
 }
 
