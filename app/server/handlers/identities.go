@@ -21,7 +21,10 @@ func (h *identitiesHandler) One(ctx context.Context, w http.ResponseWriter, r *h
 		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
 	params := web.Params(r)
-	id := params["identity"]
+	id, ok := params["identity"]
+	if !ok {
+		return web.NewRequestError(errors.New("request should have the id of the address in the endpoint"), http.StatusBadRequest)
+	}
 
 	res, err := identity.GetIdentity(ctx, qc, id)
 	if err != nil {

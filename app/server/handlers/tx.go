@@ -58,7 +58,10 @@ func (h *txHandler) GetTxStatus(ctx context.Context, w http.ResponseWriter, r *h
 
 func (h *txHandler) GetTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	txID := params["txID"]
+	txID, ok:= params["txID"]
+	if !ok {
+		return web.NewRequestError(errors.New("request should have the tx id of the address in the endpoint"), http.StatusBadRequest)
+	}
 	transaction, err := h.opensearchClient.GetTx(ctx, txID)
 	if err != nil {
 		return errors.Wrap(err, "getting tx by id")
@@ -69,7 +72,10 @@ func (h *txHandler) GetTx(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 func (h *txHandler) GetBx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	bxID := params["bxID"]
+	bxID, ok := params["bxID"]
+	if !ok {
+		return web.NewRequestError(errors.New("request should have the bx id of the address in the endpoint"), http.StatusBadRequest)
+	}
 	bx, err := h.opensearchClient.GetBx(ctx, bxID)
 	if err != nil {
 		return errors.Wrap(err, "getting bx by id")

@@ -88,5 +88,5 @@ func (input *SendSignedTxInput) toQubicModel() (tx.SignedTransaction, error) {
 }
 
 type SendRawTxInput struct {
-	HexRawTx string `json:"hex_raw_tx"`
+	HexRawTx string `json:"hex_raw_tx" validate:"required"`
 }

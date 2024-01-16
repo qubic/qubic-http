@@ -38,10 +38,13 @@ func (h *tickHandler) GetTickTransactions(ctx context.Context, w http.ResponseWr
 	}
 
 	params := web.Params(r)
-	tickNr := params["tick"]
+	tickNr, ok := params["tick"]
+	if !ok {
+		return web.NewRequestError(errors.New("endpoint should have the tick number parameter in the request"), http.StatusBadRequest)
+	}
 	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+		return web.NewRequestError(errors.New("tick number should be a valid integer"), http.StatusBadRequest)
 	}
 
 	res, err := tick.GetTickTxs(ctx, qc, uint32(tickNumber))
@@ -59,10 +62,13 @@ func (h *tickHandler) GetTickData(ctx context.Context, w http.ResponseWriter, r 
 	}
 
 	params := web.Params(r)
-	tickNr := params["tick"]
+	tickNr, ok := params["tick"]
+	if !ok {
+		return web.NewRequestError(errors.New("endpoint should have the tick number parameter in the request"), http.StatusBadRequest)
+	}
 	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+		return web.NewRequestError(errors.New("tick number should be a valid integer"), http.StatusBadRequest)
 	}
 
 	res, err := tick.GetTickData(ctx, qc, uint32(tickNumber))
@@ -75,10 +81,13 @@ func (h *tickHandler) GetTickData(ctx context.Context, w http.ResponseWriter, r 
 
 func (h *tickHandler) GetTickDataV2(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	tickNr := params["tick"]
+	tickNr, ok := params["tick"]
+	if !ok {
+		return web.NewRequestError(errors.New("endpoint should have the tick number parameter in the request"), http.StatusBadRequest)
+	}
 	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+		return web.NewRequestError(errors.New("tick number should be a valid integer"), http.StatusBadRequest)
 	}
 
 	res, err := tick.GetTickDataV2(ctx, h.opensearchClient, uint32(tickNumber))
@@ -91,10 +100,13 @@ func (h *tickHandler) GetTickDataV2(ctx context.Context, w http.ResponseWriter, 
 
 func (h *tickHandler) GetQuorum(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	tickNr := params["tick"]
+	tickNr, ok := params["tick"]
+	if !ok {
+		return web.NewRequestError(errors.New("endpoint should have the tick number parameter in the request"), http.StatusBadRequest)
+	}
 	tickNumber, err := strconv.ParseInt(tickNr, 10, 32)
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+		return web.NewRequestError(errors.New("tick number should be a valid integer"), http.StatusBadRequest)
 	}
 
 	res, err := h.opensearchClient.GetQuorum(ctx, int(tickNumber))
@@ -107,10 +119,13 @@ func (h *tickHandler) GetQuorum(ctx context.Context, w http.ResponseWriter, r *h
 
 func (h *tickHandler) GetComputors(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	epoch := params["epoch"]
+	epoch, ok := params["epoch"]
+	if !ok {
+		return web.NewRequestError(errors.New("endpoint should have the epoch number parameter in the request"), http.StatusBadRequest)
+	}
 	epochNr, err := strconv.ParseInt(epoch, 10, 32)
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "parsing input"))
+		return web.NewRequestError(errors.New("epoch number should be a valid integer"), http.StatusBadRequest)
 	}
 
 	res, err := h.opensearchClient.GetComputors(ctx, int(epochNr))

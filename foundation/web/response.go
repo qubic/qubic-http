@@ -54,16 +54,16 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	switch v := errors.Cause(err).(type) {
 	case *FieldsError:
-		res = FieldErrorResponse{
+		res = &FieldErrorResponse{
 			Error:  v.Err.Error(),
 			Fields: v.Fields,
 		}
 		code = http.StatusBadRequest
 	case *RequestError:
-		res = ErrorResponse{Error: v.Err.Error()}
+		res = &ErrorResponse{Error: v.Err.Error()}
 		code = v.Status
 	default:
-		res = ErrorResponse{Error: err.Error()}
+		res = &ErrorResponse{Error: err.Error()}
 		code = http.StatusInternalServerError
 	}
 
