@@ -40,6 +40,7 @@ type TxResponse struct {
 }
 
 type BxResponse struct {
+	TxID        string `json:"txid"`
 	Utime       string `json:"utime"`
 	Epoch       string `json:"epoch"`
 	Tick        string `json:"tick"`

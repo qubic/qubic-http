@@ -17,23 +17,42 @@ type txHandler struct {
 }
 
 func (h *txHandler) SendRawTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
-	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
-	}
-
 	var payload tx.SendRawTxInput
-	err = web.Decode(r, &payload)
+	err := web.Decode(r, &payload)
 	if err != nil {
 		return web.RespondError(ctx, w, err)
 	}
 
-	err = tx.SendRawTx(ctx, qc, payload)
+	ips := h.pool.GetMaxTargetRandomIPs(3)
+
+	err = broadcastTxToMultiple(ctx, ips, payload)
 	if err != nil {
 		return web.RespondError(ctx, w, errors.Wrap(err, "sending raw tx"))
 	}
 
 	return web.Respond(ctx, w, struct{}{}, http.StatusCreated)
+}
+
+func broadcastTxToMultiple(ctx context.Context, ips []string, input tx.SendRawTxInput) error {
+	nrFails := 0
+	for i := 0; i < len(ips); i ++ {
+		qc, err := tcp.NewQubicConnection(ctx, ips[i], "21841")
+		if err != nil {
+			nrFails ++
+			continue
+		}
+		err = tx.SendRawTx(ctx, qc, input)
+		if err != nil {
+			nrFails ++
+			continue
+		}
+	}
+
+	if nrFails == len(ips) {
+		return errors.New("broadcasting tx failed for all peers")
+	}
+
+	return nil
 }
 
 func (h *txHandler) GetTxStatus(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

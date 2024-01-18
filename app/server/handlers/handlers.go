@@ -18,7 +18,7 @@ func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool, osclient *o
 	app.Handle(http.MethodGet, "/v1/address/:identity", ih.One)
 
 	th := tickHandler{pool: pool, opensearchClient: osclient}
-	//app.Handle(http.MethodGet, "/v1/tick-info", th.GetTickInfo)
+	app.Handle(http.MethodGet, "/v1/tick-info", th.GetTickInfo)
 	//app.Handle(http.MethodGet, "/v1/tick-transactions/:tick", th.GetTickTransactions)
 	//app.Handle(http.MethodGet, "/v1/tick-data/:tick", th.GetTickData)
 
