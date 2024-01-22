@@ -51,11 +51,13 @@ type BxResponse struct {
 }
 
 type StatusResponse struct {
-	Epoch  int   `json:"epoch"`
-	BxID   []int `json:"bxid"`
-	TxID   []int `json:"txid"`
-	Quorum []int `json:"quorum"`
-	Tick   []int `json:"tick"`
+	Epoch     int   `json:"epoch"`
+	BxID      []int `json:"bxid"`
+	TxID      []int `json:"txid"`
+	Quorum    []int `json:"quorum"`
+	Tick      []int `json:"tick"`
+	Latest    []int `json:"latest"`
+	Validate  []int `json:"validate"`
 }
 
 type QuorumResponse struct {
