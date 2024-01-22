@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"crypto/tls"
 )
 
 var ErrNotFound  = errors.New("Resource not found")
