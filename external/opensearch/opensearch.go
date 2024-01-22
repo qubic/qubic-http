@@ -19,8 +19,8 @@ type Client struct {
 func NewClient(host string) *Client {
 	tr := &http.Transport{
         TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-    }
-    client := &http.Client{Transport: tr}
+    	}
+    	client := &http.Client{Transport: tr}
 	return &Client{
 		httpClient: client,
 		Host: host,
