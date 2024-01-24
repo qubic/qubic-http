@@ -27,6 +27,7 @@ type PotentialBx struct {
 }
 
 type TxResponse struct {
+	Status      string `json:"status"`
 	BxID        string `json:"bxid"`
 	Utime       string `json:"utime"`
 	Epoch       string `json:"epoch"`
