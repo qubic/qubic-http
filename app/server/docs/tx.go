@@ -8,7 +8,9 @@ import (
 // swagger-ui:route GET /v1/send-tx tx send-tx
 // Send signed transaction.
 // responses:
-//   201: sendSignedTransactionResponse
+//
+//	201: sendSignedTransactionResponse
+//
 // Send signed transaction
 // swagger-ui:response sendSignedTransactionResponse
 type sendSignedTransactionResponse struct {
@@ -25,7 +27,9 @@ type sendTxRequest struct {
 // swagger-ui:route POST /v1/get-tx-status tx get-tx-status
 // Get transaction status
 // responses:
-//   200: getTransactionStatusResponse
+//
+//	200: getTransactionStatusResponse
+//
 // Get transaction status
 // swagger-ui:response getTransactionStatusResponse
 type getTransactionStatusResponse struct {
