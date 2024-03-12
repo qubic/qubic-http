@@ -33,8 +33,8 @@ type getTransactionStatusResponse struct {
 	Body tick.GetTickDataOutput
 }
 
-// swagger-ui:parameters get-tx-status
-type getTransactionStatusRequest struct {
-	// in:body
-	Body tx.GetTxStatusInput
-}
+//// swagger-ui:parameters get-tx-status
+//type getTransactionStatusRequest struct {
+//	// in:body
+//	Body tx.GetTxStatusInput
+//}

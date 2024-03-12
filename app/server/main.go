@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/app/server/handlers"
 	"github.com/qubic/qubic-http/external/opensearch"
-	"github.com/qubic/qubic-http/foundation/nodes"
 	"log"
 	"net/http"
 	"os"
@@ -41,6 +41,14 @@ func run(log *log.Logger) error {
 		Opensearch struct {
 			Host string `conf:"default:http://93.190.139.223:9200"`
 		}
+		Pool struct {
+			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/peers"`
+			NodeFetcherTimeout time.Duration `conf:"default:2s"`
+			InitialCap         int           `conf:"default:5"`
+			MaxIdle            int           `conf:"default:20"`
+			MaxCap             int           `conf:"default:30"`
+			IdleTimeout        time.Duration `conf:"default:15s"`
+		}
 	}
 
 	if err := conf.Parse(os.Args[1:], prefix, &cfg); err != nil {
@@ -69,9 +77,17 @@ func run(log *log.Logger) error {
 	}
 	log.Printf("main: Config :\n%v\n", out)
 
-	pool := nodes.NewPool(cfg.Qubic.NodeIps)
+	pool, err := qubic.NewPoolConnection(qubic.PoolConfig{
+		InitialCap:         cfg.Pool.InitialCap,
+		MaxCap:             cfg.Pool.MaxCap,
+		MaxIdle:            cfg.Pool.MaxIdle,
+		IdleTimeout:        cfg.Pool.IdleTimeout,
+		NodeFetcherUrl:     cfg.Pool.NodeFetcherUrl,
+		NodeFetcherTimeout: cfg.Pool.NodeFetcherTimeout,
+		NodePort:           cfg.Qubic.NodePort,
+	})
 	if err != nil {
-		return errors.Wrap(err, "creating qubic client")
+		return errors.Wrap(err, "creating qubic pool")
 	}
 
 	osClient := opensearch.NewClient(cfg.Opensearch.Host)

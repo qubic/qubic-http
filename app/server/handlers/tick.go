@@ -2,25 +2,24 @@ package handlers
 
 import (
 	"context"
-	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/business/data/tick"
 	"github.com/qubic/qubic-http/external/opensearch"
-	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
 	"strconv"
 )
 
 type tickHandler struct {
-	pool *nodes.Pool
+	pool             *qubic.Pool
 	opensearchClient *opensearch.Client
 }
 
 func (h *tickHandler) GetTickInfo(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
+	qc, err := h.pool.Get()
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting qubic conn from pool"))
 	}
 
 	res, err := tick.GetTickInfo(ctx, qc)
@@ -32,9 +31,9 @@ func (h *tickHandler) GetTickInfo(ctx context.Context, w http.ResponseWriter, r 
 }
 
 func (h *tickHandler) GetTickTransactions(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
+	qc, err := h.pool.Get()
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting qubic conn from pool"))
 	}
 
 	params := web.Params(r)
@@ -56,9 +55,9 @@ func (h *tickHandler) GetTickTransactions(ctx context.Context, w http.ResponseWr
 }
 
 func (h *tickHandler) GetTickData(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
+	qc, err := h.pool.Get()
 	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting qubic conn from pool"))
 	}
 
 	params := web.Params(r)

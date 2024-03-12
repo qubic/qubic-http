@@ -2,13 +2,12 @@ package identity
 
 import (
 	"context"
-	"github.com/0xluk/go-qubic"
-	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
 )
 
-func GetIdentity(ctx context.Context, qc *tcp.QubicConnection, id string) (GetIdentityOutput, error) {
-	res, err := qubic.GetIdentity(ctx, qc, id)
+func GetIdentity(ctx context.Context, qc *qubic.Client, id string) (GetIdentityOutput, error) {
+	res, err := qc.GetIdentity(ctx, id)
 	if err != nil {
 		return GetIdentityOutput{}, errors.Wrap(err, "getting tx status from qubic node")
 	}

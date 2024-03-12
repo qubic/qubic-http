@@ -1,17 +1,17 @@
 package handlers
 
 import (
+	qubic "github.com/qubic/go-node-connector"
 	_ "github.com/qubic/qubic-http/app/server/docs"
-	 "github.com/qubic/qubic-http/business/mid"
+	"github.com/qubic/qubic-http/business/mid"
 	"github.com/qubic/qubic-http/external/opensearch"
-	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"log"
 	"net/http"
 	"os"
 )
 
-func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool, osclient *opensearch.Client) http.Handler {
+func New(shutdown chan os.Signal, log *log.Logger, pool *qubic.Pool, osclient *opensearch.Client) http.Handler {
 	app := web.NewApp(shutdown, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics(log))
 
 	ih := identitiesHandler{pool: pool}
@@ -34,7 +34,6 @@ func New(shutdown chan os.Signal, log *log.Logger, pool *nodes.Pool, osclient *o
 
 	sh := statusHandler{opensearchClient: osclient}
 	app.Handle(http.MethodGet, "/v1/status", sh.GetStatus)
-
 
 	return app
 }

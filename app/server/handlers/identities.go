@@ -2,21 +2,22 @@ package handlers
 
 import (
 	"context"
-	"github.com/0xluk/go-qubic/foundation/tcp"
 	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/business/data/identity"
-	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
 )
 
 type identitiesHandler struct {
-	pool *nodes.Pool
+	pool *qubic.Pool
 }
 
 func (h *identitiesHandler) One(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ip := h.pool.GetRandomIP()
-	qc, err := tcp.NewQubicConnection(ctx, ip, "21841")
+	qc, err := h.pool.Get()
+	if err != nil {
+		return web.RespondError(ctx, w, errors.Wrap(err, "getting qubic conn from pool"))
+	}
 	if err != nil {
 		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
 	}
@@ -28,8 +29,10 @@ func (h *identitiesHandler) One(ctx context.Context, w http.ResponseWriter, r *h
 
 	res, err := identity.GetIdentity(ctx, qc, id)
 	if err != nil {
+		qc.Close()
 		return web.RespondError(ctx, w, errors.Wrap(err, "getting balance"))
 	}
 
+	h.pool.Put(qc)
 	return web.Respond(ctx, w, res, http.StatusOK)
 }

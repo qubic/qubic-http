@@ -2,82 +2,75 @@ package handlers
 
 import (
 	"context"
-	"github.com/0xluk/go-qubic/foundation/tcp"
+	"fmt"
 	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/business/data/tx"
 	"github.com/qubic/qubic-http/external/opensearch"
-	"github.com/qubic/qubic-http/foundation/nodes"
 	"github.com/qubic/qubic-http/foundation/web"
 	"net/http"
 )
 
 type txHandler struct {
-	pool *nodes.Pool
+	pool             *qubic.Pool
 	opensearchClient *opensearch.Client
 }
 
 func (h *txHandler) SendRawTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var payload tx.SendRawTxInput
+	var payload tx.SendSignedTxInput
 	err := web.Decode(r, &payload)
 	if err != nil {
 		return web.RespondError(ctx, w, err)
 	}
 
-	ips := h.pool.GetMaxTargetRandomIPs(3)
-
-	err = broadcastTxToMultiple(ctx, ips, payload)
-	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "sending raw tx"))
-	}
-
-	return web.Respond(ctx, w, struct{}{}, http.StatusCreated)
+	nrSuccess := broadcastTxToMultiple(ctx, h.pool, payload)
+	return web.Respond(ctx, w, struct{ Message string }{Message: fmt.Sprintf("Transaction broadcasted to %d peers", nrSuccess)}, http.StatusOK)
 }
 
-func broadcastTxToMultiple(ctx context.Context, ips []string, input tx.SendRawTxInput) error {
-	nrFails := 0
-	for i := 0; i < len(ips); i ++ {
-		qc, err := tcp.NewQubicConnection(ctx, ips[i], "21841")
-		if err != nil {
-			nrFails ++
-			continue
-		}
-		err = tx.SendRawTx(ctx, qc, input)
-		if err != nil {
-			nrFails ++
-			continue
-		}
+func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, input tx.SendSignedTxInput) int {
+	nrSuccess := 0
+	for i := 0; i < 3; i++ {
+		func() {
+			client, err := pool.Get()
+			if err != nil {
+				return
+			}
+			err = client.SendRawTransaction(ctx, []byte(input.SignedTx))
+			if err != nil {
+				pool.Close(client)
+				return
+			}
+			pool.Put(client)
+			nrSuccess++
+		}()
 	}
 
-	if nrFails == len(ips) {
-		return errors.New("broadcasting tx failed for all peers")
-	}
-
-	return nil
+	return nrSuccess
 }
 
-func (h *txHandler) GetTxStatus(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
-	if err != nil {
-		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
-	}
-
-	var payload tx.GetTxStatusInput
-	err = web.Decode(r, &payload)
-	if err != nil {
-		return web.RespondError(ctx, w, err)
-	}
-
-	output, err := tx.GetTxStatus(ctx, qc, payload)
-	if err != nil {
-		return web.RespondError(ctx, w, err)
-	}
-
-	return web.Respond(ctx, w, output, http.StatusOK)
-}
+//func (h *txHandler) GetTxStatus(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+//	qc, err := tcp.NewQubicConnection(ctx, h.pool.GetRandomIP(), "21841")
+//	if err != nil {
+//		return web.RespondError(ctx, w, errors.Wrap(err, "creating qubic conn"))
+//	}
+//
+//	var payload tx.GetTxStatusInput
+//	err = web.Decode(r, &payload)
+//	if err != nil {
+//		return web.RespondError(ctx, w, err)
+//	}
+//
+//	output, err := tx.GetTxStatus(ctx, qc, payload)
+//	if err != nil {
+//		return web.RespondError(ctx, w, err)
+//	}
+//
+//	return web.Respond(ctx, w, output, http.StatusOK)
+//}
 
 func (h *txHandler) GetTx(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	params := web.Params(r)
-	txID, ok:= params["txID"]
+	txID, ok := params["txID"]
 	if !ok {
 		return web.NewRequestError(errors.New("request should have the tx id of the address in the endpoint"), http.StatusBadRequest)
 	}
@@ -102,5 +95,3 @@ func (h *txHandler) GetBx(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	return web.Respond(ctx, w, bx, http.StatusOK)
 }
-
-
