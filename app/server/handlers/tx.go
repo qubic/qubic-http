@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector"
@@ -35,7 +36,14 @@ func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, input tx.SendS
 			if err != nil {
 				return
 			}
-			err = client.SendRawTransaction(ctx, []byte(input.SignedTx))
+
+			decoded, err := hex.DecodeString(input.SignedTx)
+			if err != nil {
+				pool.Close(client)
+				return
+			}
+
+			err = client.SendRawTransaction(ctx, decoded)
 			if err != nil {
 				pool.Close(client)
 				return
