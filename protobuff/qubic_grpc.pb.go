@@ -23,6 +23,7 @@ const (
 	QubicService_GetBalance_FullMethodName           = "/qubic.http.qubic.pb.QubicService/GetBalance"
 	QubicService_BroadcastTransaction_FullMethodName = "/qubic.http.qubic.pb.QubicService/BroadcastTransaction"
 	QubicService_GetTickInfo_FullMethodName          = "/qubic.http.qubic.pb.QubicService/GetTickInfo"
+	QubicService_GetBlockHeight_FullMethodName       = "/qubic.http.qubic.pb.QubicService/GetBlockHeight"
 )
 
 // QubicServiceClient is the client API for QubicService service.
@@ -32,6 +33,7 @@ type QubicServiceClient interface {
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
+	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 }
 
 type qubicServiceClient struct {
@@ -69,6 +71,15 @@ func (c *qubicServiceClient) GetTickInfo(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
+func (c *qubicServiceClient) GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error) {
+	out := new(GetBlockHeightResponse)
+	err := c.cc.Invoke(ctx, QubicService_GetBlockHeight_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QubicServiceServer is the server API for QubicService service.
 // All implementations must embed UnimplementedQubicServiceServer
 // for forward compatibility
@@ -76,6 +87,7 @@ type QubicServiceServer interface {
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
+	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
 	mustEmbedUnimplementedQubicServiceServer()
 }
 
@@ -91,6 +103,9 @@ func (UnimplementedQubicServiceServer) BroadcastTransaction(context.Context, *Br
 }
 func (UnimplementedQubicServiceServer) GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTickInfo not implemented")
+}
+func (UnimplementedQubicServiceServer) GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
 }
 func (UnimplementedQubicServiceServer) mustEmbedUnimplementedQubicServiceServer() {}
 
@@ -159,6 +174,24 @@ func _QubicService_GetTickInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QubicService_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicServiceServer).GetBlockHeight(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicService_GetBlockHeight_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicServiceServer).GetBlockHeight(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QubicService_ServiceDesc is the grpc.ServiceDesc for QubicService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +210,10 @@ var QubicService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTickInfo",
 			Handler:    _QubicService_GetTickInfo_Handler,
+		},
+		{
+			MethodName: "GetBlockHeight",
+			Handler:    _QubicService_GetBlockHeight_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

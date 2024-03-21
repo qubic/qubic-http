@@ -41,6 +41,10 @@ message GetTickInfoResponse {
   TickInfo tick_info = 1;
 }
 
+message GetBlockHeightResponse {
+  TickInfo block_height = 1;
+}
+
 service QubicService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
@@ -58,6 +62,12 @@ service QubicService {
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (google.api.http) = {
       get: "/tick-info"
+    };
+  };
+
+  rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
+    option (google.api.http) = {
+      get: "/block-height"
     };
   };
 }

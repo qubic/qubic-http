@@ -136,6 +136,24 @@ func local_request_QubicService_GetTickInfo_0(ctx context.Context, marshaler run
 
 }
 
+func request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, client QubicServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq emptypb.Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := client.GetBlockHeight(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, server QubicServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq emptypb.Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.GetBlockHeight(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 // RegisterQubicServiceHandlerServer registers the http handlers for service QubicService to "mux".
 // UnaryRPC     :call QubicServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -214,6 +232,31 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		}
 
 		forward_QubicService_GetTickInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_QubicService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_QubicService_GetBlockHeight_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_QubicService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -324,6 +367,28 @@ func RegisterQubicServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 
 	})
 
+	mux.Handle("GET", pattern_QubicService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_QubicService_GetBlockHeight_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_QubicService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -333,6 +398,8 @@ var (
 	pattern_QubicService_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"broadcast-transaction"}, ""))
 
 	pattern_QubicService_GetTickInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"tick-info"}, ""))
+
+	pattern_QubicService_GetBlockHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"block-height"}, ""))
 )
 
 var (
@@ -341,4 +408,6 @@ var (
 	forward_QubicService_BroadcastTransaction_0 = runtime.ForwardResponseMessage
 
 	forward_QubicService_GetTickInfo_0 = runtime.ForwardResponseMessage
+
+	forward_QubicService_GetBlockHeight_0 = runtime.ForwardResponseMessage
 )

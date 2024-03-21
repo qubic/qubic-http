@@ -83,6 +83,27 @@ func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.
 	}}, nil
 }
 
+func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetBlockHeightResponse, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
+	}
+
+	tickInfo, err := client.GetTickInfo(ctx)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting tick info from node %v", err)
+	}
+
+	s.qPool.Put(client)
+	return &protobuff.GetBlockHeightResponse{BlockHeight: &protobuff.TickInfo{
+		Tick:        tickInfo.Tick,
+		Duration:    uint32(tickInfo.TickDuration),
+		Epoch:       uint32(tickInfo.Epoch),
+		InitialTick: tickInfo.InitialTick,
+	}}, nil
+}
+
 func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
 	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, req.EncodedTransaction))}, nil
 }
