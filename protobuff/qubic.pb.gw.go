@@ -32,7 +32,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_QubicService_GetBalance_0(ctx context.Context, marshaler runtime.Marshaler, client QubicServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_QubicLiveService_GetBalance_0(ctx context.Context, marshaler runtime.Marshaler, client QubicLiveServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetBalanceRequest
 	var metadata runtime.ServerMetadata
 
@@ -58,7 +58,7 @@ func request_QubicService_GetBalance_0(ctx context.Context, marshaler runtime.Ma
 
 }
 
-func local_request_QubicService_GetBalance_0(ctx context.Context, marshaler runtime.Marshaler, server QubicServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_QubicLiveService_GetBalance_0(ctx context.Context, marshaler runtime.Marshaler, server QubicLiveServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetBalanceRequest
 	var metadata runtime.ServerMetadata
 
@@ -84,7 +84,7 @@ func local_request_QubicService_GetBalance_0(ctx context.Context, marshaler runt
 
 }
 
-func request_QubicService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client QubicServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_QubicLiveService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client QubicLiveServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq BroadcastTransactionRequest
 	var metadata runtime.ServerMetadata
 
@@ -101,7 +101,7 @@ func request_QubicService_BroadcastTransaction_0(ctx context.Context, marshaler 
 
 }
 
-func local_request_QubicService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server QubicServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_QubicLiveService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server QubicLiveServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq BroadcastTransactionRequest
 	var metadata runtime.ServerMetadata
 
@@ -118,7 +118,7 @@ func local_request_QubicService_BroadcastTransaction_0(ctx context.Context, mars
 
 }
 
-func request_QubicService_GetTickInfo_0(ctx context.Context, marshaler runtime.Marshaler, client QubicServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_QubicLiveService_GetTickInfo_0(ctx context.Context, marshaler runtime.Marshaler, client QubicLiveServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
@@ -127,7 +127,7 @@ func request_QubicService_GetTickInfo_0(ctx context.Context, marshaler runtime.M
 
 }
 
-func local_request_QubicService_GetTickInfo_0(ctx context.Context, marshaler runtime.Marshaler, server QubicServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_QubicLiveService_GetTickInfo_0(ctx context.Context, marshaler runtime.Marshaler, server QubicLiveServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
@@ -136,7 +136,7 @@ func local_request_QubicService_GetTickInfo_0(ctx context.Context, marshaler run
 
 }
 
-func request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, client QubicServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_QubicLiveService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, client QubicLiveServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
@@ -145,7 +145,7 @@ func request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler runtim
 
 }
 
-func local_request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, server QubicServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_QubicLiveService_GetBlockHeight_0(ctx context.Context, marshaler runtime.Marshaler, server QubicLiveServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
@@ -154,13 +154,13 @@ func local_request_QubicService_GetBlockHeight_0(ctx context.Context, marshaler 
 
 }
 
-// RegisterQubicServiceHandlerServer registers the http handlers for service QubicService to "mux".
-// UnaryRPC     :call QubicServiceServer directly.
+// RegisterQubicLiveServiceHandlerServer registers the http handlers for service QubicLiveService to "mux".
+// UnaryRPC     :call QubicLiveServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterQubicServiceHandlerFromEndpoint instead.
-func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server QubicServiceServer) error {
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterQubicLiveServiceHandlerFromEndpoint instead.
+func RegisterQubicLiveServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server QubicLiveServiceServer) error {
 
-	mux.Handle("GET", pattern_QubicService_GetBalance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetBalance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -168,12 +168,12 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBalance", runtime.WithHTTPPathPattern("/balances/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetBalance", runtime.WithHTTPPathPattern("/balances/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_QubicService_GetBalance_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_QubicLiveService_GetBalance_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -181,11 +181,11 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_QubicService_GetBalance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetBalance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_QubicService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_QubicLiveService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -193,12 +193,12 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/BroadcastTransaction", runtime.WithHTTPPathPattern("/broadcast-transaction"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/BroadcastTransaction", runtime.WithHTTPPathPattern("/broadcast-transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_QubicService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_QubicLiveService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -206,11 +206,11 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_QubicService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_QubicService_GetTickInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetTickInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -218,12 +218,12 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetTickInfo", runtime.WithHTTPPathPattern("/tick-info"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetTickInfo", runtime.WithHTTPPathPattern("/tick-info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_QubicService_GetTickInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_QubicLiveService_GetTickInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -231,11 +231,11 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_QubicService_GetTickInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetTickInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_QubicService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -243,12 +243,12 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_QubicService_GetBlockHeight_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_QubicLiveService_GetBlockHeight_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -256,16 +256,16 @@ func RegisterQubicServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_QubicService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterQubicServiceHandlerFromEndpoint is same as RegisterQubicServiceHandler but
+// RegisterQubicLiveServiceHandlerFromEndpoint is same as RegisterQubicLiveServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterQubicServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterQubicLiveServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.DialContext(ctx, endpoint, opts...)
 	if err != nil {
 		return err
@@ -285,107 +285,107 @@ func RegisterQubicServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.S
 		}()
 	}()
 
-	return RegisterQubicServiceHandler(ctx, mux, conn)
+	return RegisterQubicLiveServiceHandler(ctx, mux, conn)
 }
 
-// RegisterQubicServiceHandler registers the http handlers for service QubicService to "mux".
+// RegisterQubicLiveServiceHandler registers the http handlers for service QubicLiveService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterQubicServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterQubicServiceHandlerClient(ctx, mux, NewQubicServiceClient(conn))
+func RegisterQubicLiveServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterQubicLiveServiceHandlerClient(ctx, mux, NewQubicLiveServiceClient(conn))
 }
 
-// RegisterQubicServiceHandlerClient registers the http handlers for service QubicService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "QubicServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "QubicServiceClient"
+// RegisterQubicLiveServiceHandlerClient registers the http handlers for service QubicLiveService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "QubicLiveServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "QubicLiveServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "QubicServiceClient" to call the correct interceptors.
-func RegisterQubicServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client QubicServiceClient) error {
+// "QubicLiveServiceClient" to call the correct interceptors.
+func RegisterQubicLiveServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client QubicLiveServiceClient) error {
 
-	mux.Handle("GET", pattern_QubicService_GetBalance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetBalance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBalance", runtime.WithHTTPPathPattern("/balances/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetBalance", runtime.WithHTTPPathPattern("/balances/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_QubicService_GetBalance_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_QubicLiveService_GetBalance_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_QubicService_GetBalance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetBalance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_QubicService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_QubicLiveService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/BroadcastTransaction", runtime.WithHTTPPathPattern("/broadcast-transaction"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/BroadcastTransaction", runtime.WithHTTPPathPattern("/broadcast-transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_QubicService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_QubicLiveService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_QubicService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_QubicService_GetTickInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetTickInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetTickInfo", runtime.WithHTTPPathPattern("/tick-info"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetTickInfo", runtime.WithHTTPPathPattern("/tick-info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_QubicService_GetTickInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_QubicLiveService_GetTickInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_QubicService_GetTickInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetTickInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_QubicService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_QubicLiveService_GetBlockHeight_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetBlockHeight", runtime.WithHTTPPathPattern("/block-height"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_QubicService_GetBlockHeight_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_QubicLiveService_GetBlockHeight_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_QubicService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_QubicLiveService_GetBlockHeight_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -393,21 +393,21 @@ func RegisterQubicServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_QubicService_GetBalance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"balances", "id"}, ""))
+	pattern_QubicLiveService_GetBalance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"balances", "id"}, ""))
 
-	pattern_QubicService_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"broadcast-transaction"}, ""))
+	pattern_QubicLiveService_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"broadcast-transaction"}, ""))
 
-	pattern_QubicService_GetTickInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"tick-info"}, ""))
+	pattern_QubicLiveService_GetTickInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"tick-info"}, ""))
 
-	pattern_QubicService_GetBlockHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"block-height"}, ""))
+	pattern_QubicLiveService_GetBlockHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"block-height"}, ""))
 )
 
 var (
-	forward_QubicService_GetBalance_0 = runtime.ForwardResponseMessage
+	forward_QubicLiveService_GetBalance_0 = runtime.ForwardResponseMessage
 
-	forward_QubicService_BroadcastTransaction_0 = runtime.ForwardResponseMessage
+	forward_QubicLiveService_BroadcastTransaction_0 = runtime.ForwardResponseMessage
 
-	forward_QubicService_GetTickInfo_0 = runtime.ForwardResponseMessage
+	forward_QubicLiveService_GetTickInfo_0 = runtime.ForwardResponseMessage
 
-	forward_QubicService_GetBlockHeight_0 = runtime.ForwardResponseMessage
+	forward_QubicLiveService_GetBlockHeight_0 = runtime.ForwardResponseMessage
 )

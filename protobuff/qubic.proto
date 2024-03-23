@@ -45,7 +45,11 @@ message GetBlockHeightResponse {
   TickInfo block_height = 1;
 }
 
-service QubicService {
+message NextTick {
+  uint32 next_tick = 1;
+}
+
+service QubicLiveService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
       get: "/balances/{id}"

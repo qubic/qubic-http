@@ -20,200 +20,200 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	QubicService_GetBalance_FullMethodName           = "/qubic.http.qubic.pb.QubicService/GetBalance"
-	QubicService_BroadcastTransaction_FullMethodName = "/qubic.http.qubic.pb.QubicService/BroadcastTransaction"
-	QubicService_GetTickInfo_FullMethodName          = "/qubic.http.qubic.pb.QubicService/GetTickInfo"
-	QubicService_GetBlockHeight_FullMethodName       = "/qubic.http.qubic.pb.QubicService/GetBlockHeight"
+	QubicLiveService_GetBalance_FullMethodName           = "/qubic.http.qubic.pb.QubicLiveService/GetBalance"
+	QubicLiveService_BroadcastTransaction_FullMethodName = "/qubic.http.qubic.pb.QubicLiveService/BroadcastTransaction"
+	QubicLiveService_GetTickInfo_FullMethodName          = "/qubic.http.qubic.pb.QubicLiveService/GetTickInfo"
+	QubicLiveService_GetBlockHeight_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetBlockHeight"
 )
 
-// QubicServiceClient is the client API for QubicService service.
+// QubicLiveServiceClient is the client API for QubicLiveService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type QubicServiceClient interface {
+type QubicLiveServiceClient interface {
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 }
 
-type qubicServiceClient struct {
+type qubicLiveServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewQubicServiceClient(cc grpc.ClientConnInterface) QubicServiceClient {
-	return &qubicServiceClient{cc}
+func NewQubicLiveServiceClient(cc grpc.ClientConnInterface) QubicLiveServiceClient {
+	return &qubicLiveServiceClient{cc}
 }
 
-func (c *qubicServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
+func (c *qubicLiveServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
 	out := new(GetBalanceResponse)
-	err := c.cc.Invoke(ctx, QubicService_GetBalance_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetBalance_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qubicServiceClient) BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error) {
+func (c *qubicLiveServiceClient) BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error) {
 	out := new(BroadcastTransactionResponse)
-	err := c.cc.Invoke(ctx, QubicService_BroadcastTransaction_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, QubicLiveService_BroadcastTransaction_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qubicServiceClient) GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error) {
+func (c *qubicLiveServiceClient) GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error) {
 	out := new(GetTickInfoResponse)
-	err := c.cc.Invoke(ctx, QubicService_GetTickInfo_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetTickInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qubicServiceClient) GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error) {
+func (c *qubicLiveServiceClient) GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error) {
 	out := new(GetBlockHeightResponse)
-	err := c.cc.Invoke(ctx, QubicService_GetBlockHeight_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetBlockHeight_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// QubicServiceServer is the server API for QubicService service.
-// All implementations must embed UnimplementedQubicServiceServer
+// QubicLiveServiceServer is the server API for QubicLiveService service.
+// All implementations must embed UnimplementedQubicLiveServiceServer
 // for forward compatibility
-type QubicServiceServer interface {
+type QubicLiveServiceServer interface {
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
-	mustEmbedUnimplementedQubicServiceServer()
+	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
-// UnimplementedQubicServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedQubicServiceServer struct {
+// UnimplementedQubicLiveServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedQubicLiveServiceServer struct {
 }
 
-func (UnimplementedQubicServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
+func (UnimplementedQubicLiveServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
 }
-func (UnimplementedQubicServiceServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
+func (UnimplementedQubicLiveServiceServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastTransaction not implemented")
 }
-func (UnimplementedQubicServiceServer) GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error) {
+func (UnimplementedQubicLiveServiceServer) GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTickInfo not implemented")
 }
-func (UnimplementedQubicServiceServer) GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error) {
+func (UnimplementedQubicLiveServiceServer) GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
 }
-func (UnimplementedQubicServiceServer) mustEmbedUnimplementedQubicServiceServer() {}
+func (UnimplementedQubicLiveServiceServer) mustEmbedUnimplementedQubicLiveServiceServer() {}
 
-// UnsafeQubicServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to QubicServiceServer will
+// UnsafeQubicLiveServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to QubicLiveServiceServer will
 // result in compilation errors.
-type UnsafeQubicServiceServer interface {
-	mustEmbedUnimplementedQubicServiceServer()
+type UnsafeQubicLiveServiceServer interface {
+	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
-func RegisterQubicServiceServer(s grpc.ServiceRegistrar, srv QubicServiceServer) {
-	s.RegisterService(&QubicService_ServiceDesc, srv)
+func RegisterQubicLiveServiceServer(s grpc.ServiceRegistrar, srv QubicLiveServiceServer) {
+	s.RegisterService(&QubicLiveService_ServiceDesc, srv)
 }
 
-func _QubicService_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _QubicLiveService_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBalanceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QubicServiceServer).GetBalance(ctx, in)
+		return srv.(QubicLiveServiceServer).GetBalance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QubicService_GetBalance_FullMethodName,
+		FullMethod: QubicLiveService_GetBalance_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QubicServiceServer).GetBalance(ctx, req.(*GetBalanceRequest))
+		return srv.(QubicLiveServiceServer).GetBalance(ctx, req.(*GetBalanceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QubicService_BroadcastTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _QubicLiveService_BroadcastTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BroadcastTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QubicServiceServer).BroadcastTransaction(ctx, in)
+		return srv.(QubicLiveServiceServer).BroadcastTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QubicService_BroadcastTransaction_FullMethodName,
+		FullMethod: QubicLiveService_BroadcastTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QubicServiceServer).BroadcastTransaction(ctx, req.(*BroadcastTransactionRequest))
+		return srv.(QubicLiveServiceServer).BroadcastTransaction(ctx, req.(*BroadcastTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QubicService_GetTickInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _QubicLiveService_GetTickInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QubicServiceServer).GetTickInfo(ctx, in)
+		return srv.(QubicLiveServiceServer).GetTickInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QubicService_GetTickInfo_FullMethodName,
+		FullMethod: QubicLiveService_GetTickInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QubicServiceServer).GetTickInfo(ctx, req.(*emptypb.Empty))
+		return srv.(QubicLiveServiceServer).GetTickInfo(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QubicService_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _QubicLiveService_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QubicServiceServer).GetBlockHeight(ctx, in)
+		return srv.(QubicLiveServiceServer).GetBlockHeight(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QubicService_GetBlockHeight_FullMethodName,
+		FullMethod: QubicLiveService_GetBlockHeight_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QubicServiceServer).GetBlockHeight(ctx, req.(*emptypb.Empty))
+		return srv.(QubicLiveServiceServer).GetBlockHeight(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// QubicService_ServiceDesc is the grpc.ServiceDesc for QubicService service.
+// QubicLiveService_ServiceDesc is the grpc.ServiceDesc for QubicLiveService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var QubicService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "qubic.http.qubic.pb.QubicService",
-	HandlerType: (*QubicServiceServer)(nil),
+var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "qubic.http.qubic.pb.QubicLiveService",
+	HandlerType: (*QubicLiveServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetBalance",
-			Handler:    _QubicService_GetBalance_Handler,
+			Handler:    _QubicLiveService_GetBalance_Handler,
 		},
 		{
 			MethodName: "BroadcastTransaction",
-			Handler:    _QubicService_BroadcastTransaction_Handler,
+			Handler:    _QubicLiveService_BroadcastTransaction_Handler,
 		},
 		{
 			MethodName: "GetTickInfo",
-			Handler:    _QubicService_GetTickInfo_Handler,
+			Handler:    _QubicLiveService_GetTickInfo_Handler,
 		},
 		{
 			MethodName: "GetBlockHeight",
-			Handler:    _QubicService_GetBlockHeight_Handler,
+			Handler:    _QubicLiveService_GetBlockHeight_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

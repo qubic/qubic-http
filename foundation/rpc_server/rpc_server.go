@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"encoding/hex"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,10 +22,10 @@ import (
 	"net/http"
 )
 
-var _ protobuff.QubicServiceServer = &Server{}
+var _ protobuff.QubicLiveServiceServer = &Server{}
 
 type Server struct {
-	protobuff.UnimplementedQubicServiceServer
+	protobuff.UnimplementedQubicLiveServiceServer
 	listenAddrGRPC string
 	listenAddrHTTP string
 	qPool          *qubic.Pool
@@ -84,6 +85,13 @@ func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.
 }
 
 func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetBlockHeightResponse, error) {
+	st := status.Newf(codes.OutOfRange, "provided tick %d was skipped by the system", 1231)
+	st, err := st.WithDetails(&protobuff.NextTick{NextTick: 1234})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "creating custom status")
+	}
+
+	return nil, st.Err()
 	client, err := s.qPool.Get()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
@@ -105,10 +113,14 @@ func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobu
 }
 
 func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
-	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, req.EncodedTransaction))}, nil
+	decodedTx, err := hex.DecodeString(req.EncodedTransaction)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx))}, nil
 }
 
-func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, encodedTx string) int {
+func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {
 	nrSuccess := 0
 	for i := 0; i < 3; i++ {
 		func() {
@@ -117,7 +129,7 @@ func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, encodedTx stri
 				return
 			}
 
-			err = client.SendRawTransaction(ctx, []byte(encodedTx))
+			err = client.SendRawTransaction(ctx, decodedTx)
 			if err != nil {
 				pool.Close(client)
 				return
@@ -135,7 +147,7 @@ func (s *Server) Start() error {
 		grpc.MaxRecvMsgSize(600*1024*1024),
 		grpc.MaxSendMsgSize(600*1024*1024),
 	)
-	protobuff.RegisterQubicServiceServer(srv, s)
+	protobuff.RegisterQubicLiveServiceServer(srv, s)
 	reflection.Register(srv)
 
 	lis, err := net.Listen("tcp", s.listenAddrGRPC)
@@ -162,7 +174,7 @@ func (s *Server) Start() error {
 				),
 			}
 
-			if err := protobuff.RegisterQubicServiceHandlerFromEndpoint(
+			if err := protobuff.RegisterQubicLiveServiceHandlerFromEndpoint(
 				context.Background(),
 				mux,
 				s.listenAddrGRPC,
