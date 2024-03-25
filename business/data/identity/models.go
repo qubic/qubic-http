@@ -2,7 +2,7 @@ package identity
 
 import (
 	"encoding/hex"
-	"github.com/0xluk/go-qubic/data/identity"
+	"github.com/qubic/go-node-connector/types"
 )
 
 type GetIdentityOutput struct {
@@ -18,25 +18,25 @@ type GetIdentityOutput struct {
 	Siblings                   []string `json:"siblings"`
 }
 
-func (o *GetIdentityOutput) fromQubicModel(model identity.GetIdentityResponse) GetIdentityOutput {
+func (o *GetIdentityOutput) fromQubicModel(model types.AddressInfo) GetIdentityOutput {
 	return GetIdentityOutput{
-		PublicKey:                  hex.EncodeToString(model.Entity.PublicKey[:]),
+		PublicKey:                  hex.EncodeToString(model.AddressData.PublicKey[:]),
 		Tick:                       model.Tick,
-		Balance:                    model.Entity.IncomingAmount - model.Entity.OutgoingAmount,
-		IncomingAmount:             model.Entity.IncomingAmount,
-		OutgoingAmount:             model.Entity.OutgoingAmount,
-		NumberOfIncomingTransfers:  model.Entity.NumberOfIncomingTransfers,
-		NumberOfOutgoingTransfers:  model.Entity.NumberOfOutgoingTransfers,
-		LatestIncomingTransferTick: model.Entity.LatestIncomingTransferTick,
-		LatestOutgoingTransferTick: model.Entity.LatestOutgoingTransferTick,
+		Balance:                    model.AddressData.IncomingAmount - model.AddressData.OutgoingAmount,
+		IncomingAmount:             model.AddressData.IncomingAmount,
+		OutgoingAmount:             model.AddressData.OutgoingAmount,
+		NumberOfIncomingTransfers:  model.AddressData.NumberOfIncomingTransfers,
+		NumberOfOutgoingTransfers:  model.AddressData.NumberOfOutgoingTransfers,
+		LatestIncomingTransferTick: model.AddressData.LatestIncomingTransferTick,
+		LatestOutgoingTransferTick: model.AddressData.LatestOutgoingTransferTick,
 		Siblings:                   byteSlicesToStrings(model.Siblings),
 	}
 }
 
-func byteSlicesToStrings(slices [identity.SpectrumDepth][32]byte) []string {
+func byteSlicesToStrings(slices [types.SpectrumDepth][32]byte) []string {
 	var zeroArray [32]byte
 
-	result := make([]string, 0, identity.SpectrumDepth)
+	result := make([]string, 0, types.SpectrumDepth)
 	for _, slice := range slices {
 		if slice == zeroArray {
 			continue

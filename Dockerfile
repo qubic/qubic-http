@@ -4,7 +4,7 @@ ENV CGO_ENABLED=0
 WORKDIR /src
 COPY . /src
 
-RUN go build -o "./bin/server" "./app/server"
+RUN go build -o "./bin/server" "./app/grpc_server"
 
 # We don't need golang to run binaries, just use alpine.
 FROM alpine

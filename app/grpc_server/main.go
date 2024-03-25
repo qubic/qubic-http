@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector"
-	"github.com/qubic/qubic-http/app/server/handlers"
-	"github.com/qubic/qubic-http/external/opensearch"
+	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,18 +25,12 @@ func main() {
 
 func run(log *log.Logger) error {
 	var cfg struct {
-		Web struct {
-			Host            string        `conf:"default:0.0.0.0:8080"`
+		Server struct {
 			ReadTimeout     time.Duration `conf:"default:5s"`
 			WriteTimeout    time.Duration `conf:"default:5s"`
 			ShutdownTimeout time.Duration `conf:"default:5s"`
-		}
-		Qubic struct {
-			NodeIps  []string `conf:"default:62.2.219.174"`
-			NodePort string   `conf:"default:21841"`
-		}
-		Opensearch struct {
-			Host string `conf:"default:http://93.190.139.223:9200"`
+			HttpHost        string        `conf:"default:0.0.0.0:8000"`
+			GrpcHost        string        `conf:"default:0.0.0.0:8001"`
 		}
 		Pool struct {
 			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/peers"`
@@ -84,47 +75,22 @@ func run(log *log.Logger) error {
 		IdleTimeout:        cfg.Pool.IdleTimeout,
 		NodeFetcherUrl:     cfg.Pool.NodeFetcherUrl,
 		NodeFetcherTimeout: cfg.Pool.NodeFetcherTimeout,
-		NodePort:           cfg.Qubic.NodePort,
+		NodePort:           "21841",
 	})
 	if err != nil {
 		return errors.Wrap(err, "creating qubic pool")
 	}
 
-	osClient := opensearch.NewClient(cfg.Opensearch.Host)
+	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, pool)
+	rpcServer.Start()
+
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
-	api := http.Server{
-		Addr:         cfg.Web.Host,
-		Handler:      handlers.New(shutdown, log, pool, osClient),
-		ReadTimeout:  cfg.Web.ReadTimeout,
-		WriteTimeout: cfg.Web.WriteTimeout,
-	}
-
-	serverErrors := make(chan error, 1)
-	// Start the service listening for requests.
-	go func() {
-		log.Printf("main: API listening on %s", cfg.Web.Host)
-		serverErrors <- api.ListenAndServe()
-	}()
-
-	select {
-	case err := <-serverErrors:
-		return errors.Wrap(err, "server error")
-
-	case sig := <-shutdown:
-		log.Printf("main: %v : Start shutdown", sig)
-
-		// Give outstanding requests a deadline for completion.
-		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
-		defer cancel()
-
-		// Asking listener to shutdown and shed load.
-		if err := api.Shutdown(ctx); err != nil {
-			api.Close()
-			return errors.Wrap(err, "could not stop server gracefully")
+	for {
+		select {
+		case <-shutdown:
+			return errors.New("shutting down")
 		}
 	}
-
-	return nil
 }
