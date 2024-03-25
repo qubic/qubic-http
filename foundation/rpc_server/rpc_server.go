@@ -2,7 +2,7 @@ package rpc
 
 import (
 	"context"
-	"encoding/hex"
+	"encoding/base64"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -85,13 +85,6 @@ func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.
 }
 
 func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetBlockHeightResponse, error) {
-	st := status.Newf(codes.OutOfRange, "provided tick %d was skipped by the system", 1231)
-	st, err := st.WithDetails(&protobuff.NextTick{NextTick: 1234})
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "creating custom status")
-	}
-
-	return nil, st.Err()
 	client, err := s.qPool.Get()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
@@ -113,7 +106,7 @@ func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobu
 }
 
 func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
-	decodedTx, err := hex.DecodeString(req.EncodedTransaction)
+	decodedTx, err := base64.StdEncoding.DecodeString(req.EncodedTransaction)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
