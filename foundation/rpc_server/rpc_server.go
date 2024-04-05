@@ -110,7 +110,7 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx))}, nil
+	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)), EncodedTransaction: req.EncodedTransaction}, nil
 }
 
 func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {
