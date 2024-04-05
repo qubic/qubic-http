@@ -40,8 +40,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/qubic/go-node-connector v0.4.0 h1:mS02AefPNNsvpXxiVBQRfhdqnK5VzB2/58VB9MWA8so=
-github.com/qubic/go-node-connector v0.4.0/go.mod h1:bY0Ojb1eGOyo0vd3a0k5ygwu08oh1feLzwZWFAxnx2k=
+github.com/qubic/go-node-connector v0.5.0 h1:Z6TE/Ter28GZPreM6xczkGTuocqENXG1ka4mYs+ryRA=
+github.com/qubic/go-node-connector v0.5.0/go.mod h1:iToCz9g9C0lWcah5gjnn16tQHdz6vvRNB0S7kKgARVU=
 github.com/silenceper/pool v1.0.0 h1:JTCaA+U6hJAA0P8nCx+JfsRCHMwLTfatsm5QXelffmU=
 github.com/silenceper/pool v1.0.0/go.mod h1:3DN13bqAbq86Lmzf6iUXWEPIWFPOSYVfaoceFvilKKI=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=
