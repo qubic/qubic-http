@@ -2,7 +2,8 @@ package tick
 
 import (
 	"encoding/hex"
-	"github.com/0xluk/go-qubic/data/tick"
+	"github.com/pkg/errors"
+	"github.com/qubic/go-node-connector/types"
 	"github.com/qubic/qubic-http/external/opensearch"
 )
 
@@ -31,7 +32,7 @@ type PotentialBx struct {
 	Amount      string `json:"amount"`
 }
 
-func (o *GetTickDataOutput) fromQubicModel(model tick.TickData) GetTickDataOutput {
+func (o *GetTickDataOutput) fromQubicModel(model types.TickData) GetTickDataOutput {
 	var contractFees []int64
 	for _, b := range model.ContractFees {
 		if b != 0 {
@@ -103,22 +104,26 @@ type Transaction struct {
 
 type GetTickTransactionsOutput []Transaction
 
-func (o *GetTickTransactionsOutput) fromQubicModel(tickTxs []tick.Transaction) GetTickTransactionsOutput {
+func (o *GetTickTransactionsOutput) fromQubicModel(tickTxs types.Transactions) (GetTickTransactionsOutput, error) {
 	txs := make([]Transaction, 0, len(tickTxs))
 
 	for _, tx := range tickTxs {
+		digest, err := tx.Digest()
+		if err != nil {
+			return GetTickTransactionsOutput{}, errors.Wrap(err, "getting tx digest")
+		}
 		txs = append(txs, Transaction{
-			SourcePublicKey:      hex.EncodeToString(tx.Data.Header.SourcePublicKey[:]),
-			DestinationPublicKey: hex.EncodeToString(tx.Data.Header.DestinationPublicKey[:]),
-			Amount:               tx.Data.Header.Amount,
-			Tick:                 tx.Data.Header.Tick,
-			InputType:            tx.Data.Header.InputType,
-			InputSize:            tx.Data.Header.InputSize,
-			Hash:                 byteArrayToString(tx.Hash),
+			SourcePublicKey:      hex.EncodeToString(tx.SourcePublicKey[:]),
+			DestinationPublicKey: hex.EncodeToString(tx.DestinationPublicKey[:]),
+			Amount:               tx.Amount,
+			Tick:                 tx.Tick,
+			InputType:            tx.InputType,
+			InputSize:            tx.InputSize,
+			Hash:                 hex.EncodeToString(digest[:]),
 		})
 	}
 
-	return txs
+	return txs, nil
 }
 
 type GetTickInfoOutput struct {
@@ -129,7 +134,7 @@ type GetTickInfoOutput struct {
 	NumberOfMisalignedVotes uint16 `json:"number_of_misaligned_votes"`
 }
 
-func (o *GetTickInfoOutput) fromQubicModel(model tick.CurrentTickInfo) GetTickInfoOutput {
+func (o *GetTickInfoOutput) fromQubicModel(model types.TickInfo) GetTickInfoOutput {
 	return GetTickInfoOutput{
 		TickDuration:            model.TickDuration,
 		Epoch:                   model.Epoch,
