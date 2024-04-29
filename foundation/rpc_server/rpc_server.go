@@ -127,7 +127,7 @@ func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
 	if err != nil {
 		return 0, errors.Wrap(err, "performing request")
 	}
-	res.Body.Close()
+	defer res.Body.Close()
 
 	var resp maxTickResponse
 	body, err := io.ReadAll(res.Body)
