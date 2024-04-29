@@ -127,6 +127,7 @@ func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
 	if err != nil {
 		return 0, errors.Wrap(err, "performing request")
 	}
+	res.Body.Close()
 
 	var resp maxTickResponse
 	body, err := io.ReadAll(res.Body)
@@ -139,6 +140,10 @@ func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
 	}
 
 	tick := resp.MaxTick
+
+	if tick == 0 {
+		return 0, errors.New("Fetched max tick is 0.")
+	}
 
 	return tick, nil
 }
@@ -174,10 +179,19 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 	}
 
 	if transaction.Tick < maxTick {
-		return nil, status.Error(codes.InvalidArgument, "Transaction cannot be on an already processed tick.")
+		return nil, status.Errorf(codes.InvalidArgument, "Target tick: %d for the transaction should be greater than max tick: %d", transaction.Tick, maxTick)
 	}
 
-	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)), EncodedTransaction: req.EncodedTransaction}, nil
+	transactionId, err := transaction.ID()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &protobuff.BroadcastTransactionResponse{
+		PeersBroadcasted:   int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)),
+		EncodedTransaction: req.EncodedTransaction,
+		TransactionId:      transactionId,
+	}, nil
 }
 
 func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {

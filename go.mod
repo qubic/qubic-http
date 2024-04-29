@@ -2,8 +2,6 @@ module github.com/qubic/qubic-http
 
 go 1.22
 
-toolchain go1.22.2
-
 require (
 	github.com/ardanlabs/conf v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
