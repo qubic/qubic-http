@@ -1,12 +1,18 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/pkg/errors"
+	"github.com/qubic/go-node-connector/types"
+	"github.com/qubic/go-schnorrq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"io"
 
 	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/protobuff"
@@ -26,16 +32,18 @@ var _ protobuff.QubicLiveServiceServer = &Server{}
 
 type Server struct {
 	protobuff.UnimplementedQubicLiveServiceServer
-	listenAddrGRPC string
-	listenAddrHTTP string
-	qPool          *qubic.Pool
+	listenAddrGRPC  string
+	listenAddrHTTP  string
+	qPool           *qubic.Pool
+	maxTickFetchUrl string
 }
 
-func NewServer(listenAddrGRPC, listenAddrHTTP string, qPool *qubic.Pool) *Server {
+func NewServer(listenAddrGRPC, listenAddrHTTP string, qPool *qubic.Pool, maxTickFetchUrl string) *Server {
 	return &Server{
-		listenAddrGRPC: listenAddrGRPC,
-		listenAddrHTTP: listenAddrHTTP,
-		qPool:          qPool,
+		listenAddrGRPC:  listenAddrGRPC,
+		listenAddrHTTP:  listenAddrHTTP,
+		qPool:           qPool,
+		maxTickFetchUrl: maxTickFetchUrl,
 	}
 }
 
@@ -105,12 +113,85 @@ func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobu
 	}}, nil
 }
 
+type maxTickResponse struct {
+	MaxTick uint32 `json:"max_tick"`
+}
+
+func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, maxTickFetchUrl, nil)
+	if err != nil {
+		return 0, errors.Wrap(err, "creating new request")
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, errors.Wrap(err, "performing request")
+	}
+	defer res.Body.Close()
+
+	var resp maxTickResponse
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return 0, errors.Wrap(err, "reading response body")
+	}
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return 0, errors.Wrap(err, "unmarshalling response")
+	}
+
+	tick := resp.MaxTick
+
+	if tick == 0 {
+		return 0, errors.New("Fetched max tick is 0.")
+	}
+
+	return tick, nil
+}
+
 func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
 	decodedTx, err := base64.StdEncoding.DecodeString(req.EncodedTransaction)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return &protobuff.BroadcastTransactionResponse{PeersBroadcasted: int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)), EncodedTransaction: req.EncodedTransaction}, nil
+
+	reader := bytes.NewReader(decodedTx)
+
+	var transaction types.Transaction
+	err = transaction.UnmarshallBinary(reader)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	digest, err := transaction.GetUnsignedDigest()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	err = schnorrq.Verify(transaction.SourcePublicKey, digest, transaction.Signature)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	maxTick, err := fetchMaxTick(ctx, s.maxTickFetchUrl)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if transaction.Tick < maxTick {
+		return nil, status.Errorf(codes.InvalidArgument, "Target tick: %d for the transaction should be greater than max tick: %d", transaction.Tick, maxTick)
+	}
+
+	transactionId, err := transaction.ID()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &protobuff.BroadcastTransactionResponse{
+		PeersBroadcasted:   int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)),
+		EncodedTransaction: req.EncodedTransaction,
+		TransactionId:      transactionId,
+	}, nil
 }
 
 func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {

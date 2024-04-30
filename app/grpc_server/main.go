@@ -31,9 +31,10 @@ func run(log *log.Logger) error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 			HttpHost        string        `conf:"default:0.0.0.0:8000"`
 			GrpcHost        string        `conf:"default:0.0.0.0:8001"`
+			MaxTickFetchUrl string        `conf:"default:http://127.0.0.1:8080/max-tick"`
 		}
 		Pool struct {
-			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/peers"`
+			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/status"`
 			NodeFetcherTimeout time.Duration `conf:"default:2s"`
 			InitialCap         int           `conf:"default:5"`
 			MaxIdle            int           `conf:"default:20"`
@@ -81,7 +82,7 @@ func run(log *log.Logger) error {
 		return errors.Wrap(err, "creating qubic pool")
 	}
 
-	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, pool)
+	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, pool, cfg.Server.MaxTickFetchUrl)
 	rpcServer.Start()
 
 	shutdown := make(chan os.Signal, 1)

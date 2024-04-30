@@ -29,6 +29,7 @@ message BroadcastTransactionRequest {
 message BroadcastTransactionResponse {
   int32 peers_broadcasted = 1;
   string encoded_transaction = 2;
+  string transaction_id = 3;
 }
 
 message TickInfo {
