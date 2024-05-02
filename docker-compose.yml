@@ -2,35 +2,35 @@ version: '3'
 
 services:
   qubic-http:
-    image: ghcr.io/qubic/qubic-http:v0.4.0
+    image: ghcr.io/qubic/qubic-http:v0.5.0
     container_name: qubic-http
     environment:
       QUBIC_API_SIDECAR_SERVER_HTTP_HOST: "0.0.0.0:8000"
       QUBIC_API_SIDECAR_SERVER_GRPC_HOST: "0.0.0.0:8001"
-      QUBIC_API_SIDECAR_POOL_NODE_FETCHER_URL: "http://qubic-node-fetcher:8080/peers"
+      QUBIC_API_SIDECAR_SERVER_MAX_TICK_FETCH_URL:  "http://qubic-nodes:8080/max-tick"
+      QUBIC_API_SIDECAR_POOL_NODE_FETCHER_URL: "http://qubic-nodes:8080/status"
       QUBIC_API_SIDECAR_POOL_NODE_FETCHER_TIMEOUT: "20s"
     networks:
       - qubic
+    ports:
+      - "127.0.0.1:8000:8000"
     depends_on:
-      qubic-node-fetcher:
+      qubic-nodes:
         condition: service_healthy
     restart: always
 
-  qubic-node-fetcher:
-    image: ghcr.io/qubic/go-node-fetcher:v0.3.0
-    container_name: qubic-node-fetcher
+  qubic-nodes:
+    image: ghcr.io/qubic/qubic-nodes:v1.0.2
+    container_name: qubic-nodes
     ports:
       - "127.0.0.1:8080:8080"
     environment:
-      NODE_FETCHER_QUBIC_FIXED_PEER_LIST: true
-      NODE_FETCHER_QUBIC_STARTING_PEERS_IP: "185.70.186.149;185.70.186.153"
-    volumes:
-      - ./store/node-fetcher:/app/store
+      QUBIC_NODES_QUBIC_PEER_LIST: "5.39.222.64;82.197.173.130;82.197.173.129"
     networks:
       - qubic
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://qubic-node-fetcher:8080/peers"]
-      interval: 30s
+      test: [ "CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/status" ]
+      interval: 5s
       timeout: 5s
       retries: 5
     restart: always
