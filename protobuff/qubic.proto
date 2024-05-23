@@ -47,17 +47,20 @@ message GetBlockHeightResponse {
   TickInfo block_height = 1;
 }
 
+// Assets
+
 message AssetInfo {
   uint32 tick = 1;
   uint32 universe_index = 2;
 }
 
+//Issued
 message IssuedAssetData {
   string issuer_identity = 1;
   uint32 type = 2;
   string name = 3;
   int32 number_of_decimal_places = 4;
-  string unit_of_measurement = 5;
+  repeated int32 unit_of_measurement = 5;
 }
 
 message IssuedAsset {
@@ -65,6 +68,15 @@ message IssuedAsset {
   AssetInfo info = 2;
 }
 
+message IssuedAssetsRequest {
+  string identity = 1;
+}
+
+message IssuedAssetsResponse {
+  repeated IssuedAsset issued_assets = 1;
+}
+
+//Owned
 message OwnedAssetData {
   string owner_identity = 1;
   uint32 type = 2;
@@ -88,6 +100,7 @@ message OwnedAssetsResponse {
   repeated OwnedAsset owned_assets = 1;
 }
 
+//Possessed
 message PossessedAssetData {
   string possessor_identity = 1;
   uint32 type = 2;
@@ -135,6 +148,12 @@ service QubicLiveService {
     option (google.api.http) = {
       get: "/block-height"
     };
+  };
+
+  rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
+     option (google.api.http) = {
+       get: "/assets/{identity}/issued"
+     };
   };
 
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {

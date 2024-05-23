@@ -267,7 +267,6 @@ func (s *Server) Start() error {
 }
 
 func int8ArrayToString(array []int8) string {
-
 	runes := make([]rune, 0)
 
 	for _, char := range array {
@@ -278,6 +277,64 @@ func int8ArrayToString(array []int8) string {
 		runes = append(runes, rune(char))
 	}
 	return string(runes)
+}
+
+func int8ArrayToInt32Array(array []int8) []int32 {
+	ints := make([]int32, 0)
+
+	for _, smallInt := range array {
+		ints = append(ints, int32(smallInt))
+	}
+	return ints
+}
+
+func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAssetsRequest) (*protobuff.IssuedAssetsResponse, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+	}
+
+	assets, err := client.GetIssuedAssets(ctx, req.Identity)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting issued assets from node %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	issuedAssets := make([]*protobuff.IssuedAsset, 0)
+
+	for _, asset := range assets {
+
+		iAsset := asset.Data
+		var iAssetIdentity types.Identity
+		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+		}
+
+		data := protobuff.IssuedAssetData{
+			IssuerIdentity:        iAssetIdentity.String(),
+			Type:                  uint32(iAsset.Type),
+			Name:                  int8ArrayToString(iAsset.Name[:]),
+			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
+		}
+
+		info := protobuff.AssetInfo{
+			Tick:          asset.Info.Tick,
+			UniverseIndex: asset.Info.UniverseIndex,
+		}
+
+		issuedAsset := protobuff.IssuedAsset{
+			Data: &data,
+			Info: &info,
+		}
+
+		issuedAssets = append(issuedAssets, &issuedAsset)
+	}
+
+	return &protobuff.IssuedAssetsResponse{IssuedAssets: issuedAssets}, nil
 }
 
 func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsRequest) (*protobuff.OwnedAssetsResponse, error) {
@@ -311,7 +368,7 @@ func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsR
 			Type:                  uint32(iAsset.Type),
 			Name:                  int8ArrayToString(iAsset.Name[:]),
 			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToString(iAsset.UnitOfMeasurement[:]),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
 		}
 
 		var oAssetIdentity types.Identity
@@ -384,7 +441,7 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 			Type:                  uint32(iAsset.Type),
 			Name:                  int8ArrayToString(iAsset.Name[:]),
 			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToString(iAsset.UnitOfMeasurement[:]),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
 		}
 
 		ownedAsset := protobuff.OwnedAssetData{
