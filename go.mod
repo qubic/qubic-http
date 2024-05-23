@@ -2,6 +2,8 @@ module github.com/qubic/qubic-http
 
 go 1.22
 
+replace github.com/qubic/go-node-connector v0.6.2 => ../go-node-connector
+
 require (
 	github.com/ardanlabs/conf v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
@@ -15,7 +17,7 @@ require (
 
 require (
 	github.com/bits-and-blooms/bitset v1.13.0 // indirect
-	github.com/cloudflare/circl v1.3.6 // indirect
+	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

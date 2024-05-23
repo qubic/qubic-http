@@ -11,7 +11,7 @@ Some of its features include:
 ## Building from source
 
 ```shell
-go build -o "server" "./app/server"
+go build -o "server" "./app/grpc_server"
 ```
 
 ## Running the service
