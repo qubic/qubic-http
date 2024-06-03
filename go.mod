@@ -6,7 +6,7 @@ require (
 	github.com/ardanlabs/conf v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
 	github.com/pkg/errors v0.9.1
-	github.com/qubic/go-node-connector v0.7.0
+	github.com/qubic/go-node-connector v0.7.1
 	github.com/qubic/go-schnorrq v1.0.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240314234333-6e1732d8331c
 	google.golang.org/grpc v1.62.1
