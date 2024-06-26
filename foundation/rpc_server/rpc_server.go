@@ -265,3 +265,224 @@ func (s *Server) Start() error {
 
 	return nil
 }
+
+func int8ArrayToString(array []int8) string {
+	runes := make([]rune, 0)
+
+	for _, char := range array {
+		if char == 0 {
+			continue
+		}
+
+		runes = append(runes, rune(char))
+	}
+	return string(runes)
+}
+
+func int8ArrayToInt32Array(array []int8) []int32 {
+	ints := make([]int32, 0)
+
+	for _, smallInt := range array {
+		ints = append(ints, int32(smallInt))
+	}
+	return ints
+}
+
+func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAssetsRequest) (*protobuff.IssuedAssetsResponse, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+	}
+
+	assets, err := client.GetIssuedAssets(ctx, req.Identity)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting issued assets from node %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	issuedAssets := make([]*protobuff.IssuedAsset, 0)
+
+	for _, asset := range assets {
+
+		iAsset := asset.Data
+		var iAssetIdentity types.Identity
+		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+		}
+
+		data := protobuff.IssuedAssetData{
+			IssuerIdentity:        iAssetIdentity.String(),
+			Type:                  uint32(iAsset.Type),
+			Name:                  int8ArrayToString(iAsset.Name[:]),
+			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
+		}
+
+		info := protobuff.AssetInfo{
+			Tick:          asset.Info.Tick,
+			UniverseIndex: asset.Info.UniverseIndex,
+		}
+
+		issuedAsset := protobuff.IssuedAsset{
+			Data: &data,
+			Info: &info,
+		}
+
+		issuedAssets = append(issuedAssets, &issuedAsset)
+	}
+
+	return &protobuff.IssuedAssetsResponse{IssuedAssets: issuedAssets}, nil
+}
+
+func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsRequest) (*protobuff.OwnedAssetsResponse, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+	}
+
+	assets, err := client.GetOwnedAssets(ctx, req.Identity)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting owned assets from node %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	ownedAssets := make([]*protobuff.OwnedAsset, 0)
+
+	for _, asset := range assets {
+
+		iAsset := asset.Data.IssuedAsset
+
+		var iAssetIdentity types.Identity
+		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+		}
+
+		issuedAsset := protobuff.IssuedAssetData{
+			IssuerIdentity:        iAssetIdentity.String(),
+			Type:                  uint32(iAsset.Type),
+			Name:                  int8ArrayToString(iAsset.Name[:]),
+			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
+		}
+
+		var oAssetIdentity types.Identity
+		oAssetIdentity, err = oAssetIdentity.FromPubKey(asset.Data.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for owned asset public key")
+		}
+
+		data := protobuff.OwnedAssetData{
+			OwnerIdentity:         oAssetIdentity.String(),
+			Type:                  uint32(asset.Data.Type),
+			Padding:               int32(asset.Data.Padding[0]),
+			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
+			IssuanceIndex:         asset.Data.IssuanceIndex,
+			NumberOfUnits:         asset.Data.NumberOfUnits,
+			IssuedAsset:           &issuedAsset,
+		}
+
+		info := protobuff.AssetInfo{
+			Tick:          asset.Info.Tick,
+			UniverseIndex: asset.Info.UniverseIndex,
+		}
+
+		ownedAsset := protobuff.OwnedAsset{
+			Data: &data,
+			Info: &info,
+		}
+
+		ownedAssets = append(ownedAssets, &ownedAsset)
+
+	}
+
+	return &protobuff.OwnedAssetsResponse{OwnedAssets: ownedAssets}, nil
+}
+
+func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.PossessedAssetsRequest) (*protobuff.PossessedAssetsResponse, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+	}
+
+	assets, err := client.GetPossessedAssets(ctx, req.Identity)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting possessed assets from node %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	possessedAssets := make([]*protobuff.PossessedAsset, 0)
+
+	for _, asset := range assets {
+
+		oAsset := asset.Data.OwnedAsset
+		var oAssetIdentity types.Identity
+		oAssetIdentity, err = oAssetIdentity.FromPubKey(oAsset.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for owned asset public key")
+		}
+
+		iAsset := oAsset.IssuedAsset
+		var iAssetIdentity types.Identity
+		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+		}
+
+		issuedAsset := protobuff.IssuedAssetData{
+			IssuerIdentity:        iAssetIdentity.String(),
+			Type:                  uint32(iAsset.Type),
+			Name:                  int8ArrayToString(iAsset.Name[:]),
+			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
+			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
+		}
+
+		ownedAsset := protobuff.OwnedAssetData{
+			OwnerIdentity:         oAssetIdentity.String(),
+			Type:                  uint32(asset.Data.Type),
+			Padding:               int32(asset.Data.Padding[0]),
+			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
+			IssuanceIndex:         asset.Data.IssuanceIndex,
+			NumberOfUnits:         asset.Data.NumberOfUnits,
+			IssuedAsset:           &issuedAsset,
+		}
+
+		var pAssetIdentity types.Identity
+		pAssetIdentity, err = pAssetIdentity.FromPubKey(asset.Data.PublicKey, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get identity for possessed asset public key")
+		}
+
+		data := protobuff.PossessedAssetData{
+			PossessorIdentity:     pAssetIdentity.String(),
+			Type:                  uint32(asset.Data.Type),
+			Padding:               int32(asset.Data.Padding[0]),
+			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
+			IssuanceIndex:         asset.Data.IssuanceIndex,
+			NumberOfUnits:         asset.Data.NumberOfUnits,
+			OwnedAsset:            &ownedAsset,
+		}
+
+		info := protobuff.AssetInfo{
+			Tick:          asset.Info.Tick,
+			UniverseIndex: asset.Info.UniverseIndex,
+		}
+
+		possessedAsset := protobuff.PossessedAsset{
+			Data: &data,
+			Info: &info,
+		}
+
+		possessedAssets = append(possessedAssets, &possessedAsset)
+
+	}
+
+	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
+}

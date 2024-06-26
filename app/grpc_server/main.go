@@ -36,6 +36,7 @@ func run(log *log.Logger) error {
 		Pool struct {
 			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/status"`
 			NodeFetcherTimeout time.Duration `conf:"default:2s"`
+			NodePort           string        `conf:"default:21841"`
 			InitialCap         int           `conf:"default:5"`
 			MaxIdle            int           `conf:"default:20"`
 			MaxCap             int           `conf:"default:30"`
@@ -76,7 +77,7 @@ func run(log *log.Logger) error {
 		IdleTimeout:        cfg.Pool.IdleTimeout,
 		NodeFetcherUrl:     cfg.Pool.NodeFetcherUrl,
 		NodeFetcherTimeout: cfg.Pool.NodeFetcherTimeout,
-		NodePort:           "21841",
+		NodePort:           cfg.Pool.NodePort,
 	})
 	if err != nil {
 		return errors.Wrap(err, "creating qubic pool")
