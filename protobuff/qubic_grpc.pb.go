@@ -24,6 +24,9 @@ const (
 	QubicLiveService_BroadcastTransaction_FullMethodName = "/qubic.http.qubic.pb.QubicLiveService/BroadcastTransaction"
 	QubicLiveService_GetTickInfo_FullMethodName          = "/qubic.http.qubic.pb.QubicLiveService/GetTickInfo"
 	QubicLiveService_GetBlockHeight_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetBlockHeight"
+	QubicLiveService_GetIssuedAssets_FullMethodName      = "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssets"
+	QubicLiveService_GetOwnedAssets_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssets"
+	QubicLiveService_GetPossessedAssets_FullMethodName   = "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssets"
 )
 
 // QubicLiveServiceClient is the client API for QubicLiveService service.
@@ -34,6 +37,9 @@ type QubicLiveServiceClient interface {
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
+	GetIssuedAssets(ctx context.Context, in *IssuedAssetsRequest, opts ...grpc.CallOption) (*IssuedAssetsResponse, error)
+	GetOwnedAssets(ctx context.Context, in *OwnedAssetsRequest, opts ...grpc.CallOption) (*OwnedAssetsResponse, error)
+	GetPossessedAssets(ctx context.Context, in *PossessedAssetsRequest, opts ...grpc.CallOption) (*PossessedAssetsResponse, error)
 }
 
 type qubicLiveServiceClient struct {
@@ -80,6 +86,33 @@ func (c *qubicLiveServiceClient) GetBlockHeight(ctx context.Context, in *emptypb
 	return out, nil
 }
 
+func (c *qubicLiveServiceClient) GetIssuedAssets(ctx context.Context, in *IssuedAssetsRequest, opts ...grpc.CallOption) (*IssuedAssetsResponse, error) {
+	out := new(IssuedAssetsResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetIssuedAssets_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qubicLiveServiceClient) GetOwnedAssets(ctx context.Context, in *OwnedAssetsRequest, opts ...grpc.CallOption) (*OwnedAssetsResponse, error) {
+	out := new(OwnedAssetsResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetOwnedAssets_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qubicLiveServiceClient) GetPossessedAssets(ctx context.Context, in *PossessedAssetsRequest, opts ...grpc.CallOption) (*PossessedAssetsResponse, error) {
+	out := new(PossessedAssetsResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetPossessedAssets_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QubicLiveServiceServer is the server API for QubicLiveService service.
 // All implementations must embed UnimplementedQubicLiveServiceServer
 // for forward compatibility
@@ -88,6 +121,9 @@ type QubicLiveServiceServer interface {
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
+	GetIssuedAssets(context.Context, *IssuedAssetsRequest) (*IssuedAssetsResponse, error)
+	GetOwnedAssets(context.Context, *OwnedAssetsRequest) (*OwnedAssetsResponse, error)
+	GetPossessedAssets(context.Context, *PossessedAssetsRequest) (*PossessedAssetsResponse, error)
 	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
@@ -106,6 +142,15 @@ func (UnimplementedQubicLiveServiceServer) GetTickInfo(context.Context, *emptypb
 }
 func (UnimplementedQubicLiveServiceServer) GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetIssuedAssets(context.Context, *IssuedAssetsRequest) (*IssuedAssetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIssuedAssets not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetOwnedAssets(context.Context, *OwnedAssetsRequest) (*OwnedAssetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOwnedAssets not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetPossessedAssets(context.Context, *PossessedAssetsRequest) (*PossessedAssetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPossessedAssets not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) mustEmbedUnimplementedQubicLiveServiceServer() {}
 
@@ -192,6 +237,60 @@ func _QubicLiveService_GetBlockHeight_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QubicLiveService_GetIssuedAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssuedAssetsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetIssuedAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_GetIssuedAssets_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetIssuedAssets(ctx, req.(*IssuedAssetsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QubicLiveService_GetOwnedAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OwnedAssetsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetOwnedAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_GetOwnedAssets_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetOwnedAssets(ctx, req.(*OwnedAssetsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QubicLiveService_GetPossessedAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PossessedAssetsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetPossessedAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_GetPossessedAssets_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetPossessedAssets(ctx, req.(*PossessedAssetsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QubicLiveService_ServiceDesc is the grpc.ServiceDesc for QubicLiveService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +313,18 @@ var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlockHeight",
 			Handler:    _QubicLiveService_GetBlockHeight_Handler,
+		},
+		{
+			MethodName: "GetIssuedAssets",
+			Handler:    _QubicLiveService_GetIssuedAssets_Handler,
+		},
+		{
+			MethodName: "GetOwnedAssets",
+			Handler:    _QubicLiveService_GetOwnedAssets_Handler,
+		},
+		{
+			MethodName: "GetPossessedAssets",
+			Handler:    _QubicLiveService_GetPossessedAssets_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

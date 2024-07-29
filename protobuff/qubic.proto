@@ -47,6 +47,83 @@ message GetBlockHeightResponse {
   TickInfo block_height = 1;
 }
 
+// Assets
+
+message AssetInfo {
+  uint32 tick = 1;
+  uint32 universe_index = 2;
+}
+
+//Issued
+message IssuedAssetData {
+  string issuer_identity = 1;
+  uint32 type = 2;
+  string name = 3;
+  int32 number_of_decimal_places = 4;
+  repeated int32 unit_of_measurement = 5;
+}
+
+message IssuedAsset {
+  IssuedAssetData data = 1;
+  AssetInfo info = 2;
+}
+
+message IssuedAssetsRequest {
+  string identity = 1;
+}
+
+message IssuedAssetsResponse {
+  repeated IssuedAsset issued_assets = 1;
+}
+
+//Owned
+message OwnedAssetData {
+  string owner_identity = 1;
+  uint32 type = 2;
+  int32 padding = 3;
+  uint32 managing_contract_index = 4;
+  uint32 issuance_index = 5;
+  int64 number_of_units = 6;
+  IssuedAssetData issued_asset = 7;
+}
+
+message OwnedAsset {
+  OwnedAssetData data = 1;
+  AssetInfo info = 2;
+}
+
+message OwnedAssetsRequest {
+  string identity = 1;
+}
+
+message OwnedAssetsResponse {
+  repeated OwnedAsset owned_assets = 1;
+}
+
+//Possessed
+message PossessedAssetData {
+  string possessor_identity = 1;
+  uint32 type = 2;
+  int32 padding = 3;
+  uint32 managing_contract_index = 4;
+  uint32 issuance_index = 5;
+  int64 number_of_units = 6;
+  OwnedAssetData owned_asset = 7;
+}
+
+message PossessedAsset {
+  PossessedAssetData data = 1;
+  AssetInfo info = 2;
+}
+
+message PossessedAssetsRequest {
+  string identity = 1;
+}
+
+message PossessedAssetsResponse {
+  repeated PossessedAsset possessed_assets = 1;
+}
+
 service QubicLiveService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
@@ -72,4 +149,23 @@ service QubicLiveService {
       get: "/block-height"
     };
   };
+
+  rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
+     option (google.api.http) = {
+       get: "/assets/{identity}/issued"
+     };
+  };
+
+  rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
+    option (google.api.http) = {
+      get: "/assets/{identity}/owned"
+    };
+  };
+
+  rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
+    option (google.api.http) = {
+      get: "/assets/{identity}/possessed"
+    };
+  };
+
 }

@@ -11,7 +11,7 @@ Some of its features include:
 ## Building from source
 
 ```shell
-go build -o "server" "./app/server"
+go build -o "server" "./app/grpc_server"
 ```
 
 ## Running the service
@@ -104,7 +104,7 @@ curl http://localhost:8000/block-height
 }
 ```
 
-#### /balances/{id}
+#### /balances/{identity}
 
 ```shell
 curl http://localhost:8000/balances/PKXGRCNOEEDLEGTLAZOSXMEYZIEDLGMSPNTJJJBHIBJISHFFYBBFDVGHRJQF
@@ -133,5 +133,295 @@ curl -X POST http://localhost:8000/broadcast-transaction -d '{"encodedTransactio
     "peersBroadcasted": 3,
     "encodedTransaction": "...",
     "transactionId": "oxmqdbynwbisqcjgphyaexhlknmaanipiyxpulatkdjxpdqsqtiovjhcxqkd"
+}
+```
+
+### Asset related endpoints
+
+#### /assets/{identity}/issued
+
+```shell
+curl localhost:8000/assets/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB/issued
+```
+```json
+{
+  "issuedAssets": [
+    {
+      "data": {
+        "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+        "type": 1,
+        "name": "RANDOM",
+        "numberOfDecimalPlaces": 0,
+        "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+      },
+      "info": {
+        "tick": 14057739,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+        "type": 1,
+        "name": "QX",
+        "numberOfDecimalPlaces": 0,
+        "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+      },
+      "info": {
+        "tick": 14057739,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+        "type": 1,
+        "name": "QTRY",
+        "numberOfDecimalPlaces": 0,
+        "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+      },
+      "info": {
+        "tick": 14057739,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+        "type": 1,
+        "name": "QUTIL",
+        "numberOfDecimalPlaces": 0,
+        "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+      },
+      "info": {
+        "tick": 14057739,
+        "universeIndex": 0
+      }
+    }
+  ]
+}
+```
+
+#### /assets/{identity}/owned
+
+```shell
+curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC/owned
+```
+```json
+{
+  "ownedAssets": [
+    {
+      "data": {
+        "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 2,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 0,
+        "numberOfUnits": "2",
+        "issuedAsset": {
+          "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+          "type": 1,
+          "name": "RANDOM",
+          "numberOfDecimalPlaces": 0,
+          "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "info": {
+        "tick": 14057652,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 2,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 1,
+        "numberOfUnits": "1",
+        "issuedAsset": {
+          "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+          "type": 1,
+          "name": "QX",
+          "numberOfDecimalPlaces": 0,
+          "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      "info": {
+        "tick": 14057652,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 2,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 9284980,
+        "numberOfUnits": "186685601",
+        "issuedAsset": {
+          "issuerIdentity": "QWALLETSGQVAGBHUCVVXWZXMBKQBPQQSHRYKZGEJWFVNUFCEDDPRMKTAUVHA",
+          "type": 1,
+          "name": "QWALLET",
+          "numberOfDecimalPlaces": 0,
+          "unitOfMeasurement": [0, -48, 0, -48, 35, 24, 21]
+        }
+      },
+      "info": {
+        "tick": 14057652,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 2,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 2741973,
+        "numberOfUnits": "10",
+        "issuedAsset": {
+          "issuerIdentity": "TFUYVBXYIYBVTEMJHAJGEJOOZHJBQFVQLTBBKMEHPEVIZFXZRPEYFUWGTIWG",
+          "type": 1,
+          "name": "QFT",
+          "numberOfDecimalPlaces": 0,
+          "unitOfMeasurement": [84, 79, 75, 69, 78, 0, 0]
+        }
+      },
+      "info": {
+        "tick": 14057652,
+        "universeIndex": 0
+      }
+    }
+  ]
+}
+```
+
+#### /assets/{identity}/possessed
+
+```shell
+curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC/possessed
+```
+```json
+{
+  "possessedAssets": [
+    {
+      "data": {
+        "possessorIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 3,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 9707976,
+        "numberOfUnits": "2",
+        "ownedAsset": {
+          "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+          "type": 3,
+          "padding": 0,
+          "managingContractIndex": 1,
+          "issuanceIndex": 9707976,
+          "numberOfUnits": "2",
+          "issuedAsset": {
+            "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+            "type": 1,
+            "name": "RANDOM",
+            "numberOfDecimalPlaces": 0,
+            "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+          }
+        }
+      },
+      "info": {
+        "tick": 14057759,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "possessorIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 3,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 9707978,
+        "numberOfUnits": "1",
+        "ownedAsset": {
+          "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+          "type": 3,
+          "padding": 0,
+          "managingContractIndex": 1,
+          "issuanceIndex": 9707978,
+          "numberOfUnits": "1",
+          "issuedAsset": {
+            "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+            "type": 1,
+            "name": "QX",
+            "numberOfDecimalPlaces": 0,
+            "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+          }
+        }
+      },
+      "info": {
+        "tick": 14057759,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "possessorIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 3,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 9707980,
+        "numberOfUnits": "186685601",
+        "ownedAsset": {
+          "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+          "type": 3,
+          "padding": 0,
+          "managingContractIndex": 1,
+          "issuanceIndex": 9707980,
+          "numberOfUnits": "186685601",
+          "issuedAsset": {
+            "issuerIdentity": "QWALLETSGQVAGBHUCVVXWZXMBKQBPQQSHRYKZGEJWFVNUFCEDDPRMKTAUVHA",
+            "type": 1,
+            "name": "QWALLET",
+            "numberOfDecimalPlaces": 0,
+            "unitOfMeasurement": [0, -48, 0, -48, 35, 24, 21]
+          }
+        }
+      },
+      "info": {
+        "tick": 14057759,
+        "universeIndex": 0
+      }
+    },
+    {
+      "data": {
+        "possessorIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+        "type": 3,
+        "padding": 0,
+        "managingContractIndex": 1,
+        "issuanceIndex": 9707982,
+        "numberOfUnits": "10",
+        "ownedAsset": {
+          "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+          "type": 3,
+          "padding": 0,
+          "managingContractIndex": 1,
+          "issuanceIndex": 9707982,
+          "numberOfUnits": "10",
+          "issuedAsset": {
+            "issuerIdentity": "TFUYVBXYIYBVTEMJHAJGEJOOZHJBQFVQLTBBKMEHPEVIZFXZRPEYFUWGTIWG",
+            "type": 1,
+            "name": "QFT",
+            "numberOfDecimalPlaces": 0,
+            "unitOfMeasurement": [84, 79, 75, 69, 78, 0, 0]
+          }
+        }
+      },
+      "info": {
+        "tick": 14057759,
+        "universeIndex": 0
+      }
+    }
+  ]
 }
 ```
