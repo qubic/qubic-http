@@ -188,7 +188,7 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	fmt.Printf("Transaction: %s | Target tick: %d | Max tick: %d", transactionId, transaction.Tick, maxTick)
+	fmt.Printf("Transaction: %s | Target tick: %d | Max tick: %d\n", transactionId, transaction.Tick, maxTick)
 
 	return &protobuff.BroadcastTransactionResponse{
 		PeersBroadcasted:   int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)),
