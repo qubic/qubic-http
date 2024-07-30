@@ -188,9 +188,7 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	if transaction.Tick < maxTick+15 {
-		fmt.Printf("WARN: Transaction %s has a taget tick smaller than network tick(%d) + 15(%d)", transactionId, maxTick, maxTick+15)
-	}
+	fmt.Printf("Transaction: %s | Target tick: %d | Max tick: %d", transactionId, transaction.Tick, maxTick)
 
 	return &protobuff.BroadcastTransactionResponse{
 		PeersBroadcasted:   int32(broadcastTxToMultiple(ctx, s.qPool, decodedTx)),
