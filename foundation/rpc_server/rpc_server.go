@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
 	"github.com/qubic/go-node-connector/types"
@@ -185,6 +186,10 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 	transactionId, err := transaction.ID()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if transaction.Tick < maxTick+15 {
+		fmt.Printf("WARN: Transaction %s has a taget tick smaller than network tick(%d) + 15(%d)", transactionId, maxTick, maxTick+15)
 	}
 
 	return &protobuff.BroadcastTransactionResponse{
