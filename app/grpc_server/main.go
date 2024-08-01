@@ -17,13 +17,13 @@ import (
 const prefix = "QUBIC_API_SIDECAR"
 
 func main() {
-	log := log.New(os.Stdout, prefix, log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-	if err := run(log); err != nil {
-		log.Fatalf("main: exited with error: %s", err.Error())
+	logger := log.New(os.Stdout, prefix, log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	if err := run(logger); err != nil {
+		logger.Fatalf("main: exited with error: %s", err.Error())
 	}
 }
 
-func run(log *log.Logger) error {
+func run(logger *log.Logger) error {
 	var cfg struct {
 		Server struct {
 			ReadTimeout     time.Duration `conf:"default:5s"`
@@ -68,7 +68,7 @@ func run(log *log.Logger) error {
 	if err != nil {
 		return errors.Wrap(err, "generating config for output")
 	}
-	log.Printf("main: Config :\n%v\n", out)
+	logger.Printf("main: Config :\n%v\n", out)
 
 	pool, err := qubic.NewPoolConnection(qubic.PoolConfig{
 		InitialCap:         cfg.Pool.InitialCap,
@@ -83,8 +83,11 @@ func run(log *log.Logger) error {
 		return errors.Wrap(err, "creating qubic pool")
 	}
 
-	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, pool, cfg.Server.MaxTickFetchUrl)
-	rpcServer.Start()
+	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl)
+	err = rpcServer.Start()
+	if err != nil {
+		return errors.Wrap(err, "starting rpc server")
+	}
 
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
