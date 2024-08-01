@@ -12,6 +12,10 @@ message Balance {
   uint32 valid_for_tick = 3;
   uint32 latest_incoming_transfer_tick = 4;
   uint32 latest_outgoing_transfer_tick = 5;
+  int64 incoming_amount = 6;
+  int64 outgoing_amount = 7;
+  uint32 number_of_incoming_transfers = 8;
+  uint32 number_of_outgoing_transfers = 9;
 }
 
 message GetBalanceRequest {
@@ -151,9 +155,9 @@ service QubicLiveService {
   };
 
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
-     option (google.api.http) = {
-       get: "/assets/{identity}/issued"
-     };
+    option (google.api.http) = {
+      get: "/assets/{identity}/issued"
+    };
   };
 
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {

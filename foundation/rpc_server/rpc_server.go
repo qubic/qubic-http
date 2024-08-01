@@ -66,6 +66,10 @@ func (s *Server) GetBalance(ctx context.Context, req *protobuff.GetBalanceReques
 		ValidForTick:               identityInfo.Tick,
 		LatestIncomingTransferTick: identityInfo.AddressData.LatestIncomingTransferTick,
 		LatestOutgoingTransferTick: identityInfo.AddressData.LatestOutgoingTransferTick,
+		IncomingAmount:             identityInfo.AddressData.IncomingAmount,
+		OutgoingAmount:             identityInfo.AddressData.OutgoingAmount,
+		NumberOfIncomingTransfers:  identityInfo.AddressData.NumberOfIncomingTransfers,
+		NumberOfOutgoingTransfers:  identityInfo.AddressData.NumberOfOutgoingTransfers,
 	}
 	return &protobuff.GetBalanceResponse{Balance: &balance}, nil
 }
