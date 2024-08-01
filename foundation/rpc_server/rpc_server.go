@@ -180,7 +180,7 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	offsetTick := transaction.Tick - maxTick
+	offsetTick := int32(transaction.Tick) - int32(maxTick)
 	if offsetTick <= 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "Target tick: %d for the transaction should be greater than max tick: %d", transaction.Tick, maxTick)
 	}
