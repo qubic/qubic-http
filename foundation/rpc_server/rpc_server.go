@@ -116,6 +116,32 @@ func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobu
 	}}, nil
 }
 
+func (s *Server) QuerySmartContract(ctx context.Context, req *protobuff.QuerySmartContractRequest) (*protobuff.QuerySmartContractResponse, error) {
+	reqData, err := base64.StdEncoding.DecodeString(req.RequestData)
+	if err != nil {
+		return nil, status.Errorf(codes.FailedPrecondition, "failed to decode from base64 the request data: %s", req.RequestData)
+	}
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
+	}
+
+	scData, err := client.QuerySmartContract(ctx, qubic.RequestContractFunction{
+		ContractIndex: req.ContractIndex,
+		InputType:     uint16(req.InputType),
+		InputSize:     uint16(req.InputSize),
+	}, reqData)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "query smart contract %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	return &protobuff.QuerySmartContractResponse{ResponseData: base64.StdEncoding.EncodeToString(scData.Data)}, nil
+}
+
 type maxTickResponse struct {
 	MaxTick uint32 `json:"max_tick"`
 }
