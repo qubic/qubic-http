@@ -128,10 +128,28 @@ message PossessedAssetsResponse {
   repeated PossessedAsset possessed_assets = 1;
 }
 
+message QuerySmartContractRequest {
+  uint32 contract_index = 1;
+  uint32 input_type = 2;
+  uint32 input_size = 3;
+  string request_data = 4;
+}
+
+message QuerySmartContractResponse {
+  string response_data = 5;
+}
+
 service QubicLiveService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
       get: "/balances/{id}"
+    };
+  };
+
+  rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
+    option (google.api.http) = {
+      post: "/querySmartContract"
+      body: "*"
     };
   };
 

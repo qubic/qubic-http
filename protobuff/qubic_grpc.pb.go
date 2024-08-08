@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	QubicLiveService_GetBalance_FullMethodName           = "/qubic.http.qubic.pb.QubicLiveService/GetBalance"
+	QubicLiveService_QuerySmartContract_FullMethodName   = "/qubic.http.qubic.pb.QubicLiveService/QuerySmartContract"
 	QubicLiveService_BroadcastTransaction_FullMethodName = "/qubic.http.qubic.pb.QubicLiveService/BroadcastTransaction"
 	QubicLiveService_GetTickInfo_FullMethodName          = "/qubic.http.qubic.pb.QubicLiveService/GetTickInfo"
 	QubicLiveService_GetBlockHeight_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetBlockHeight"
@@ -34,6 +35,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QubicLiveServiceClient interface {
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
+	QuerySmartContract(ctx context.Context, in *QuerySmartContractRequest, opts ...grpc.CallOption) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
@@ -53,6 +55,15 @@ func NewQubicLiveServiceClient(cc grpc.ClientConnInterface) QubicLiveServiceClie
 func (c *qubicLiveServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
 	out := new(GetBalanceResponse)
 	err := c.cc.Invoke(ctx, QubicLiveService_GetBalance_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qubicLiveServiceClient) QuerySmartContract(ctx context.Context, in *QuerySmartContractRequest, opts ...grpc.CallOption) (*QuerySmartContractResponse, error) {
+	out := new(QuerySmartContractResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_QuerySmartContract_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +129,7 @@ func (c *qubicLiveServiceClient) GetPossessedAssets(ctx context.Context, in *Pos
 // for forward compatibility
 type QubicLiveServiceServer interface {
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
+	QuerySmartContract(context.Context, *QuerySmartContractRequest) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
@@ -133,6 +145,9 @@ type UnimplementedQubicLiveServiceServer struct {
 
 func (UnimplementedQubicLiveServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) QuerySmartContract(context.Context, *QuerySmartContractRequest) (*QuerySmartContractResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QuerySmartContract not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastTransaction not implemented")
@@ -179,6 +194,24 @@ func _QubicLiveService_GetBalance_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QubicLiveServiceServer).GetBalance(ctx, req.(*GetBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QubicLiveService_QuerySmartContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QuerySmartContractRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).QuerySmartContract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_QuerySmartContract_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).QuerySmartContract(ctx, req.(*QuerySmartContractRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -301,6 +334,10 @@ var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBalance",
 			Handler:    _QubicLiveService_GetBalance_Handler,
+		},
+		{
+			MethodName: "QuerySmartContract",
+			Handler:    _QubicLiveService_QuerySmartContract_Handler,
 		},
 		{
 			MethodName: "BroadcastTransaction",

@@ -28,8 +28,9 @@ all: $(GO)
 		--go_out=paths=source_relative:. *.proto
 
 openapi: *.proto
-		protoc --openapiv2_out=logtostderr=true:. $(OPT_ARGS) \
-			   *.proto
+		protoc --openapiv2_out=logtostderr=true:. \
+        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
+        			   *.proto
 
 clean:
 		rm -f *.pb.go
