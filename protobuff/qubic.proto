@@ -142,51 +142,51 @@ message QuerySmartContractResponse {
 service QubicLiveService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
-      get: "/balances/{id}"
+      get: "/v1/balances/{id}"
     };
   };
 
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
     option (google.api.http) = {
-      post: "/querySmartContract"
+      post: "/v1/querySmartContract"
       body: "*"
     };
   };
 
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
     option (google.api.http) = {
-      post: "/broadcast-transaction"
+      post: "/v1/broadcast-transaction"
       body: "*"
     };
   };
 
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (google.api.http) = {
-      get: "/tick-info"
+      get: "/v1/tick-info"
     };
   };
 
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (google.api.http) = {
-      get: "/block-height"
+      get: "/v1/block-height"
     };
   };
 
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
     option (google.api.http) = {
-      get: "/assets/{identity}/issued"
+      get: "/v1/assets/{identity}/issued"
     };
   };
 
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
     option (google.api.http) = {
-      get: "/assets/{identity}/owned"
+      get: "/v1/assets/{identity}/owned"
     };
   };
 
   rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
     option (google.api.http) = {
-      get: "/assets/{identity}/possessed"
+      get: "/v1//assets/{identity}/possessed"
     };
   };
 
