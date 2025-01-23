@@ -28,10 +28,10 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/qubic/go-node-connector v0.10.2 h1:GRa+HI7JABJXn2rC/MSh2VgGpGBpNdqtS/Z0MZsUkhM=
-github.com/qubic/go-node-connector v0.10.2/go.mod h1:jLbmYx2GUh8Ctk5zULFepgho7yoGZXrU8/tMk+fcuEc=
-github.com/qubic/go-schnorrq v1.0.1 h1:F0R/BQVf+O7Bp57NGJmc3uXlqsaIzerg/1bmU4jMLLE=
-github.com/qubic/go-schnorrq v1.0.1/go.mod h1:j2qw/zHiyjH9GAScAAETWpZk6iELbjYnzIg7CQwc5wM=
+github.com/qubic/go-node-connector v0.8.0 h1:GzA8rpLvbEAkqz/AWkM/7Ut4P9KkwrkdP++tmF2eKHs=
+github.com/qubic/go-node-connector v0.8.0/go.mod h1:3Q9xCv5c01AqxVIx1aijMd8Pt3KJyQQiDfc4sG0UnXI=
+github.com/qubic/go-schnorrq v1.0.0 h1:EiCC3v9v3esFFfhKNEGdAI4DFIY3Dm/wbH327pC5qco=
+github.com/qubic/go-schnorrq v1.0.0/go.mod h1:KW64PcvyF4+cBA22pCx9wcoKDqPIbGz0EZ9dCZWV6Yo=
 github.com/silenceper/pool v1.0.0 h1:JTCaA+U6hJAA0P8nCx+JfsRCHMwLTfatsm5QXelffmU=
 github.com/silenceper/pool v1.0.0/go.mod h1:3DN13bqAbq86Lmzf6iUXWEPIWFPOSYVfaoceFvilKKI=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=
