@@ -32,6 +32,7 @@ func run(logger *log.Logger) error {
 			HttpHost        string        `conf:"default:0.0.0.0:8000"`
 			GrpcHost        string        `conf:"default:0.0.0.0:8001"`
 			MaxTickFetchUrl string        `conf:"default:http://127.0.0.1:8080/max-tick"`
+			ReadRetryCount  int           `conf:"default:5"`
 		}
 		Pool struct {
 			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/status"`
@@ -83,7 +84,7 @@ func run(logger *log.Logger) error {
 		return errors.Wrap(err, "creating qubic pool")
 	}
 
-	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl)
+	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl, cfg.Server.ReadRetryCount)
 	err = rpcServer.Start()
 	if err != nil {
 		return errors.Wrap(err, "starting rpc server")
