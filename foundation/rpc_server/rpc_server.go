@@ -34,24 +34,24 @@ type Server struct {
 	listenAddrHTTP  string
 	qPool           *qubic.Pool
 	maxTickFetchUrl string
-	readRetryCount  int
+	ReadMaxRetries  int
 }
 
-func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, readRetryCount int) *Server {
+func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, readMaxRetries int) *Server {
 	return &Server{
 		listenAddrGRPC:  listenAddrGRPC,
 		listenAddrHTTP:  listenAddrHTTP,
 		logger:          logger,
 		qPool:           qPool,
 		maxTickFetchUrl: maxTickFetchUrl,
-		readRetryCount:  readRetryCount,
+		ReadMaxRetries:  readMaxRetries,
 	}
 }
 
 func (s *Server) GetBalance(ctx context.Context, req *protobuff.GetBalanceRequest) (*protobuff.GetBalanceResponse, error) {
 
 	var identityInfo types.AddressInfo
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetIdentity(ctx, req.Id)
 		if err != nil {
 			return errors.Wrap(err, "getting identity info from node")
@@ -81,7 +81,7 @@ func (s *Server) GetBalance(ctx context.Context, req *protobuff.GetBalanceReques
 func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetTickInfoResponse, error) {
 
 	var tickInfo types.TickInfo
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetTickInfo(ctx)
 		if err != nil {
 			return errors.Wrap(err, "getting tick info from node")
@@ -105,7 +105,7 @@ func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.
 func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetBlockHeightResponse, error) {
 
 	var tickInfo types.TickInfo
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetTickInfo(ctx)
 		if err != nil {
 			return errors.Wrap(err, "getting tick info from node")
@@ -134,7 +134,7 @@ func (s *Server) QuerySmartContract(ctx context.Context, req *protobuff.QuerySma
 
 	var scData types.SmartContractData
 
-	err = WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err = WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.QuerySmartContract(ctx, qubic.RequestContractFunction{
 			ContractIndex: req.ContractIndex,
 			InputType:     uint16(req.InputType),
@@ -157,7 +157,7 @@ func (s *Server) QuerySmartContract(ctx context.Context, req *protobuff.QuerySma
 func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAssetsRequest) (*protobuff.IssuedAssetsResponse, error) {
 
 	var assets types.IssuedAssets
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetIssuedAssets(ctx, req.Identity)
 		if err != nil {
 			return errors.Wrap(err, "getting issued assets from node")
@@ -208,7 +208,7 @@ func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAsset
 func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsRequest) (*protobuff.OwnedAssetsResponse, error) {
 
 	var assets types.OwnedAssets
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetOwnedAssets(ctx, req.Identity)
 		if err != nil {
 			return errors.Wrap(err, "getting owned assets from node")
@@ -277,7 +277,7 @@ func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsR
 func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.PossessedAssetsRequest) (*protobuff.PossessedAssetsResponse, error) {
 
 	var assets types.PossessedAssets
-	err := WithRetry(ctx, s.qPool, s.readRetryCount, func(ctx context.Context, client *qubic.Client) error {
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
 		res, err := client.GetPossessedAssets(ctx, req.Identity)
 		if err != nil {
 			return errors.Wrap(err, "getting possessed assets from node")
@@ -428,7 +428,7 @@ type RetryableCall func(ctx context.Context, client *qubic.Client) error
 func WithRetry(ctx context.Context, pool *qubic.Pool, maxRetries int, call RetryableCall) error {
 	var lastErr error
 
-	for attempt := 0; attempt <= maxRetries; attempt++ {
+	for attempt := 0; attempt < maxRetries; attempt++ {
 		client, err := pool.Get()
 		if err != nil {
 			lastErr = status.Errorf(codes.Internal, "failed to get client from pool: %v", err)
