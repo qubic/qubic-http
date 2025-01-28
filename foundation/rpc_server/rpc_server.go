@@ -34,31 +34,35 @@ type Server struct {
 	listenAddrHTTP  string
 	qPool           *qubic.Pool
 	maxTickFetchUrl string
+	ReadMaxRetries  int
 }
 
-func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string) *Server {
+func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, readMaxRetries int) *Server {
 	return &Server{
 		listenAddrGRPC:  listenAddrGRPC,
 		listenAddrHTTP:  listenAddrHTTP,
 		logger:          logger,
 		qPool:           qPool,
 		maxTickFetchUrl: maxTickFetchUrl,
+		ReadMaxRetries:  readMaxRetries,
 	}
 }
 
 func (s *Server) GetBalance(ctx context.Context, req *protobuff.GetBalanceRequest) (*protobuff.GetBalanceResponse, error) {
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
-	}
 
-	identityInfo, err := client.GetIdentity(ctx, req.Id)
+	var identityInfo types.AddressInfo
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetIdentity(ctx, req.Id)
+		if err != nil {
+			return errors.Wrap(err, "getting identity info from node")
+		}
+
+		identityInfo = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting identity info from node %v", err)
 	}
-
-	s.qPool.Put(client)
 
 	balance := protobuff.Balance{
 		Id:                         req.Id,
@@ -75,18 +79,21 @@ func (s *Server) GetBalance(ctx context.Context, req *protobuff.GetBalanceReques
 }
 
 func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetTickInfoResponse, error) {
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
-	}
 
-	tickInfo, err := client.GetTickInfo(ctx)
+	var tickInfo types.TickInfo
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetTickInfo(ctx)
+		if err != nil {
+			return errors.Wrap(err, "getting tick info from node")
+		}
+
+		tickInfo = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting tick info from node %v", err)
 	}
 
-	s.qPool.Put(client)
 	return &protobuff.GetTickInfoResponse{TickInfo: &protobuff.TickInfo{
 		Tick:        tickInfo.Tick,
 		Duration:    uint32(tickInfo.TickDuration),
@@ -96,18 +103,21 @@ func (s *Server) GetTickInfo(ctx context.Context, _ *emptypb.Empty) (*protobuff.
 }
 
 func (s *Server) GetBlockHeight(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetBlockHeightResponse, error) {
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
-	}
 
-	tickInfo, err := client.GetTickInfo(ctx)
+	var tickInfo types.TickInfo
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetTickInfo(ctx)
+		if err != nil {
+			return errors.Wrap(err, "getting tick info from node")
+		}
+
+		tickInfo = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting tick info from node %v", err)
 	}
 
-	s.qPool.Put(client)
 	return &protobuff.GetBlockHeightResponse{BlockHeight: &protobuff.TickInfo{
 		Tick:        tickInfo.Tick,
 		Duration:    uint32(tickInfo.TickDuration),
@@ -122,182 +132,43 @@ func (s *Server) QuerySmartContract(ctx context.Context, req *protobuff.QuerySma
 		return nil, status.Errorf(codes.FailedPrecondition, "failed to decode from base64 the request data: %s", req.RequestData)
 	}
 
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection %v", err)
-	}
+	var scData types.SmartContractData
 
-	scData, err := client.QuerySmartContract(ctx, qubic.RequestContractFunction{
-		ContractIndex: req.ContractIndex,
-		InputType:     uint16(req.InputType),
-		InputSize:     uint16(req.InputSize),
-	}, reqData)
+	err = WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.QuerySmartContract(ctx, qubic.RequestContractFunction{
+			ContractIndex: req.ContractIndex,
+			InputType:     uint16(req.InputType),
+			InputSize:     uint16(req.InputSize),
+		}, reqData)
+		if err != nil {
+			return errors.Wrap(err, "getting smart contract from node")
+		}
+
+		scData = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "query smart contract %v", err)
 	}
-
-	s.qPool.Put(client)
 
 	return &protobuff.QuerySmartContractResponse{ResponseData: base64.StdEncoding.EncodeToString(scData.Data)}, nil
 }
 
-type maxTickResponse struct {
-	MaxTick uint32 `json:"max_tick"`
-}
+func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAssetsRequest) (*protobuff.IssuedAssetsResponse, error) {
 
-func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, maxTickFetchUrl, nil)
-	if err != nil {
-		return 0, errors.Wrap(err, "creating new request")
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return 0, errors.Wrap(err, "performing request")
-	}
-	defer res.Body.Close()
-
-	var resp maxTickResponse
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return 0, errors.Wrap(err, "reading response body")
-	}
-	err = json.Unmarshal(body, &resp)
-	if err != nil {
-		return 0, errors.Wrap(err, "unmarshalling response")
-	}
-
-	tick := resp.MaxTick
-
-	if tick == 0 {
-		return 0, errors.New("Fetched max tick is 0.")
-	}
-
-	return tick, nil
-}
-
-func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
-	decodedTx, err := base64.StdEncoding.DecodeString(req.EncodedTransaction)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	reader := bytes.NewReader(decodedTx)
-
-	var transaction types.Transaction
-	err = transaction.UnmarshallBinary(reader)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	digest, err := transaction.GetUnsignedDigest()
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	err = schnorrq.Verify(transaction.SourcePublicKey, digest, transaction.Signature)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	maxTick, err := fetchMaxTick(ctx, s.maxTickFetchUrl)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	offsetTick := int32(transaction.Tick) - int32(maxTick)
-	if offsetTick <= 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "Target tick: %d for the transaction should be greater than max tick: %d", transaction.Tick, maxTick)
-	}
-
-	transactionId, err := transaction.ID()
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	var sourceID types.Identity
-	sourceID, err = sourceID.FromPubKey(transaction.SourcePublicKey, false)
-	if err != nil {
-		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting source ID").Error())
-	}
-
-	var destID types.Identity
-	destID, err = destID.FromPubKey(transaction.DestinationPublicKey, false)
-	if err != nil {
-		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting dest ID").Error())
-	}
-
-	peersBroadcasted := broadcastTxToMultiple(ctx, s.qPool, decodedTx)
-	s.logger.Printf("Tx ID: %s | Source: %s | Dest: %s | Target tick: %d | Max tick: %d | Offset tick: %d | Peers broadcasted: %d\n", transactionId, sourceID, destID, transaction.Tick, maxTick, offsetTick, peersBroadcasted)
-	if peersBroadcasted == 0 {
-		return nil, status.Error(codes.Internal, "tx wasn't broadcast to any peers, please retry")
-	}
-
-	return &protobuff.BroadcastTransactionResponse{
-		PeersBroadcasted:   int32(peersBroadcasted),
-		EncodedTransaction: req.EncodedTransaction,
-		TransactionId:      transactionId,
-	}, nil
-}
-
-func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {
-	nrSuccess := 0
-	for i := 0; i < 3; i++ {
-		func() {
-			client, err := pool.Get()
-			if err != nil {
-				return
-			}
-
-			err = client.SendRawTransaction(ctx, decodedTx)
-			if err != nil {
-				pool.Close(client)
-				return
-			}
-			pool.Put(client)
-			nrSuccess++
-		}()
-	}
-
-	return nrSuccess
-}
-
-func int8ArrayToString(array []int8) string {
-	runes := make([]rune, 0)
-
-	for _, char := range array {
-		if char == 0 {
-			continue
+	var assets types.IssuedAssets
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetIssuedAssets(ctx, req.Identity)
+		if err != nil {
+			return errors.Wrap(err, "getting issued assets from node")
 		}
 
-		runes = append(runes, rune(char))
-	}
-	return string(runes)
-}
-
-func int8ArrayToInt32Array(array []int8) []int32 {
-	ints := make([]int32, 0)
-
-	for _, smallInt := range array {
-		ints = append(ints, int32(smallInt))
-	}
-	return ints
-}
-
-func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAssetsRequest) (*protobuff.IssuedAssetsResponse, error) {
-	client, err := s.qPool.Get()
+		assets = res
+		return nil
+	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
-	}
-
-	assets, err := client.GetIssuedAssets(ctx, req.Identity)
-	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting issued assets from node %v", err)
 	}
-
-	s.qPool.Put(client)
 
 	issuedAssets := make([]*protobuff.IssuedAsset, 0)
 
@@ -335,18 +206,20 @@ func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAsset
 }
 
 func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsRequest) (*protobuff.OwnedAssetsResponse, error) {
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
-	}
 
-	assets, err := client.GetOwnedAssets(ctx, req.Identity)
+	var assets types.OwnedAssets
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetOwnedAssets(ctx, req.Identity)
+		if err != nil {
+			return errors.Wrap(err, "getting owned assets from node")
+		}
+
+		assets = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting owned assets from node %v", err)
 	}
-
-	s.qPool.Put(client)
 
 	ownedAssets := make([]*protobuff.OwnedAsset, 0)
 
@@ -402,18 +275,20 @@ func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsR
 }
 
 func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.PossessedAssetsRequest) (*protobuff.PossessedAssetsResponse, error) {
-	client, err := s.qPool.Get()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
-	}
 
-	assets, err := client.GetPossessedAssets(ctx, req.Identity)
+	var assets types.PossessedAssets
+	err := WithRetry(ctx, s.qPool, s.ReadMaxRetries, func(ctx context.Context, client *qubic.Client) error {
+		res, err := client.GetPossessedAssets(ctx, req.Identity)
+		if err != nil {
+			return errors.Wrap(err, "getting possessed assets from node")
+		}
+
+		assets = res
+		return nil
+	})
 	if err != nil {
-		s.qPool.Close(client)
 		return nil, status.Errorf(codes.Internal, "getting possessed assets from node %v", err)
 	}
-
-	s.qPool.Put(client)
 
 	possessedAssets := make([]*protobuff.PossessedAsset, 0)
 
@@ -482,6 +357,174 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 	}
 
 	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
+}
+
+func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.BroadcastTransactionRequest) (*protobuff.BroadcastTransactionResponse, error) {
+	decodedTx, err := base64.StdEncoding.DecodeString(req.EncodedTransaction)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	reader := bytes.NewReader(decodedTx)
+
+	var transaction types.Transaction
+	err = transaction.UnmarshallBinary(reader)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	digest, err := transaction.GetUnsignedDigest()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	err = schnorrq.Verify(transaction.SourcePublicKey, digest, transaction.Signature)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	maxTick, err := fetchMaxTick(ctx, s.maxTickFetchUrl)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	offsetTick := int32(transaction.Tick) - int32(maxTick)
+	if offsetTick <= 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "Target tick: %d for the transaction should be greater than max tick: %d", transaction.Tick, maxTick)
+	}
+
+	transactionId, err := transaction.ID()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	var sourceID types.Identity
+	sourceID, err = sourceID.FromPubKey(transaction.SourcePublicKey, false)
+	if err != nil {
+		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting source ID").Error())
+	}
+
+	var destID types.Identity
+	destID, err = destID.FromPubKey(transaction.DestinationPublicKey, false)
+	if err != nil {
+		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting dest ID").Error())
+	}
+
+	peersBroadcasted := broadcastTxToMultiple(ctx, s.qPool, decodedTx)
+	s.logger.Printf("Tx ID: %s | Source: %s | Dest: %s | Target tick: %d | Max tick: %d | Offset tick: %d | Peers broadcasted: %d\n", transactionId, sourceID, destID, transaction.Tick, maxTick, offsetTick, peersBroadcasted)
+	if peersBroadcasted == 0 {
+		return nil, status.Error(codes.Internal, "tx wasn't broadcast to any peers, please retry")
+	}
+
+	return &protobuff.BroadcastTransactionResponse{
+		PeersBroadcasted:   int32(peersBroadcasted),
+		EncodedTransaction: req.EncodedTransaction,
+		TransactionId:      transactionId,
+	}, nil
+}
+
+type RetryableCall func(ctx context.Context, client *qubic.Client) error
+
+func WithRetry(ctx context.Context, pool *qubic.Pool, maxRetries int, call RetryableCall) error {
+	var lastErr error
+
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		client, err := pool.Get()
+		if err != nil {
+			lastErr = status.Errorf(codes.Internal, "failed to get client from pool: %v", err)
+			continue
+		}
+
+		err = call(ctx, client)
+
+		if err == nil {
+			pool.Put(client)
+			return nil
+		}
+
+		lastErr = err
+		pool.Close(client)
+	}
+	return lastErr
+}
+
+type maxTickResponse struct {
+	MaxTick uint32 `json:"max_tick"`
+}
+
+func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {
+	nrSuccess := 0
+	for i := 0; i < 3; i++ {
+		func() {
+			client, err := pool.Get()
+			if err != nil {
+				return
+			}
+
+			err = client.SendRawTransaction(ctx, decodedTx)
+			if err != nil {
+				pool.Close(client)
+				return
+			}
+			pool.Put(client)
+			nrSuccess++
+		}()
+	}
+
+	return nrSuccess
+}
+
+func int8ArrayToString(array []int8) string {
+	runes := make([]rune, 0)
+
+	for _, char := range array {
+		if char == 0 {
+			continue
+		}
+
+		runes = append(runes, rune(char))
+	}
+	return string(runes)
+}
+
+func int8ArrayToInt32Array(array []int8) []int32 {
+	ints := make([]int32, 0)
+
+	for _, smallInt := range array {
+		ints = append(ints, int32(smallInt))
+	}
+	return ints
+}
+
+func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, maxTickFetchUrl, nil)
+	if err != nil {
+		return 0, errors.Wrap(err, "creating new request")
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, errors.Wrap(err, "performing request")
+	}
+	defer res.Body.Close()
+
+	var resp maxTickResponse
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return 0, errors.Wrap(err, "reading response body")
+	}
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return 0, errors.Wrap(err, "unmarshalling response")
+	}
+
+	tick := resp.MaxTick
+
+	if tick == 0 {
+		return 0, errors.New("Fetched max tick is 0.")
+	}
+
+	return tick, nil
 }
 
 func (s *Server) Start() error {
