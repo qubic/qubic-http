@@ -166,6 +166,7 @@ service QubicLiveService {
     };
   };
 
+  // /block-height Deprecated in favor of /tick-info
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (google.api.http) = {
       get: "/block-height"

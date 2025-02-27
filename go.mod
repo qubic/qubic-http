@@ -10,9 +10,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/qubic/go-node-connector v0.8.0
 	github.com/qubic/go-schnorrq v1.0.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20240314234333-6e1732d8331c
-	google.golang.org/grpc v1.62.1
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
+	google.golang.org/grpc v1.64.1
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
