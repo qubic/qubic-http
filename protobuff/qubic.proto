@@ -139,85 +139,6 @@ message QuerySmartContractResponse {
   string response_data = 5;
 }
 
-message AssetIssuanceData {
-  string issuer_identity = 1;
-  uint32 type = 2;
-  string name = 3;
-  int32 number_of_decimal_places = 4;
-  repeated int32 unit_of_measurement = 5;
-}
-
-message AssetIssuance {
-  AssetIssuanceData data = 1;
-  uint32 tick = 2;
-  uint32 universe_index = 3;
-}
-
-message AssetIssuances {
-  repeated AssetIssuance assets = 1;
-}
-
-message AssetOwnershipData {
-  string owner_identity = 1;
-  uint32 type = 2;
-  uint32 managing_contract_index = 3;
-  uint32 issuance_index = 4;
-  int64 number_of_units = 5;
-}
-
-message AssetOwnership {
-  AssetOwnershipData data = 1;
-  uint32 tick = 2;
-  uint32 universe_index = 3;
-}
-
-message AssetOwnerships {
-  repeated AssetOwnership assets = 1;
-}
-
-message AssetPossessionData {
-  string possessor_identity = 1;
-  uint32 type = 2;
-  uint32 managing_contract_index = 3;
-  uint32 ownership_index = 4;
-  int64 number_of_units = 5;
-}
-
-message AssetPossession {
-  AssetPossessionData data = 1;
-  uint32 tick = 2;
-  uint32 universe_index = 3;
-}
-
-message AssetPossessions {
-  repeated AssetPossession assets = 1;
-}
-
-message GetIssuedAssetByUniverseIndexRequest {
-  uint32 index = 1;
-}
-
-message GetIssuedAssetsByFilterRequest {
-  string issuer_identity = 1;
-  string asset_name = 2;
-}
-
-message GetOwnedAssetsByFilterRequest {
-  string issuer_identity = 1;
-  string asset_name = 2;
-  string owner_identity = 3;
-  uint32 ownership_managing_contract = 4;
-}
-
-message GetPossessedAssetsByFilterRequest {
-  string issuer_identity = 1;
-  string asset_name = 2;
-  string owner_identity = 3;
-  string possessor_identity = 4;
-  uint32 ownership_managing_contract = 5;
-  uint32 possession_managing_contract = 6;
-}
-
 service QubicLiveService {
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
@@ -268,29 +189,5 @@ service QubicLiveService {
       get: "/assets/{identity}/possessed"
     };
   };
-
-  rpc GetIssuedAssetByUniverseIndex(GetIssuedAssetByUniverseIndexRequest) returns (AssetIssuance) {
-    option (google.api.http) = {
-      get: "/assets/by-universe-index/{index}"
-    };
-  }
-
-  rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
-    option (google.api.http) = {
-      get: "/assets/by-filter/issued"
-    };
-  }
-
-  rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
-    option (google.api.http) = {
-      get: "/assets/by-filter/owned"
-    };
-  }
-
-  rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
-    option (google.api.http) = {
-      get: "/assets/by-filter/possessed"
-    };
-  }
 
 }

@@ -8,8 +8,8 @@ require (
 	github.com/ardanlabs/conf v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0
 	github.com/pkg/errors v0.9.1
-	github.com/qubic/go-node-connector v0.10.3-0.20250227103222-20fcda1a5139
-	github.com/qubic/go-schnorrq v1.0.1
+	github.com/qubic/go-node-connector v0.8.0
+	github.com/qubic/go-schnorrq v1.0.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
 	google.golang.org/grpc v1.64.1
 	google.golang.org/protobuf v1.34.2
