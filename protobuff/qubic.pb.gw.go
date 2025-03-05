@@ -702,7 +702,7 @@ func RegisterQubicLiveServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", runtime.WithHTTPPathPattern("/assets/by-universe-index/{index}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", runtime.WithHTTPPathPattern("/assets/issuers/{index}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -727,7 +727,7 @@ func RegisterQubicLiveServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/issued"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/issuers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -752,7 +752,7 @@ func RegisterQubicLiveServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/owned"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/owners"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -777,7 +777,7 @@ func RegisterQubicLiveServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/possessed"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/possessors"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1017,7 +1017,7 @@ func RegisterQubicLiveServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", runtime.WithHTTPPathPattern("/assets/by-universe-index/{index}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", runtime.WithHTTPPathPattern("/assets/issuers/{index}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1039,7 +1039,7 @@ func RegisterQubicLiveServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/issued"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/issuers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1061,7 +1061,7 @@ func RegisterQubicLiveServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/owned"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/owners"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1083,7 +1083,7 @@ func RegisterQubicLiveServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/by-filter/possessed"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter", runtime.WithHTTPPathPattern("/assets/possessors"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1119,13 +1119,13 @@ var (
 
 	pattern_QubicLiveService_GetPossessedAssets_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"assets", "identity", "possessed"}, ""))
 
-	pattern_QubicLiveService_GetIssuedAssetByUniverseIndex_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"assets", "by-universe-index", "index"}, ""))
+	pattern_QubicLiveService_GetIssuedAssetByUniverseIndex_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"assets", "issuers", "index"}, ""))
 
-	pattern_QubicLiveService_GetIssuedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"assets", "by-filter", "issued"}, ""))
+	pattern_QubicLiveService_GetIssuedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"assets", "issuers"}, ""))
 
-	pattern_QubicLiveService_GetOwnedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"assets", "by-filter", "owned"}, ""))
+	pattern_QubicLiveService_GetOwnedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"assets", "owners"}, ""))
 
-	pattern_QubicLiveService_GetPossessedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"assets", "by-filter", "possessed"}, ""))
+	pattern_QubicLiveService_GetPossessedAssetsByFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"assets", "possessors"}, ""))
 )
 
 var (

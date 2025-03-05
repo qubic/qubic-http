@@ -23,13 +23,18 @@ type QubicLiveServiceClient interface {
 	QuerySmartContract(ctx context.Context, in *QuerySmartContractRequest, opts ...grpc.CallOption) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
+	// /block-height Deprecated in favor of /tick-info
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 	GetIssuedAssets(ctx context.Context, in *IssuedAssetsRequest, opts ...grpc.CallOption) (*IssuedAssetsResponse, error)
 	GetOwnedAssets(ctx context.Context, in *OwnedAssetsRequest, opts ...grpc.CallOption) (*OwnedAssetsResponse, error)
 	GetPossessedAssets(ctx context.Context, in *PossessedAssetsRequest, opts ...grpc.CallOption) (*PossessedAssetsResponse, error)
+	// Returns an issued asset.
 	GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetIssuedAssetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error)
+	// Returns a list of issued assets.
 	GetIssuedAssetsByFilter(ctx context.Context, in *GetIssuedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetIssuances, error)
+	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
 	GetOwnedAssetsByFilter(ctx context.Context, in *GetOwnedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetOwnerships, error)
+	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
 	GetPossessedAssetsByFilter(ctx context.Context, in *GetPossessedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetPossessions, error)
 }
 
@@ -157,13 +162,18 @@ type QubicLiveServiceServer interface {
 	QuerySmartContract(context.Context, *QuerySmartContractRequest) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
+	// /block-height Deprecated in favor of /tick-info
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
 	GetIssuedAssets(context.Context, *IssuedAssetsRequest) (*IssuedAssetsResponse, error)
 	GetOwnedAssets(context.Context, *OwnedAssetsRequest) (*OwnedAssetsResponse, error)
 	GetPossessedAssets(context.Context, *PossessedAssetsRequest) (*PossessedAssetsResponse, error)
+	// Returns an issued asset.
 	GetIssuedAssetByUniverseIndex(context.Context, *GetIssuedAssetByUniverseIndexRequest) (*AssetIssuance, error)
+	// Returns a list of issued assets.
 	GetIssuedAssetsByFilter(context.Context, *GetIssuedAssetsByFilterRequest) (*AssetIssuances, error)
+	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
 	GetOwnedAssetsByFilter(context.Context, *GetOwnedAssetsByFilterRequest) (*AssetOwnerships, error)
+	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
 	GetPossessedAssetsByFilter(context.Context, *GetPossessedAssetsByFilterRequest) (*AssetPossessions, error)
 	mustEmbedUnimplementedQubicLiveServiceServer()
 }

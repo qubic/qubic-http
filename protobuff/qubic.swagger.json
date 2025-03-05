@@ -16,8 +16,9 @@
     "application/json"
   ],
   "paths": {
-    "/assets/by-filter/issued": {
+    "/assets/issuers": {
       "get": {
+        "summary": "Returns a list of issued assets.",
         "operationId": "QubicLiveService_GetIssuedAssetsByFilter",
         "responses": {
           "200": {
@@ -52,8 +53,41 @@
         ]
       }
     },
-    "/assets/by-filter/owned": {
+    "/assets/issuers/{index}": {
       "get": {
+        "summary": "Returns an issued asset.",
+        "operationId": "QubicLiveService_GetIssuedAssetByUniverseIndex",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbAssetIssuance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "QubicLiveService"
+        ]
+      }
+    },
+    "/assets/owners": {
+      "get": {
+        "summary": "Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.",
         "operationId": "QubicLiveService_GetOwnedAssetsByFilter",
         "responses": {
           "200": {
@@ -101,8 +135,9 @@
         ]
       }
     },
-    "/assets/by-filter/possessed": {
+    "/assets/possessors": {
       "get": {
+        "summary": "Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.",
         "operationId": "QubicLiveService_GetPossessedAssetsByFilter",
         "responses": {
           "200": {
@@ -154,37 +189,6 @@
             "name": "possessionManagingContract",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "QubicLiveService"
-        ]
-      }
-    },
-    "/assets/by-universe-index/{index}": {
-      "get": {
-        "operationId": "QubicLiveService_GetIssuedAssetByUniverseIndex",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbAssetIssuance"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "index",
-            "in": "path",
-            "required": true,
             "type": "integer",
             "format": "int64"
           }
@@ -316,6 +320,7 @@
     },
     "/block-height": {
       "get": {
+        "summary": "/block-height Deprecated in favor of /tick-info",
         "operationId": "QubicLiveService_GetBlockHeight",
         "responses": {
           "200": {

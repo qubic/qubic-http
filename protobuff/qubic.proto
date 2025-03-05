@@ -269,27 +269,31 @@ service QubicLiveService {
     };
   };
 
+  // Returns an issued asset.
   rpc GetIssuedAssetByUniverseIndex(GetIssuedAssetByUniverseIndexRequest) returns (AssetIssuance) {
     option (google.api.http) = {
-      get: "/assets/by-universe-index/{index}"
+      get: "/assets/issuers/{index}"
     };
   }
 
+  // Returns a list of issued assets.
   rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
     option (google.api.http) = {
-      get: "/assets/by-filter/issued"
+      get: "/assets/issuers"
     };
   }
 
+  // Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
     option (google.api.http) = {
-      get: "/assets/by-filter/owned"
+      get: "/assets/owners"
     };
   }
 
+  // Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
     option (google.api.http) = {
-      get: "/assets/by-filter/possessed"
+      get: "/assets/possessors"
     };
   }
 

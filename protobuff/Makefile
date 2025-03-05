@@ -29,8 +29,8 @@ all: $(GO) openapi
 
 openapi: *.proto
 		protoc --openapiv2_out=logtostderr=true:. \
-        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
         			   *.proto
+#        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
 
 clean:
 		rm -f *.pb.go
