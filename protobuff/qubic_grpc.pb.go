@@ -23,19 +23,22 @@ type QubicLiveServiceClient interface {
 	QuerySmartContract(ctx context.Context, in *QuerySmartContractRequest, opts ...grpc.CallOption) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
-	// /block-height Deprecated in favor of /tick-info
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 	GetIssuedAssets(ctx context.Context, in *IssuedAssetsRequest, opts ...grpc.CallOption) (*IssuedAssetsResponse, error)
 	GetOwnedAssets(ctx context.Context, in *OwnedAssetsRequest, opts ...grpc.CallOption) (*OwnedAssetsResponse, error)
 	GetPossessedAssets(ctx context.Context, in *PossessedAssetsRequest, opts ...grpc.CallOption) (*PossessedAssetsResponse, error)
-	// Returns an issued asset.
-	GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetIssuedAssetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error)
 	// Returns a list of issued assets.
 	GetIssuedAssetsByFilter(ctx context.Context, in *GetIssuedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetIssuances, error)
+	// Returns an asset issuance by universe index.
+	GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error)
 	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
 	GetOwnedAssetsByFilter(ctx context.Context, in *GetOwnedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetOwnerships, error)
+	// Returns an asset ownership by universe index.
+	GetOwnedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetOwnership, error)
 	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
 	GetPossessedAssetsByFilter(ctx context.Context, in *GetPossessedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetPossessions, error)
+	// Returns an asset possession by universe index.
+	GetPossessedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetPossession, error)
 }
 
 type qubicLiveServiceClient struct {
@@ -118,18 +121,18 @@ func (c *qubicLiveServiceClient) GetPossessedAssets(ctx context.Context, in *Pos
 	return out, nil
 }
 
-func (c *qubicLiveServiceClient) GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetIssuedAssetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error) {
-	out := new(AssetIssuance)
-	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", in, out, opts...)
+func (c *qubicLiveServiceClient) GetIssuedAssetsByFilter(ctx context.Context, in *GetIssuedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetIssuances, error) {
+	out := new(AssetIssuances)
+	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qubicLiveServiceClient) GetIssuedAssetsByFilter(ctx context.Context, in *GetIssuedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetIssuances, error) {
-	out := new(AssetIssuances)
-	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetsByFilter", in, out, opts...)
+func (c *qubicLiveServiceClient) GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error) {
+	out := new(AssetIssuance)
+	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -145,9 +148,27 @@ func (c *qubicLiveServiceClient) GetOwnedAssetsByFilter(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *qubicLiveServiceClient) GetOwnedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetOwnership, error) {
+	out := new(AssetOwnership)
+	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetByUniverseIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *qubicLiveServiceClient) GetPossessedAssetsByFilter(ctx context.Context, in *GetPossessedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetPossessions, error) {
 	out := new(AssetPossessions)
 	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qubicLiveServiceClient) GetPossessedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetPossession, error) {
+	out := new(AssetPossession)
+	err := c.cc.Invoke(ctx, "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetByUniverseIndex", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -162,19 +183,22 @@ type QubicLiveServiceServer interface {
 	QuerySmartContract(context.Context, *QuerySmartContractRequest) (*QuerySmartContractResponse, error)
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
-	// /block-height Deprecated in favor of /tick-info
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
 	GetIssuedAssets(context.Context, *IssuedAssetsRequest) (*IssuedAssetsResponse, error)
 	GetOwnedAssets(context.Context, *OwnedAssetsRequest) (*OwnedAssetsResponse, error)
 	GetPossessedAssets(context.Context, *PossessedAssetsRequest) (*PossessedAssetsResponse, error)
-	// Returns an issued asset.
-	GetIssuedAssetByUniverseIndex(context.Context, *GetIssuedAssetByUniverseIndexRequest) (*AssetIssuance, error)
 	// Returns a list of issued assets.
 	GetIssuedAssetsByFilter(context.Context, *GetIssuedAssetsByFilterRequest) (*AssetIssuances, error)
+	// Returns an asset issuance by universe index.
+	GetIssuedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetIssuance, error)
 	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
 	GetOwnedAssetsByFilter(context.Context, *GetOwnedAssetsByFilterRequest) (*AssetOwnerships, error)
+	// Returns an asset ownership by universe index.
+	GetOwnedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetOwnership, error)
 	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
 	GetPossessedAssetsByFilter(context.Context, *GetPossessedAssetsByFilterRequest) (*AssetPossessions, error)
+	// Returns an asset possession by universe index.
+	GetPossessedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetPossession, error)
 	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
@@ -206,17 +230,23 @@ func (UnimplementedQubicLiveServiceServer) GetOwnedAssets(context.Context, *Owne
 func (UnimplementedQubicLiveServiceServer) GetPossessedAssets(context.Context, *PossessedAssetsRequest) (*PossessedAssetsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPossessedAssets not implemented")
 }
-func (UnimplementedQubicLiveServiceServer) GetIssuedAssetByUniverseIndex(context.Context, *GetIssuedAssetByUniverseIndexRequest) (*AssetIssuance, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetIssuedAssetByUniverseIndex not implemented")
-}
 func (UnimplementedQubicLiveServiceServer) GetIssuedAssetsByFilter(context.Context, *GetIssuedAssetsByFilterRequest) (*AssetIssuances, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIssuedAssetsByFilter not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetIssuedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetIssuance, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIssuedAssetByUniverseIndex not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) GetOwnedAssetsByFilter(context.Context, *GetOwnedAssetsByFilterRequest) (*AssetOwnerships, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOwnedAssetsByFilter not implemented")
 }
+func (UnimplementedQubicLiveServiceServer) GetOwnedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetOwnership, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOwnedAssetByUniverseIndex not implemented")
+}
 func (UnimplementedQubicLiveServiceServer) GetPossessedAssetsByFilter(context.Context, *GetPossessedAssetsByFilterRequest) (*AssetPossessions, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPossessedAssetsByFilter not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetPossessedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetPossession, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPossessedAssetByUniverseIndex not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) mustEmbedUnimplementedQubicLiveServiceServer() {}
 
@@ -375,24 +405,6 @@ func _QubicLiveService_GetPossessedAssets_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QubicLiveService_GetIssuedAssetByUniverseIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetIssuedAssetByUniverseIndexRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QubicLiveServiceServer).GetIssuedAssetByUniverseIndex(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QubicLiveServiceServer).GetIssuedAssetByUniverseIndex(ctx, req.(*GetIssuedAssetByUniverseIndexRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _QubicLiveService_GetIssuedAssetsByFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetIssuedAssetsByFilterRequest)
 	if err := dec(in); err != nil {
@@ -407,6 +419,24 @@ func _QubicLiveService_GetIssuedAssetsByFilter_Handler(srv interface{}, ctx cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QubicLiveServiceServer).GetIssuedAssetsByFilter(ctx, req.(*GetIssuedAssetsByFilterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QubicLiveService_GetIssuedAssetByUniverseIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByUniverseIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetIssuedAssetByUniverseIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qubic.http.qubic.pb.QubicLiveService/GetIssuedAssetByUniverseIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetIssuedAssetByUniverseIndex(ctx, req.(*GetByUniverseIndexRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -429,6 +459,24 @@ func _QubicLiveService_GetOwnedAssetsByFilter_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QubicLiveService_GetOwnedAssetByUniverseIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByUniverseIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetOwnedAssetByUniverseIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetByUniverseIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetOwnedAssetByUniverseIndex(ctx, req.(*GetByUniverseIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _QubicLiveService_GetPossessedAssetsByFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPossessedAssetsByFilterRequest)
 	if err := dec(in); err != nil {
@@ -443,6 +491,24 @@ func _QubicLiveService_GetPossessedAssetsByFilter_Handler(srv interface{}, ctx c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QubicLiveServiceServer).GetPossessedAssetsByFilter(ctx, req.(*GetPossessedAssetsByFilterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QubicLiveService_GetPossessedAssetByUniverseIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByUniverseIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetPossessedAssetByUniverseIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetByUniverseIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetPossessedAssetByUniverseIndex(ctx, req.(*GetByUniverseIndexRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -487,20 +553,28 @@ var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _QubicLiveService_GetPossessedAssets_Handler,
 		},
 		{
-			MethodName: "GetIssuedAssetByUniverseIndex",
-			Handler:    _QubicLiveService_GetIssuedAssetByUniverseIndex_Handler,
-		},
-		{
 			MethodName: "GetIssuedAssetsByFilter",
 			Handler:    _QubicLiveService_GetIssuedAssetsByFilter_Handler,
+		},
+		{
+			MethodName: "GetIssuedAssetByUniverseIndex",
+			Handler:    _QubicLiveService_GetIssuedAssetByUniverseIndex_Handler,
 		},
 		{
 			MethodName: "GetOwnedAssetsByFilter",
 			Handler:    _QubicLiveService_GetOwnedAssetsByFilter_Handler,
 		},
 		{
+			MethodName: "GetOwnedAssetByUniverseIndex",
+			Handler:    _QubicLiveService_GetOwnedAssetByUniverseIndex_Handler,
+		},
+		{
 			MethodName: "GetPossessedAssetsByFilter",
 			Handler:    _QubicLiveService_GetPossessedAssetsByFilter_Handler,
+		},
+		{
+			MethodName: "GetPossessedAssetByUniverseIndex",
+			Handler:    _QubicLiveService_GetPossessedAssetByUniverseIndex_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

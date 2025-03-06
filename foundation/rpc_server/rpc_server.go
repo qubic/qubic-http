@@ -485,89 +485,114 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
 }
 
-func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetIssuedAssetByUniverseIndexRequest) (*protobuff.AssetIssuance, error) {
+func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetIssuance, error) {
 	client, err := s.qPool.Get()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
 	}
 
-	assets, err := client.GetAssetsByUniverseIndex(ctx, request.Index)
+	assets, err := client.GetAssetIssuancesByUniverseIndex(ctx, request.Index)
 	if err != nil {
 		s.qPool.Close(client)
-		return nil, status.Errorf(codes.Internal, "getting assets by universe index %v", err)
+		return nil, status.Errorf(codes.Internal, "getting asset issuances: %v", err)
 	}
 	s.qPool.Put(client)
 
-	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) { // don't return empty issuance data
+	// don't return empty issuance data or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) && assets[0].Asset.Type == 1 {
 
-		var issuerIdentity types.Identity
-		issuerIdentity, err = issuerIdentity.FromPubKey(assets[0].Asset.PublicKey, false)
+		converted, err := convertAssetIssuance(assets[0])
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+			return nil, errors.Wrap(err, "converting response")
 		}
+		return converted, nil
 
-		issuedAsset := protobuff.AssetIssuanceData{
-			IssuerIdentity:        issuerIdentity.String(),
-			Type:                  uint32(assets[0].Asset.Type),
-			Name:                  int8ArrayToString(assets[0].Asset.Name[:]),
-			NumberOfDecimalPlaces: int32(assets[0].Asset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToInt32Array(assets[0].Asset.UnitOfMeasurement[:]),
-		}
-
-		asset := protobuff.AssetIssuance{
-			Data:          &issuedAsset,
-			Tick:          assets[0].Tick,
-			UniverseIndex: assets[0].UniverseIndex,
-		}
-
-		return &asset, nil
 	} else {
-		log.Printf("asset with universe index [%d] not found", request.Index)
+		log.Printf("asset issuance with universe index [%d] not found", request.Index)
 		return nil, status.Error(codes.NotFound, "asset not found")
 	}
 
+}
+
+func (s *Server) GetOwnedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetOwnership, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetOwnershipsByUniverseIndex(ctx, request.Index)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset ownerships: %v", err)
+	}
+	s.qPool.Put(client)
+
+	// don't return empty issuance data or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetOwnershipData{}) && assets[0].Asset.Type == 2 {
+
+		converted, err := convertAssetOwnership(assets[0])
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		return converted, nil
+
+	} else {
+		log.Printf("asset ownership with universe index [%d] not found", request.Index)
+		return nil, status.Error(codes.NotFound, "asset not found")
+	}
+
+}
+
+func (s *Server) GetPossessedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetPossession, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetPossessionsByUniverseIndex(ctx, request.Index)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset possessions: %v", err)
+	}
+	s.qPool.Put(client)
+
+	// don't return empty issuance data or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetPossessionData{}) && assets[0].Asset.Type == 3 {
+
+		converted, err := convertAssetPossession(assets[0])
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		return converted, nil
+
+	} else {
+		log.Printf("asset possession with universe index [%d] not found", request.Index)
+		return nil, status.Error(codes.NotFound, "asset not found")
+	}
 }
 
 func (s *Server) GetIssuedAssetsByFilter(ctx context.Context, request *protobuff.GetIssuedAssetsByFilterRequest) (*protobuff.AssetIssuances, error) {
 
 	client, err := s.qPool.Get()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
 	}
 
 	assets, err := client.GetAssetIssuancesByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName())
 	if err != nil {
 		s.qPool.Close(client)
-		return nil, status.Errorf(codes.Internal, "getting issued assets by filter %v", err)
+		return nil, status.Errorf(codes.Internal, "getting asset issuances: %v", err)
 	}
 	s.qPool.Put(client)
 
 	assetIssuances := make([]*protobuff.AssetIssuance, 0)
 
 	for _, asset := range assets {
-
-		var issuerIdentity types.Identity
-		issuerIdentity, err = issuerIdentity.FromPubKey(asset.Asset.PublicKey, false)
+		assetIssuance, err := convertAssetIssuance(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+			return nil, errors.Wrap(err, "converting response")
 		}
-
-		issuedAsset := protobuff.AssetIssuanceData{
-			IssuerIdentity:        issuerIdentity.String(),
-			Type:                  uint32(asset.Asset.Type),
-			Name:                  int8ArrayToString(asset.Asset.Name[:]),
-			NumberOfDecimalPlaces: int32(asset.Asset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToInt32Array(asset.Asset.UnitOfMeasurement[:]),
-		}
-
-		assetIssuance := protobuff.AssetIssuance{
-			Data:          &issuedAsset,
-			Tick:          asset.Tick,
-			UniverseIndex: asset.UniverseIndex,
-		}
-
-		assetIssuances = append(assetIssuances, &assetIssuance)
-
+		assetIssuances = append(assetIssuances, assetIssuance)
 	}
 
 	return &protobuff.AssetIssuances{Assets: assetIssuances}, nil
@@ -582,42 +607,25 @@ func (s *Server) GetOwnedAssetsByFilter(ctx context.Context, request *protobuff.
 
 	client, err := s.qPool.Get()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
 	}
 
 	assets, err := client.GetAssetOwnershipsByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName(), request.GetOwnerIdentity(), contract)
 	if err != nil {
 		s.qPool.Close(client)
-		return nil, status.Errorf(codes.Internal, "getting asset owners by filter %v", err)
+		return nil, status.Errorf(codes.Internal, "getting asset ownerships: %v", err)
 	}
 	s.qPool.Put(client)
 
 	assetOwnerships := make([]*protobuff.AssetOwnership, 0)
 
 	for _, asset := range assets {
-
-		var owner types.Identity
-		owner, err = owner.FromPubKey(asset.Asset.PublicKey, false)
+		assetOwnership, err := convertAssetOwnership(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for owner public key")
+			return nil, errors.Wrap(err, "converting response")
 		}
 
-		ownedAsset := protobuff.AssetOwnershipData{
-			OwnerIdentity:         owner.String(),
-			Type:                  uint32(asset.Asset.Type),
-			ManagingContractIndex: uint32(asset.Asset.ManagingContractIndex),
-			IssuanceIndex:         asset.Asset.IssuanceIndex,
-			NumberOfUnits:         asset.Asset.NumberOfUnits,
-		}
-
-		assetOwnership := protobuff.AssetOwnership{
-			Data:          &ownedAsset,
-			Tick:          asset.Tick,
-			UniverseIndex: asset.UniverseIndex,
-		}
-
-		assetOwnerships = append(assetOwnerships, &assetOwnership)
-
+		assetOwnerships = append(assetOwnerships, assetOwnership)
 	}
 
 	return &protobuff.AssetOwnerships{Assets: assetOwnerships}, nil
@@ -637,42 +645,24 @@ func (s *Server) GetPossessedAssetsByFilter(ctx context.Context, request *protob
 
 	client, err := s.qPool.Get()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
 	}
 
 	assets, err := client.GetAssetPossessionsByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName(), request.GetOwnerIdentity(), request.GetPossessorIdentity(), ownerContract, possessorContract)
 	if err != nil {
 		s.qPool.Close(client)
-		return nil, status.Errorf(codes.Internal, "getting asset possessions by filter %v", err)
+		return nil, status.Errorf(codes.Internal, "getting asset possessions: %v", err)
 	}
 	s.qPool.Put(client)
 
 	assetPossessions := make([]*protobuff.AssetPossession, 0)
 
 	for _, asset := range assets {
-
-		var possessor types.Identity
-		possessor, err = possessor.FromPubKey(asset.Asset.PublicKey, false)
+		assetPossession, err := convertAssetPossession(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for possessor public key")
+			return nil, errors.Wrap(err, "converting response")
 		}
-
-		possessedAsset := protobuff.AssetPossessionData{
-			PossessorIdentity:     possessor.String(),
-			Type:                  uint32(asset.Asset.Type),
-			ManagingContractIndex: uint32(asset.Asset.ManagingContractIndex),
-			OwnershipIndex:        asset.Asset.OwnershipIndex,
-			NumberOfUnits:         asset.Asset.NumberOfUnits,
-		}
-
-		assetPossession := protobuff.AssetPossession{
-			Data:          &possessedAsset,
-			Tick:          asset.Tick,
-			UniverseIndex: asset.UniverseIndex,
-		}
-
-		assetPossessions = append(assetPossessions, &assetPossession)
-
+		assetPossessions = append(assetPossessions, assetPossession)
 	}
 
 	return &protobuff.AssetPossessions{Assets: assetPossessions}, nil

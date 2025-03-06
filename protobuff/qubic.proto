@@ -193,7 +193,7 @@ message AssetPossessions {
   repeated AssetPossession assets = 1;
 }
 
-message GetIssuedAssetByUniverseIndexRequest {
+message GetByUniverseIndexRequest {
   uint32 index = 1;
 }
 
@@ -269,31 +269,46 @@ service QubicLiveService {
     };
   };
 
-  // Returns an issued asset.
-  rpc GetIssuedAssetByUniverseIndex(GetIssuedAssetByUniverseIndexRequest) returns (AssetIssuance) {
-    option (google.api.http) = {
-      get: "/assets/issuers/{index}"
-    };
-  }
 
   // Returns a list of issued assets.
   rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
     option (google.api.http) = {
-      get: "/assets/issuers"
+      get: "/assets/issuances"
+    };
+  }
+
+  // Returns an asset issuance by universe index.
+  rpc GetIssuedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetIssuance) {
+    option (google.api.http) = {
+      get: "/assets/issuances/{index}"
     };
   }
 
   // Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
     option (google.api.http) = {
-      get: "/assets/owners"
+      get: "/assets/ownerships"
+    };
+  }
+
+  // Returns an asset ownership by universe index.
+  rpc GetOwnedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetOwnership) {
+    option (google.api.http) = {
+      get: "/assets/ownerships/{index}"
     };
   }
 
   // Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
     option (google.api.http) = {
-      get: "/assets/possessors"
+      get: "/assets/possessions"
+    };
+  }
+
+  // Returns an asset possession by universe index.
+  rpc GetPossessedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetPossession) {
+    option (google.api.http) = {
+      get: "/assets/possessions/{index}"
     };
   }
 

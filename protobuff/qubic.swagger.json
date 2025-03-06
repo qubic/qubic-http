@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/assets/issuers": {
+    "/assets/issuances": {
       "get": {
         "summary": "Returns a list of issued assets.",
         "operationId": "QubicLiveService_GetIssuedAssetsByFilter",
@@ -53,9 +53,9 @@
         ]
       }
     },
-    "/assets/issuers/{index}": {
+    "/assets/issuances/{index}": {
       "get": {
-        "summary": "Returns an issued asset.",
+        "summary": "Returns an asset issuance by universe index.",
         "operationId": "QubicLiveService_GetIssuedAssetByUniverseIndex",
         "responses": {
           "200": {
@@ -85,7 +85,7 @@
         ]
       }
     },
-    "/assets/owners": {
+    "/assets/ownerships": {
       "get": {
         "summary": "Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.",
         "operationId": "QubicLiveService_GetOwnedAssetsByFilter",
@@ -135,7 +135,39 @@
         ]
       }
     },
-    "/assets/possessors": {
+    "/assets/ownerships/{index}": {
+      "get": {
+        "summary": "Returns an asset ownership by universe index.",
+        "operationId": "QubicLiveService_GetOwnedAssetByUniverseIndex",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbAssetOwnership"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "QubicLiveService"
+        ]
+      }
+    },
+    "/assets/possessions": {
       "get": {
         "summary": "Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.",
         "operationId": "QubicLiveService_GetPossessedAssetsByFilter",
@@ -189,6 +221,38 @@
             "name": "possessionManagingContract",
             "in": "query",
             "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "QubicLiveService"
+        ]
+      }
+    },
+    "/assets/possessions/{index}": {
+      "get": {
+        "summary": "Returns an asset possession by universe index.",
+        "operationId": "QubicLiveService_GetPossessedAssetByUniverseIndex",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbAssetPossession"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int64"
           }
@@ -320,7 +384,6 @@
     },
     "/block-height": {
       "get": {
-        "summary": "/block-height Deprecated in favor of /tick-info",
         "operationId": "QubicLiveService_GetBlockHeight",
         "responses": {
           "200": {
