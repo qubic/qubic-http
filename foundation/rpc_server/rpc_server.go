@@ -498,7 +498,7 @@ func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *pro
 	}
 	s.qPool.Put(client)
 
-	// don't return empty issuance data or wrong type
+	// don't return empty or wrong type
 	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) && assets[0].Asset.Type == 1 {
 
 		converted, err := convertAssetIssuance(assets[0])
@@ -527,7 +527,7 @@ func (s *Server) GetOwnedAssetByUniverseIndex(ctx context.Context, request *prot
 	}
 	s.qPool.Put(client)
 
-	// don't return empty issuance data or wrong type
+	// don't return empty or wrong type
 	if len(assets) > 0 && assets[0].Asset != (types.AssetOwnershipData{}) && assets[0].Asset.Type == 2 {
 
 		converted, err := convertAssetOwnership(assets[0])
@@ -556,7 +556,7 @@ func (s *Server) GetPossessedAssetByUniverseIndex(ctx context.Context, request *
 	}
 	s.qPool.Put(client)
 
-	// don't return empty issuance data or wrong type
+	// don't return empty or wrong type
 	if len(assets) > 0 && assets[0].Asset != (types.AssetPossessionData{}) && assets[0].Asset.Type == 3 {
 
 		converted, err := convertAssetPossession(assets[0])
