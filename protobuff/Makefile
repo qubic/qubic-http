@@ -17,7 +17,7 @@ PB = $(wildcard *.proto)
 GO = $(PB:.proto=.pb.go)
 PWD = $(pwd)
 
-all: $(GO)
+all: $(GO) openapi
 
 %.pb.go: %.proto
 		protoc -I=. --go-grpc_out=paths=source_relative:. \
@@ -29,8 +29,8 @@ all: $(GO)
 
 openapi: *.proto
 		protoc --openapiv2_out=logtostderr=true:. \
-        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
         			   *.proto
+#        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
 
 clean:
 		rm -f *.pb.go

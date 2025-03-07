@@ -17,6 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
+	"math"
 	"net"
 
 	qubic "github.com/qubic/go-node-connector"
@@ -482,6 +483,193 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 	}
 
 	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
+}
+
+const assetIssuanceType = 1
+const assetOwnershipType = 2
+const assetPossessionType = 3
+
+func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetIssuance, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetIssuancesByUniverseIndex(ctx, request.Index)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset issuances: %v", err)
+	}
+	s.qPool.Put(client)
+
+	// don't return empty or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) && assets[0].Asset.Type == assetIssuanceType {
+
+		converted, err := convertAssetIssuance(assets[0])
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		return converted, nil
+
+	} else {
+		log.Printf("asset issuance with universe index [%d] not found", request.Index)
+		return nil, status.Error(codes.NotFound, "asset not found")
+	}
+
+}
+
+func (s *Server) GetOwnedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetOwnership, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetOwnershipsByUniverseIndex(ctx, request.Index)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset ownerships: %v", err)
+	}
+	s.qPool.Put(client)
+
+	// don't return empty or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetOwnershipData{}) && assets[0].Asset.Type == assetOwnershipType {
+
+		converted, err := convertAssetOwnership(assets[0])
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		return converted, nil
+
+	} else {
+		log.Printf("asset ownership with universe index [%d] not found", request.Index)
+		return nil, status.Error(codes.NotFound, "asset not found")
+	}
+
+}
+
+func (s *Server) GetPossessedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetPossession, error) {
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetPossessionsByUniverseIndex(ctx, request.Index)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset possessions: %v", err)
+	}
+	s.qPool.Put(client)
+
+	// don't return empty or wrong type
+	if len(assets) > 0 && assets[0].Asset != (types.AssetPossessionData{}) && assets[0].Asset.Type == assetPossessionType {
+
+		converted, err := convertAssetPossession(assets[0])
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		return converted, nil
+
+	} else {
+		log.Printf("asset possession with universe index [%d] not found", request.Index)
+		return nil, status.Error(codes.NotFound, "asset not found")
+	}
+}
+
+func (s *Server) GetIssuedAssetsByFilter(ctx context.Context, request *protobuff.GetIssuedAssetsByFilterRequest) (*protobuff.AssetIssuances, error) {
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetIssuancesByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName())
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset issuances: %v", err)
+	}
+	s.qPool.Put(client)
+
+	assetIssuances := make([]*protobuff.AssetIssuance, 0)
+
+	for _, asset := range assets {
+		assetIssuance, err := convertAssetIssuance(asset)
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		assetIssuances = append(assetIssuances, assetIssuance)
+	}
+
+	return &protobuff.AssetIssuances{Assets: assetIssuances}, nil
+}
+
+func (s *Server) GetOwnedAssetsByFilter(ctx context.Context, request *protobuff.GetOwnedAssetsByFilterRequest) (*protobuff.AssetOwnerships, error) {
+
+	if request.GetOwnershipManagingContract() > math.MaxUint16 {
+		return nil, status.Errorf(codes.InvalidArgument, "ownership managing contract value out of range")
+	}
+	contract := uint16(request.GetOwnershipManagingContract())
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetOwnershipsByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName(), request.GetOwnerIdentity(), contract)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset ownerships: %v", err)
+	}
+	s.qPool.Put(client)
+
+	assetOwnerships := make([]*protobuff.AssetOwnership, 0)
+
+	for _, asset := range assets {
+		assetOwnership, err := convertAssetOwnership(asset)
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+
+		assetOwnerships = append(assetOwnerships, assetOwnership)
+	}
+
+	return &protobuff.AssetOwnerships{Assets: assetOwnerships}, nil
+
+}
+
+func (s *Server) GetPossessedAssetsByFilter(ctx context.Context, request *protobuff.GetPossessedAssetsByFilterRequest) (*protobuff.AssetPossessions, error) {
+	if request.GetOwnershipManagingContract() > math.MaxUint16 {
+		return nil, status.Errorf(codes.InvalidArgument, "ownership managing contract value out of range")
+	}
+	ownerContract := uint16(request.GetOwnershipManagingContract())
+
+	if request.GetPossessionManagingContract() > math.MaxUint16 {
+		return nil, status.Errorf(codes.InvalidArgument, "possession managing contract value out of range")
+	}
+	possessorContract := uint16(request.GetPossessionManagingContract())
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection: %v", err)
+	}
+
+	assets, err := client.GetAssetPossessionsByFilter(ctx, request.GetIssuerIdentity(), request.GetAssetName(), request.GetOwnerIdentity(), request.GetPossessorIdentity(), ownerContract, possessorContract)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting asset possessions: %v", err)
+	}
+	s.qPool.Put(client)
+
+	assetPossessions := make([]*protobuff.AssetPossession, 0)
+
+	for _, asset := range assets {
+		assetPossession, err := convertAssetPossession(asset)
+		if err != nil {
+			return nil, errors.Wrap(err, "converting response")
+		}
+		assetPossessions = append(assetPossessions, assetPossession)
+	}
+
+	return &protobuff.AssetPossessions{Assets: assetPossessions}, nil
 }
 
 func (s *Server) Start() error {
