@@ -485,6 +485,10 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
 }
 
+const assetIssuanceType = 1
+const assetOwnershipType = 2
+const assetPossessionType = 3
+
 func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *protobuff.GetByUniverseIndexRequest) (*protobuff.AssetIssuance, error) {
 	client, err := s.qPool.Get()
 	if err != nil {
@@ -499,7 +503,7 @@ func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *pro
 	s.qPool.Put(client)
 
 	// don't return empty or wrong type
-	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) && assets[0].Asset.Type == 1 {
+	if len(assets) > 0 && assets[0].Asset != (types.AssetIssuanceData{}) && assets[0].Asset.Type == assetIssuanceType {
 
 		converted, err := convertAssetIssuance(assets[0])
 		if err != nil {
@@ -528,7 +532,7 @@ func (s *Server) GetOwnedAssetByUniverseIndex(ctx context.Context, request *prot
 	s.qPool.Put(client)
 
 	// don't return empty or wrong type
-	if len(assets) > 0 && assets[0].Asset != (types.AssetOwnershipData{}) && assets[0].Asset.Type == 2 {
+	if len(assets) > 0 && assets[0].Asset != (types.AssetOwnershipData{}) && assets[0].Asset.Type == assetOwnershipType {
 
 		converted, err := convertAssetOwnership(assets[0])
 		if err != nil {
@@ -557,7 +561,7 @@ func (s *Server) GetPossessedAssetByUniverseIndex(ctx context.Context, request *
 	s.qPool.Put(client)
 
 	// don't return empty or wrong type
-	if len(assets) > 0 && assets[0].Asset != (types.AssetPossessionData{}) && assets[0].Asset.Type == 3 {
+	if len(assets) > 0 && assets[0].Asset != (types.AssetPossessionData{}) && assets[0].Asset.Type == assetPossessionType {
 
 		converted, err := convertAssetPossession(assets[0])
 		if err != nil {
