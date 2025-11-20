@@ -2,7 +2,7 @@ version: '3'
 
 services:
   qubic-http:
-    image: ghcr.io/qubic/qubic-http:v0.5.0
+    image: ghcr.io/qubic/qubic-http:v0.8.1
     container_name: qubic-http
     environment:
       QUBIC_API_SIDECAR_SERVER_HTTP_HOST: "0.0.0.0:8000"
@@ -20,7 +20,7 @@ services:
     restart: always
 
   qubic-nodes:
-    image: ghcr.io/qubic/qubic-nodes:v1.0.2
+    image: ghcr.io/qubic/qubic-nodes:v2.1.1
     container_name: qubic-nodes
     ports:
       - "127.0.0.1:8080:8080"
