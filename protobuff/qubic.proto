@@ -27,7 +27,7 @@ message GetBalanceResponse {
 }
 
 message BroadcastTransactionRequest {
-  // encoding needs to be base64
+  // base64 encoded binary transaction data
   string encoded_transaction = 1;
 }
 
@@ -136,7 +136,7 @@ message QuerySmartContractRequest {
   uint32 input_type = 2;
   // the size of the input data (request data)
   uint32 input_size = 3;
-  // the input data. encoding needs to be base64
+  // base64 encoded input data
   string request_data = 4;
 }
 

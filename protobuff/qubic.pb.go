@@ -221,7 +221,7 @@ func (x *GetBalanceResponse) GetBalance() *Balance {
 
 type BroadcastTransactionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// encoding needs to be base64
+	// base64 encoded binary transaction data
 	EncodedTransaction string `protobuf:"bytes,1,opt,name=encoded_transaction,json=encodedTransaction,proto3" json:"encoded_transaction,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
@@ -1223,7 +1223,7 @@ type QuerySmartContractRequest struct {
 	InputType uint32 `protobuf:"varint,2,opt,name=input_type,json=inputType,proto3" json:"input_type,omitempty"`
 	// the size of the input data (request data)
 	InputSize uint32 `protobuf:"varint,3,opt,name=input_size,json=inputSize,proto3" json:"input_size,omitempty"`
-	// the input data. encoding needs to be base64
+	// base64 encoded input data
 	RequestData   string `protobuf:"bytes,4,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
