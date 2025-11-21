@@ -27,6 +27,7 @@ message GetBalanceResponse {
 }
 
 message BroadcastTransactionRequest {
+  // encoding needs to be base64
   string encoded_transaction = 1;
 }
 
@@ -37,9 +38,12 @@ message BroadcastTransactionResponse {
 }
 
 message TickInfo {
+  // current network tick
   uint32 tick = 1;
   uint32 duration = 2;
+  // current epoch
   uint32 epoch = 3;
+  // initial tick of epoch
   uint32 initial_tick = 4;
 }
 
@@ -58,7 +62,6 @@ message AssetInfo {
   uint32 universe_index = 2;
 }
 
-//Issued
 message IssuedAssetData {
   string issuer_identity = 1;
   uint32 type = 2;
@@ -80,7 +83,6 @@ message IssuedAssetsResponse {
   repeated IssuedAsset issued_assets = 1;
 }
 
-//Owned
 message OwnedAssetData {
   string owner_identity = 1;
   uint32 type = 2;
@@ -104,7 +106,6 @@ message OwnedAssetsResponse {
   repeated OwnedAsset owned_assets = 1;
 }
 
-//Possessed
 message PossessedAssetData {
   string possessor_identity = 1;
   uint32 type = 2;
@@ -129,9 +130,13 @@ message PossessedAssetsResponse {
 }
 
 message QuerySmartContractRequest {
+  // identifies the smart contract
   uint32 contract_index = 1;
+  // identifies the function to be queried
   uint32 input_type = 2;
+  // the size of the input data (request data)
   uint32 input_size = 3;
+  // the input data. encoding needs to be base64
   string request_data = 4;
 }
 
@@ -219,12 +224,15 @@ message GetPossessedAssetsByFilterRequest {
 }
 
 service QubicLiveService {
+
+  // Gets the balance of the specified identity
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
       get: "/balances/{id}"
     };
   };
 
+  // Queries a smart contract function
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
     option (google.api.http) = {
       post: "/querySmartContract"
@@ -232,6 +240,7 @@ service QubicLiveService {
     };
   };
 
+  // Broadcasts a transaction to the network
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
     option (google.api.http) = {
       post: "/broadcast-transaction"
@@ -239,30 +248,35 @@ service QubicLiveService {
     };
   };
 
+  // Gets the current tick information
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (google.api.http) = {
       get: "/tick-info"
     };
   };
 
+  // Deprecated: use /tick-info instead
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (google.api.http) = {
       get: "/block-height"
     };
   };
 
+  // Gets assets issued by the specified identity.
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
     option (google.api.http) = {
       get: "/assets/{identity}/issued"
     };
   };
 
+  // Gets assets that are owned by the specified identity.
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
     option (google.api.http) = {
       get: "/assets/{identity}/owned"
     };
   };
 
+  // Gets assets that are possessed by the specified identity.
   rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
     option (google.api.http) = {
       get: "/assets/{identity}/possessed"
