@@ -6,6 +6,7 @@ option go_package = "github.com/qubic/qubic-http/protobuff/";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+// Balance
 message Balance {
   string id = 1;
   int64 balance = 2;
@@ -18,25 +19,30 @@ message Balance {
   uint32 number_of_outgoing_transfers = 9;
 }
 
+// GetBalanceRequest
 message GetBalanceRequest {
   string id = 1;
 }
 
+// GetBalanceResponse
 message GetBalanceResponse {
   Balance balance = 1;
 }
 
+// BroadcastTransactionRequest
 message BroadcastTransactionRequest {
   // base64 encoded binary transaction data
   string encoded_transaction = 1;
 }
 
+// BroadcastTransactionResponse
 message BroadcastTransactionResponse {
   int32 peers_broadcasted = 1;
   string encoded_transaction = 2;
   string transaction_id = 3;
 }
 
+// TickInfo
 message TickInfo {
   // current network tick
   uint32 tick = 1;
@@ -47,21 +53,23 @@ message TickInfo {
   uint32 initial_tick = 4;
 }
 
+// GetTickInfoResponse
 message GetTickInfoResponse {
   TickInfo tick_info = 1;
 }
 
+// GetBlockHeightResponse
 message GetBlockHeightResponse {
   TickInfo block_height = 1;
 }
 
-// Assets
-
+// AssetInfo
 message AssetInfo {
   uint32 tick = 1;
   uint32 universe_index = 2;
 }
 
+// IssuedAssetData
 message IssuedAssetData {
   string issuer_identity = 1;
   uint32 type = 2;
@@ -70,19 +78,23 @@ message IssuedAssetData {
   repeated int32 unit_of_measurement = 5;
 }
 
+// IssuedAsset
 message IssuedAsset {
   IssuedAssetData data = 1;
   AssetInfo info = 2;
 }
 
+// IssuedAssetsRequest
 message IssuedAssetsRequest {
   string identity = 1;
 }
 
+// IssuedAssetsResponse
 message IssuedAssetsResponse {
   repeated IssuedAsset issued_assets = 1;
 }
 
+// OwnedAssetData
 message OwnedAssetData {
   string owner_identity = 1;
   uint32 type = 2;
@@ -93,19 +105,23 @@ message OwnedAssetData {
   IssuedAssetData issued_asset = 7;
 }
 
+// OwnedAsset
 message OwnedAsset {
   OwnedAssetData data = 1;
   AssetInfo info = 2;
 }
 
+// OwnedAssetsRequest
 message OwnedAssetsRequest {
   string identity = 1;
 }
 
+// OwnedAssetsResponse
 message OwnedAssetsResponse {
   repeated OwnedAsset owned_assets = 1;
 }
 
+// PossessedAssetData
 message PossessedAssetData {
   string possessor_identity = 1;
   uint32 type = 2;
@@ -116,19 +132,23 @@ message PossessedAssetData {
   OwnedAssetData owned_asset = 7;
 }
 
+// PossessedAsset
 message PossessedAsset {
   PossessedAssetData data = 1;
   AssetInfo info = 2;
 }
 
+// PossessedAssetsRequest
 message PossessedAssetsRequest {
   string identity = 1;
 }
 
+// PossessedAssetsResponse
 message PossessedAssetsResponse {
   repeated PossessedAsset possessed_assets = 1;
 }
 
+// QuerySmartContractRequest
 message QuerySmartContractRequest {
   // identifies the smart contract
   uint32 contract_index = 1;
@@ -140,10 +160,12 @@ message QuerySmartContractRequest {
   string request_data = 4;
 }
 
+// QuerySmartContractResponse
 message QuerySmartContractResponse {
   string response_data = 5;
 }
 
+// AssetIssuanceData
 message AssetIssuanceData {
   string issuer_identity = 1;
   uint32 type = 2;
@@ -152,16 +174,19 @@ message AssetIssuanceData {
   repeated int32 unit_of_measurement = 5;
 }
 
+// AssetIssuance
 message AssetIssuance {
   AssetIssuanceData data = 1;
   uint32 tick = 2;
   uint32 universe_index = 3;
 }
 
+// AssetIssuances
 message AssetIssuances {
   repeated AssetIssuance assets = 1;
 }
 
+// AssetOwnershipData
 message AssetOwnershipData {
   string owner_identity = 1;
   uint32 type = 2;
@@ -170,16 +195,19 @@ message AssetOwnershipData {
   int64 number_of_units = 5;
 }
 
+// AssetOwnership
 message AssetOwnership {
   AssetOwnershipData data = 1;
   uint32 tick = 2;
   uint32 universe_index = 3;
 }
 
+// AssetOwnerships
 message AssetOwnerships {
   repeated AssetOwnership assets = 1;
 }
 
+// AssetPossessionData
 message AssetPossessionData {
   string possessor_identity = 1;
   uint32 type = 2;
@@ -188,51 +216,80 @@ message AssetPossessionData {
   int64 number_of_units = 5;
 }
 
+// AssetPossession
 message AssetPossession {
   AssetPossessionData data = 1;
   uint32 tick = 2;
   uint32 universe_index = 3;
 }
 
+// AssetPossessions
 message AssetPossessions {
   repeated AssetPossession assets = 1;
 }
 
+// GetByUniverseIndexRequest
 message GetByUniverseIndexRequest {
   uint32 index = 1;
 }
 
+// GetIssuedAssetsByFilterRequest
 message GetIssuedAssetsByFilterRequest {
   string issuer_identity = 1;
   string asset_name = 2;
 }
 
+// GetOwnedAssetsByFilterRequest
 message GetOwnedAssetsByFilterRequest {
+  // Identity of the issuer (required). Defaults to the zero address (smart contract shares).
   string issuer_identity = 1;
+  // Name of the asset (required).
   string asset_name = 2;
+  // Identity of the owner of the asset (optional).
   string owner_identity = 3;
+  // Index of the contract that manages the ownership (optional).
   uint32 ownership_managing_contract = 4;
 }
 
+// GetPossessedAssetsByFilterRequest
 message GetPossessedAssetsByFilterRequest {
+  // Identity of the issuer (required). Defaults to the zero address (smart contract shares).
   string issuer_identity = 1;
+  // Name of the asset (required).
   string asset_name = 2;
+  // Identity of the owner of the asset (optional).
   string owner_identity = 3;
+  // Identity of the possessor of the asset (optional).
   string possessor_identity = 4;
+  // Index of the contract that manages the ownership (optional).
   uint32 ownership_managing_contract = 5;
+  // Index of the contract that manages the possession (optional).
   uint32 possession_managing_contract = 6;
+}
+
+// IPO
+message Ipo {
+  // The index of the related contract (contract address).
+  uint32 contract_index = 1;
+  // The name of the related asset.
+  string asset_name = 2;
+}
+
+// GetActiveIposResponse
+message GetActiveIposResponse {
+  repeated Ipo ipos = 1;
 }
 
 service QubicLiveService {
 
-  // Gets the balance of the specified identity
+  // Gets the balance of the specified identity.
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
       get: "/balances/{id}"
     };
   };
 
-  // Queries a smart contract function
+  // Queries a smart contract function.
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
     option (google.api.http) = {
       post: "/querySmartContract"
@@ -240,7 +297,7 @@ service QubicLiveService {
     };
   };
 
-  // Broadcasts a transaction to the network
+  // Broadcasts a transaction to the network.
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
     option (google.api.http) = {
       post: "/broadcast-transaction"
@@ -248,14 +305,14 @@ service QubicLiveService {
     };
   };
 
-  // Gets the current tick information
+  // Gets the current tick information.
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (google.api.http) = {
       get: "/tick-info"
     };
   };
 
-  // Deprecated: use /tick-info instead
+  // Deprecated: use /tick-info instead.
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (google.api.http) = {
       get: "/block-height"
@@ -298,7 +355,7 @@ service QubicLiveService {
     };
   }
 
-  // Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
+  // Returns a list of asset ownerships.
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
     option (google.api.http) = {
       get: "/assets/ownerships"
@@ -312,7 +369,7 @@ service QubicLiveService {
     };
   }
 
-  // Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
+  // Returns a list of assets possessions.
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
     option (google.api.http) = {
       get: "/assets/possessions"
@@ -323,6 +380,13 @@ service QubicLiveService {
   rpc GetPossessedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetPossession) {
     option (google.api.http) = {
       get: "/assets/possessions/{index}"
+    };
+  }
+
+  // Returns a list of IPOs that are active in the current epoch.
+  rpc GetActiveIpos(google.protobuf.Empty) returns (GetActiveIposResponse) {
+    option (google.api.http) = {
+      get: "/ipos/active"
     };
   }
 

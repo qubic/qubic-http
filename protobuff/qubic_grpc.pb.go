@@ -34,21 +34,22 @@ const (
 	QubicLiveService_GetOwnedAssetByUniverseIndex_FullMethodName     = "/qubic.http.qubic.pb.QubicLiveService/GetOwnedAssetByUniverseIndex"
 	QubicLiveService_GetPossessedAssetsByFilter_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter"
 	QubicLiveService_GetPossessedAssetByUniverseIndex_FullMethodName = "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetByUniverseIndex"
+	QubicLiveService_GetActiveIpos_FullMethodName                    = "/qubic.http.qubic.pb.QubicLiveService/GetActiveIpos"
 )
 
 // QubicLiveServiceClient is the client API for QubicLiveService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QubicLiveServiceClient interface {
-	// Gets the balance of the specified identity
+	// Gets the balance of the specified identity.
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
-	// Queries a smart contract function
+	// Queries a smart contract function.
 	QuerySmartContract(ctx context.Context, in *QuerySmartContractRequest, opts ...grpc.CallOption) (*QuerySmartContractResponse, error)
-	// Broadcasts a transaction to the network
+	// Broadcasts a transaction to the network.
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
-	// Gets the current tick information
+	// Gets the current tick information.
 	GetTickInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTickInfoResponse, error)
-	// Deprecated: use /tick-info instead
+	// Deprecated: use /tick-info instead.
 	GetBlockHeight(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 	// Gets assets issued by the specified identity.
 	GetIssuedAssets(ctx context.Context, in *IssuedAssetsRequest, opts ...grpc.CallOption) (*IssuedAssetsResponse, error)
@@ -60,14 +61,16 @@ type QubicLiveServiceClient interface {
 	GetIssuedAssetsByFilter(ctx context.Context, in *GetIssuedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetIssuances, error)
 	// Returns an asset issuance by universe index.
 	GetIssuedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetIssuance, error)
-	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
+	// Returns a list of asset ownerships.
 	GetOwnedAssetsByFilter(ctx context.Context, in *GetOwnedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetOwnerships, error)
 	// Returns an asset ownership by universe index.
 	GetOwnedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetOwnership, error)
-	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
+	// Returns a list of assets possessions.
 	GetPossessedAssetsByFilter(ctx context.Context, in *GetPossessedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetPossessions, error)
 	// Returns an asset possession by universe index.
 	GetPossessedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetPossession, error)
+	// Returns a list of IPOs that are active in the current epoch.
+	GetActiveIpos(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveIposResponse, error)
 }
 
 type qubicLiveServiceClient struct {
@@ -218,19 +221,29 @@ func (c *qubicLiveServiceClient) GetPossessedAssetByUniverseIndex(ctx context.Co
 	return out, nil
 }
 
+func (c *qubicLiveServiceClient) GetActiveIpos(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveIposResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetActiveIposResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetActiveIpos_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QubicLiveServiceServer is the server API for QubicLiveService service.
 // All implementations must embed UnimplementedQubicLiveServiceServer
 // for forward compatibility.
 type QubicLiveServiceServer interface {
-	// Gets the balance of the specified identity
+	// Gets the balance of the specified identity.
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
-	// Queries a smart contract function
+	// Queries a smart contract function.
 	QuerySmartContract(context.Context, *QuerySmartContractRequest) (*QuerySmartContractResponse, error)
-	// Broadcasts a transaction to the network
+	// Broadcasts a transaction to the network.
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
-	// Gets the current tick information
+	// Gets the current tick information.
 	GetTickInfo(context.Context, *emptypb.Empty) (*GetTickInfoResponse, error)
-	// Deprecated: use /tick-info instead
+	// Deprecated: use /tick-info instead.
 	GetBlockHeight(context.Context, *emptypb.Empty) (*GetBlockHeightResponse, error)
 	// Gets assets issued by the specified identity.
 	GetIssuedAssets(context.Context, *IssuedAssetsRequest) (*IssuedAssetsResponse, error)
@@ -242,14 +255,16 @@ type QubicLiveServiceServer interface {
 	GetIssuedAssetsByFilter(context.Context, *GetIssuedAssetsByFilterRequest) (*AssetIssuances, error)
 	// Returns an asset issuance by universe index.
 	GetIssuedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetIssuance, error)
-	// Returns a list of asset owners. Asset name and issuer are required. Issuer defaults to zero address.
+	// Returns a list of asset ownerships.
 	GetOwnedAssetsByFilter(context.Context, *GetOwnedAssetsByFilterRequest) (*AssetOwnerships, error)
 	// Returns an asset ownership by universe index.
 	GetOwnedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetOwnership, error)
-	// Returns a list of asset possessors. Asset name and issuer are required. Issuer defaults to zero address.
+	// Returns a list of assets possessions.
 	GetPossessedAssetsByFilter(context.Context, *GetPossessedAssetsByFilterRequest) (*AssetPossessions, error)
 	// Returns an asset possession by universe index.
 	GetPossessedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetPossession, error)
+	// Returns a list of IPOs that are active in the current epoch.
+	GetActiveIpos(context.Context, *emptypb.Empty) (*GetActiveIposResponse, error)
 	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
@@ -301,6 +316,9 @@ func (UnimplementedQubicLiveServiceServer) GetPossessedAssetsByFilter(context.Co
 }
 func (UnimplementedQubicLiveServiceServer) GetPossessedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetPossession, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPossessedAssetByUniverseIndex not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetActiveIpos(context.Context, *emptypb.Empty) (*GetActiveIposResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetActiveIpos not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) mustEmbedUnimplementedQubicLiveServiceServer() {}
 func (UnimplementedQubicLiveServiceServer) testEmbeddedByValue()                          {}
@@ -575,6 +593,24 @@ func _QubicLiveService_GetPossessedAssetByUniverseIndex_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QubicLiveService_GetActiveIpos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetActiveIpos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_GetActiveIpos_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetActiveIpos(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QubicLiveService_ServiceDesc is the grpc.ServiceDesc for QubicLiveService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -637,6 +673,10 @@ var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPossessedAssetByUniverseIndex",
 			Handler:    _QubicLiveService_GetPossessedAssetByUniverseIndex_Handler,
+		},
+		{
+			MethodName: "GetActiveIpos",
+			Handler:    _QubicLiveService_GetActiveIpos_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

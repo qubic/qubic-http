@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
-	qubic "github.com/qubic/go-node-connector"
-	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/pkg/errors"
+	qubic "github.com/qubic/go-node-connector"
+	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
 
 	"github.com/ardanlabs/conf"
 )
@@ -31,10 +32,10 @@ func run(logger *log.Logger) error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 			HttpHost        string        `conf:"default:0.0.0.0:8000"`
 			GrpcHost        string        `conf:"default:0.0.0.0:8001"`
-			MaxTickFetchUrl string        `conf:"default:http://127.0.0.1:8080/max-tick"`
+			MaxTickFetchUrl string        `conf:"default:http://localhost:8080/max-tick"`
 		}
 		Pool struct {
-			NodeFetcherUrl     string        `conf:"default:http://127.0.0.1:8080/status"`
+			NodeFetcherUrl     string        `conf:"default:http://localhost:8080/status"`
 			NodeFetcherTimeout time.Duration `conf:"default:2s"`
 			NodePort           string        `conf:"default:21841"`
 			InitialCap         int           `conf:"default:5"`
@@ -95,7 +96,7 @@ func run(logger *log.Logger) error {
 	for {
 		select {
 		case <-shutdown:
-			return errors.New("shutting down")
+			return errors.New("shutting down...")
 		}
 	}
 }
