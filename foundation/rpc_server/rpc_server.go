@@ -5,6 +5,10 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"io"
+	"math"
+	"net"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
 	"github.com/qubic/go-node-connector/types"
@@ -16,14 +20,12 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
-	"math"
-	"net"
+
+	"log"
+	"net/http"
 
 	qubic "github.com/qubic/go-node-connector"
 	"github.com/qubic/qubic-http/protobuff"
-	"log"
-	"net/http"
 )
 
 var _ protobuff.QubicLiveServiceServer = &Server{}
@@ -670,6 +672,31 @@ func (s *Server) GetPossessedAssetsByFilter(ctx context.Context, request *protob
 	}
 
 	return &protobuff.AssetPossessions{Assets: assetPossessions}, nil
+}
+
+func (s *Server) GetActiveIpos(ctx context.Context, _ *emptypb.Empty) (*protobuff.GetActiveIposResponse, error) {
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting connection from pool: %v", err)
+	}
+
+	nodeResponse, err := client.GetActiveIpos(ctx)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting active Ipos: %v", err)
+	}
+	s.qPool.Put(client)
+
+	ipos := make([]*protobuff.Ipo, 0)
+	for _, nodeIpo := range nodeResponse {
+		ipo := &protobuff.Ipo{
+			ContractIndex: nodeIpo.ContractIndex,
+			AssetName:     string(nodeIpo.AssetName[:]),
+		}
+		ipos = append(ipos, ipo)
+	}
+	return &protobuff.GetActiveIposResponse{Ipos: ipos}, nil
 }
 
 func (s *Server) Start() error {
