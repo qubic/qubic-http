@@ -692,7 +692,7 @@ func (s *Server) GetActiveIpos(ctx context.Context, _ *emptypb.Empty) (*protobuf
 	for _, nodeIpo := range nodeResponse {
 		ipo := &protobuff.Ipo{
 			ContractIndex: nodeIpo.ContractIndex,
-			AssetName:     string(nodeIpo.AssetName[:]),
+			AssetName:     string(bytes.TrimRight(nodeIpo.AssetName[:], "\x00")),
 		}
 		ipos = append(ipos, ipo)
 	}
