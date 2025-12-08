@@ -39,8 +39,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/qubic/go-node-connector v0.14.2-0.20251204170215-d62e18791d38 h1:Sk4fp0LAXzzd7TRc6FlYFoniLBu32HzAzOLgH2llkGU=
-github.com/qubic/go-node-connector v0.14.2-0.20251204170215-d62e18791d38/go.mod h1:GOQGJ6IKhm3CU62bfLJJbBerjYmt6NNhDKzxC1i7HhU=
+github.com/qubic/go-node-connector v0.15.0 h1:fbd+wgEBtKMzmlsRdbYAKAGnDxew4HLjAPj4whGKWjY=
+github.com/qubic/go-node-connector v0.15.0/go.mod h1:GOQGJ6IKhm3CU62bfLJJbBerjYmt6NNhDKzxC1i7HhU=
 github.com/qubic/go-schnorrq v1.0.1 h1:F0R/BQVf+O7Bp57NGJmc3uXlqsaIzerg/1bmU4jMLLE=
 github.com/qubic/go-schnorrq v1.0.1/go.mod h1:j2qw/zHiyjH9GAScAAETWpZk6iELbjYnzIg7CQwc5wM=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
