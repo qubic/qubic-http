@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "qubic.proto",
-    "version": "version not set"
+    "version": "1.0.0"
   },
   "tags": [
     {

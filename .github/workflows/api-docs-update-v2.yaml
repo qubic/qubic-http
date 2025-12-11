@@ -1,0 +1,19 @@
+name: Trigger Docs Update for v2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'protobuff/qubic.swagger.json' # Only trigger if the swagger file changed
+
+jobs:
+  api-docs-update-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Event
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          repository: qubic/integration
+          event-type: api-docs-update
