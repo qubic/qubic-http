@@ -5,6 +5,24 @@ package qubic.http.qubic.pb;
 option go_package = "github.com/qubic/qubic-http/protobuff/";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "protoc_gen_openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Qubic HTTP API"
+    description: "Bridge service for Qubic network operations."
+    version: "1.0.0"
+  }
+  host: "rpc.qubic.org"
+  base_path: "/live/v1"
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+  external_docs: {
+    description: "Github";
+    url: "https://github.com/qubic/qubic-http";
+  }
+};
 
 // Balance
 message Balance {
@@ -282,6 +300,8 @@ message GetActiveIposResponse {
 
 service QubicLiveService {
 
+  // Get Balance
+  //
   // Gets the balance of the specified identity.
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
@@ -289,6 +309,8 @@ service QubicLiveService {
     };
   };
 
+  // Query Smart Contract
+  //
   // Queries a smart contract function.
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
     option (google.api.http) = {
@@ -297,6 +319,8 @@ service QubicLiveService {
     };
   };
 
+  // Broadcast Transaction
+  //
   // Broadcasts a transaction to the network.
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
     option (google.api.http) = {
@@ -305,6 +329,8 @@ service QubicLiveService {
     };
   };
 
+  // Get Tick Info
+  //
   // Gets the current tick information.
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (google.api.http) = {
@@ -312,13 +338,20 @@ service QubicLiveService {
     };
   };
 
+  // Get Block Height
+  //
   // Deprecated: use /tick-info instead.
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (google.api.http) = {
       get: "/block-height"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      deprecated: true
+    };
   };
 
+  // List Issued Assets
+  //
   // Gets assets issued by the specified identity.
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
     option (google.api.http) = {
@@ -326,6 +359,8 @@ service QubicLiveService {
     };
   };
 
+  // List Owned Assets
+  //
   // Gets assets that are owned by the specified identity.
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
     option (google.api.http) = {
@@ -333,6 +368,8 @@ service QubicLiveService {
     };
   };
 
+  // List Possessed Assets
+  //
   // Gets assets that are possessed by the specified identity.
   rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
     option (google.api.http) = {
@@ -341,13 +378,17 @@ service QubicLiveService {
   };
 
 
-  // Returns a list of issued assets.
+  // Search Asset Issuances
+  //
+  // Returns a list of issued assets filtered by issuer identity and asset name.
   rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
     option (google.api.http) = {
       get: "/assets/issuances"
     };
   }
 
+  // Get Asset Issuance By Index
+  //
   // Returns an asset issuance by universe index.
   rpc GetIssuedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetIssuance) {
     option (google.api.http) = {
@@ -355,13 +396,17 @@ service QubicLiveService {
     };
   }
 
-  // Returns a list of asset ownerships.
+  // Search Asset Ownerships
+  //
+  // Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract.
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
     option (google.api.http) = {
       get: "/assets/ownerships"
     };
   }
 
+  // Get Asset Ownership By Index
+  //
   // Returns an asset ownership by universe index.
   rpc GetOwnedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetOwnership) {
     option (google.api.http) = {
@@ -369,13 +414,17 @@ service QubicLiveService {
     };
   }
 
-  // Returns a list of assets possessions.
+  // Search Asset Possessions
+  //
+  // Returns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts.
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
     option (google.api.http) = {
       get: "/assets/possessions"
     };
   }
 
+  // Get Asset Possession By Index
+  //
   // Returns an asset possession by universe index.
   rpc GetPossessedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetPossession) {
     option (google.api.http) = {
@@ -383,6 +432,8 @@ service QubicLiveService {
     };
   }
 
+  // Get Active IPOs
+  //
   // Returns a list of IPOs that are active in the current epoch.
   rpc GetActiveIpos(google.protobuf.Empty) returns (GetActiveIposResponse) {
     option (google.api.http) = {
