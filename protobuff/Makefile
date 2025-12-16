@@ -1,11 +1,15 @@
-#Check for Macos arm64
-
+# Check for macOS arm64 - dynamically detect protobuf version
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
+PROTOBUF_VERSION := $(shell ls /opt/homebrew/Cellar/protobuf/ 2>/dev/null | head -1)
 
 ifeq ($(UNAME_S),Darwin)
     ifeq ($(UNAME_M),arm64)
-        OPT_ARGS := --proto_path=/opt/homebrew/Cellar/protobuf/25.3_1/include
+        ifneq ($(PROTOBUF_VERSION),)
+            OPT_ARGS := --proto_path=/opt/homebrew/Cellar/protobuf/$(PROTOBUF_VERSION)/include
+        else
+            OPT_ARGS :=
+        endif
     else
         OPT_ARGS :=
     endif
