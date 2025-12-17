@@ -22,6 +22,20 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     description: "Github";
     url: "https://github.com/qubic/qubic-http";
   }
+  tags: {
+    name: "QubicLiveService"
+    description: "Query live data from the Qubic network"
+    external_docs: {
+      description: "GitHub repository"
+      url: "https://github.com/qubic/qubic-http/"
+    }
+    extensions: {
+      key: "x-displayName"
+      value: {
+        string_value: "Live API"
+      }
+    }
+  }
 };
 
 // Balance
