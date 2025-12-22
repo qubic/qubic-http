@@ -28,7 +28,7 @@ option (openapi.v3.document) = {
 
 // Balance
 message Balance {
-  string id = 1 [(openapi.v3.property) = {description:"This is the description"}];
+  string id = 1;
   int64 balance = 2;
   uint32 valid_for_tick = 3;
   uint32 latest_incoming_transfer_tick = 4;
