@@ -4,6 +4,7 @@ go 1.25
 
 require (
 	github.com/ardanlabs/conf v1.5.0
+	github.com/google/gnostic v0.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3
 	github.com/pkg/errors v0.9.1
 	github.com/qubic/go-node-connector v0.15.0
@@ -19,10 +20,12 @@ require (
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/consensys/gnark-crypto v0.19.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/google/gnostic-models v0.7.0 // indirect
 	github.com/linckode/circl v1.3.71 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/silenceper/pool v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
