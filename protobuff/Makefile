@@ -32,7 +32,7 @@ all: $(GO) openapi-v3
 		--go_out=paths=source_relative:. *.proto
 
 openapi-v3:
-		protoc -I=. --openapi_out=output_mode=source_relative:. *.proto
+		protoc -I=. --openapi_out=output_mode=source_relative,default_response=false:. *.proto
 
 clean:
 		rm -f *.pb.go
