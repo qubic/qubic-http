@@ -24,20 +24,23 @@ option (openapi.v3.document) = {
     url: "https://github.com/qubic/qubic-http"
   }
 
-  tags: {
-    name: "QubicLiveService"
-    description: "Query live data from the Qubic network"
-    external_docs: {
-      description: "GitHub repository"
-      url: "https://github.com/qubic/qubic-http/"
-    }
-    extensions: {
-      key: "x-displayName"
-      value: {
-        string_value: "Live API"
+  tags: [
+    {
+      name: "QubicLiveService"
+      description: "Query live data from the Qubic network"
+      external_docs: {
+        description: "GitHub repository"
+        url: "https://github.com/qubic/qubic-http/"
+      }
+      specification_extension: {
+        name: "x-displayName"
+        value: {
+          yaml: "Live API"
+
+        }
       }
     }
-  }
+  ]
 };
 
 // Balance
