@@ -223,7 +223,7 @@ func (x *GetBalanceResponse) GetBalance() *Balance {
 	return nil
 }
 
-// This is a different comment
+// BroadcastTransactionRequest
 type BroadcastTransactionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// base64 encoded binary transaction data
@@ -2436,9 +2436,13 @@ const file_qubic_proto_rawDesc = "" +
 	"\x1cGetOwnedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a#.qubic.http.qubic.pb.AssetOwnership\"r\xbaGM\x12\x1cGet Asset Ownership By Index\x1a-Returns an asset ownership by universe index.\x82\xd3\xe4\x93\x02\x1c\x12\x1a/assets/ownerships/{index}\x12\xa5\x02\n" +
 	"\x1aGetPossessedAssetsByFilter\x126.qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest\x1a%.qubic.http.qubic.pb.AssetPossessions\"\xa7\x01\xbaG\x88\x01\x12\x18Search Asset Possessions\x1alReturns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts.\x82\xd3\xe4\x93\x02\x15\x12\x13/assets/possessions\x12\xef\x01\n" +
 	" GetPossessedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a$.qubic.http.qubic.pb.AssetPossession\"u\xbaGO\x12\x1dGet Asset Possession By Index\x1a.Returns an asset possession by universe index.\x82\xd3\xe4\x93\x02\x1d\x12\x1b/assets/possessions/{index}\x12\xbb\x01\n" +
-	"\rGetActiveIpos\x12\x16.google.protobuf.Empty\x1a*.qubic.http.qubic.pb.GetActiveIposResponse\"f\xbaGO\x12\x0fGet Active IPOs\x1a<Returns a list of IPOs that are active in the current epoch.\x82\xd3\xe4\x93\x02\x0e\x12\f/ipos/activeB\xc3\x01\xbaG\x97\x01\x12E\n" +
+	"\rGetActiveIpos\x12\x16.google.protobuf.Empty\x1a*.qubic.http.qubic.pb.GetActiveIposResponse\"f\xbaGO\x12\x0fGet Active IPOs\x1a<Returns a list of IPOs that are active in the current epoch.\x82\xd3\xe4\x93\x02\x0e\x12\f/ipos/activeB\xd8\x02\xbaG\xac\x02\x12E\n" +
 	"\x0eQubic HTTP API\x12,Bridge service for Qubic network operations.2\x051.0.0\x1a\x1f\n" +
-	"\x1dhttps://rpc.qubic.org/live/v1B-\n" +
+	"\x1dhttps://rpc.qubic.org/live/v1:\x92\x01\n" +
+	"\x10QubicLiveService\x12&Query live data from the Qubic network\x1a9\n" +
+	"\x11GitHub repository\x12$https://github.com/qubic/qubic-http/\"\x1b\n" +
+	"\rx-displayName\x12\n" +
+	"\x12\bLive APIB-\n" +
 	"\x06GitHub\x12#https://github.com/qubic/qubic-httpZ&github.com/qubic/qubic-http/protobuff/b\x06proto3"
 
 var (
