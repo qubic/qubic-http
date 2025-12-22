@@ -5,23 +5,25 @@ package qubic.http.qubic.pb;
 option go_package = "github.com/qubic/qubic-http/protobuff/";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "protoc_gen_openapiv2/options/annotations.proto";
 
-option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+import "openapiv3/annotations.proto";
+
+option (openapi.v3.document) = {
   info: {
     title: "Qubic HTTP API"
     description: "Bridge service for Qubic network operations."
     version: "1.0.0"
   }
-  host: "rpc.qubic.org"
-  base_path: "/live/v1"
-  schemes: HTTPS
-  consumes: "application/json"
-  produces: "application/json"
+  servers: [
+    {
+      url: "https://rpc.qubic.org/live/v1"
+    }
+  ]
   external_docs: {
-    description: "Github";
-    url: "https://github.com/qubic/qubic-http";
+    description: "GitHub"
+    url: "https://github.com/qubic/qubic-http"
   }
+
   tags: {
     name: "QubicLiveService"
     description: "Query live data from the Qubic network"
@@ -314,145 +316,157 @@ message GetActiveIposResponse {
 
 service QubicLiveService {
 
-  // Get Balance
-  //
-  // Gets the balance of the specified identity.
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Get Balance"
+      description: "Gets the balance of the specified identity."
+    };
     option (google.api.http) = {
       get: "/balances/{id}"
     };
   };
 
-  // Query Smart Contract
-  //
-  // Queries a smart contract function.
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Query Smart Contract"
+      description: "Queries a smart contract function."
+    };
     option (google.api.http) = {
       post: "/querySmartContract"
       body: "*"
     };
   };
 
-  // Broadcast Transaction
-  //
-  // Broadcasts a transaction to the network.
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Broadcast Transaction"
+      description: "Broadcasts a transaction to the network."
+    };
     option (google.api.http) = {
       post: "/broadcast-transaction"
       body: "*"
     };
   };
 
-  // Get Tick Info
-  //
-  // Gets the current tick information.
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Get Tick Info"
+      description: "Gets the current tick information."
+    };
     option (google.api.http) = {
       get: "/tick-info"
     };
   };
 
-  // Get Block Height
-  //
-  // Deprecated: use /tick-info instead.
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Get Block Height"
+      description: "Deprecated: use /tick-info instead."
+      deprecated: true
+    };
     option (google.api.http) = {
       get: "/block-height"
     };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      deprecated: true
-    };
   };
 
-  // List Issued Assets
-  //
-  // Gets assets issued by the specified identity.
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
+    option (openapi.v3.operation) = {
+      summary: "List Issued Assets"
+      description: "Gets assets issued by the specified identity."
+    };
     option (google.api.http) = {
       get: "/assets/{identity}/issued"
     };
   };
 
-  // List Owned Assets
-  //
-  // Gets assets that are owned by the specified identity.
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
+    option (openapi.v3.operation) = {
+      summary: "List Owned Assets"
+      description: "Gets assets that are owned by the specified identity."
+    };
     option (google.api.http) = {
       get: "/assets/{identity}/owned"
     };
   };
 
-  // List Possessed Assets
-  //
-  // Gets assets that are possessed by the specified identity.
+
   rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
+    option (openapi.v3.operation) = {
+      summary: "List Possessed Assets"
+      description: "Gets assets that are possessed by the specified identity."
+    };
     option (google.api.http) = {
       get: "/assets/{identity}/possessed"
     };
   };
 
-
-  // Search Asset Issuances
-  //
-  // Returns a list of issued assets filtered by issuer identity and asset name.
   rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
+    option (openapi.v3.operation) = {
+      summary: "Search Asset Issuances"
+      description: "Returns a list of issued assets filtered by issuer identity and asset name."
+    };
     option (google.api.http) = {
       get: "/assets/issuances"
     };
   }
 
-  // Get Asset Issuance By Index
-  //
-  // Returns an asset issuance by universe index.
   rpc GetIssuedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetIssuance) {
+    option (openapi.v3.operation) = {
+      summary: "Get Asset Issuance By Index"
+      description: "Returns an asset issuance by universe index."
+    };
     option (google.api.http) = {
       get: "/assets/issuances/{index}"
     };
   }
 
-  // Search Asset Ownerships
-  //
-  // Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract.
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
+    option (openapi.v3.operation) = {
+      summary: "Search Asset Ownerships"
+      description: "Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract."
+    };
     option (google.api.http) = {
       get: "/assets/ownerships"
     };
   }
 
-  // Get Asset Ownership By Index
-  //
-  // Returns an asset ownership by universe index.
   rpc GetOwnedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetOwnership) {
+    option (openapi.v3.operation) = {
+      summary: "Get Asset Ownership By Index"
+      description: "Returns an asset ownership by universe index."
+    };
     option (google.api.http) = {
       get: "/assets/ownerships/{index}"
     };
   }
 
-  // Search Asset Possessions
-  //
-  // Returns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts.
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
+    option (openapi.v3.operation) = {
+      summary: "Search Asset Possessions"
+      description: "Returns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts."
+    };
     option (google.api.http) = {
       get: "/assets/possessions"
     };
   }
 
-  // Get Asset Possession By Index
-  //
-  // Returns an asset possession by universe index.
   rpc GetPossessedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetPossession) {
+    option (openapi.v3.operation) = {
+      summary: "Get Asset Possession By Index"
+      description: "Returns an asset possession by universe index."
+    };
     option (google.api.http) = {
       get: "/assets/possessions/{index}"
     };
   }
 
-  // Get Active IPOs
-  //
-  // Returns a list of IPOs that are active in the current epoch.
   rpc GetActiveIpos(google.protobuf.Empty) returns (GetActiveIposResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Get Active IPOs"
+      description: "Returns a list of IPOs that are active in the current epoch."
+    };
     option (google.api.http) = {
       get: "/ipos/active"
     };
   }
-
 }
