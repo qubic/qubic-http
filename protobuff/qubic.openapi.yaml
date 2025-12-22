@@ -32,12 +32,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetIssuances'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/issuances/{index}:
         get:
             tags:
@@ -59,12 +53,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetIssuance'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/ownerships:
         get:
             tags:
@@ -101,12 +89,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetOwnerships'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/ownerships/{index}:
         get:
             tags:
@@ -128,12 +110,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetOwnership'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/possessions:
         get:
             tags:
@@ -181,12 +157,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetPossessions'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/possessions/{index}:
         get:
             tags:
@@ -208,12 +178,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AssetPossession'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/{identity}/issued:
         get:
             tags:
@@ -234,12 +198,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/IssuedAssetsResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/{identity}/owned:
         get:
             tags:
@@ -260,12 +218,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/OwnedAssetsResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /assets/{identity}/possessed:
         get:
             tags:
@@ -286,12 +238,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/PossessedAssetsResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /balances/{id}:
         get:
             tags:
@@ -312,12 +258,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetBalanceResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /block-height:
         get:
             tags:
@@ -332,12 +272,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetBlockHeightResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
             deprecated: true
     /broadcast-transaction:
         post:
@@ -359,12 +293,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/BroadcastTransactionResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /ipos/active:
         get:
             tags:
@@ -379,12 +307,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetActiveIposResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /querySmartContract:
         post:
             tags:
@@ -405,12 +327,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/QuerySmartContractResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /tick-info:
         get:
             tags:
@@ -425,12 +341,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetTickInfoResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         AssetInfo:
@@ -627,14 +537,6 @@ components:
                 tickInfo:
                     $ref: '#/components/schemas/TickInfo'
             description: GetTickInfoResponse
-        GoogleProtobufAny:
-            type: object
-            properties:
-                '@type':
-                    type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
         Ipo:
             type: object
             properties:
@@ -782,22 +684,6 @@ components:
                 responseData:
                     type: string
             description: QuerySmartContractResponse
-        Status:
-            type: object
-            properties:
-                code:
-                    type: integer
-                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
-                    format: int32
-                message:
-                    type: string
-                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-                details:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GoogleProtobufAny'
-                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
-            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
         TickInfo:
             type: object
             properties:
