@@ -499,7 +499,7 @@ components:
                 encodedTransaction:
                     type: string
                     description: base64 encoded binary transaction data
-            description: This is a different comment
+            description: BroadcastTransactionRequest
         BroadcastTransactionResponse:
             type: object
             properties:
@@ -704,6 +704,12 @@ components:
                     format: uint32
             description: TickInfo
 tags:
+    - name: QubicLiveService
+      description: Query live data from the Qubic network
+      externalDocs:
+        description: GitHub repository
+        url: https://github.com/qubic/qubic-http/
+      x-displayName: Live API
     - name: QubicLiveService
 externalDocs:
     description: GitHub
