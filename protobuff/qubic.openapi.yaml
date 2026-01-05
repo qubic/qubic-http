@@ -63,7 +63,7 @@ paths:
             parameters:
                 - name: issuerIdentity
                   in: query
-                  description: Identity of the issuer (required). Defaults to the zero address (smart contract shares).
+                  description: Identity of the issuer. Defaults to the zero address (smart contract shares).
                   schema:
                     type: string
                 - name: assetName
@@ -471,26 +471,35 @@ components:
             properties:
                 id:
                     type: string
+                    description: The identity relevant to this balance.
                 balance:
                     type: string
+                    description: The amount of funds the identity holds.
                 validForTick:
                     type: integer
+                    description: The tick that this balance is valid for.
                     format: uint32
                 latestIncomingTransferTick:
                     type: integer
+                    description: The last tick when this identity received funds through a transfer.
                     format: uint32
                 latestOutgoingTransferTick:
                     type: integer
+                    description: The last tick when this identity sent funds through a transfer.
                     format: uint32
                 incomingAmount:
                     type: string
+                    description: The total sum of received funds over time.
                 outgoingAmount:
                     type: string
+                    description: The total sum of sent funds over time.
                 numberOfIncomingTransfers:
                     type: integer
+                    description: The number of incoming transfers.
                     format: uint32
                 numberOfOutgoingTransfers:
                     type: integer
+                    description: The number of outgoing transfers.
                     format: uint32
             description: Balance
         BroadcastTransactionRequest:
@@ -498,18 +507,21 @@ components:
             properties:
                 encodedTransaction:
                     type: string
-                    description: base64 encoded binary transaction data
+                    description: Base64 encoded binary transaction data.
             description: BroadcastTransactionRequest
         BroadcastTransactionResponse:
             type: object
             properties:
                 peersBroadcasted:
                     type: integer
+                    description: The number of Qubic node peers this transactions has been broadcast to.
                     format: int32
                 encodedTransaction:
                     type: string
+                    description: The Base 64 encoded binary transaction from the request.
                 transactionId:
                     type: string
+                    description: The id / hash of the transaction.
             description: BroadcastTransactionResponse
         GetActiveIposResponse:
             type: object
@@ -683,6 +695,7 @@ components:
             properties:
                 responseData:
                     type: string
+                    description: Binary data encoded as Base64. This data is returned directly from the called SC function.
             description: QuerySmartContractResponse
         TickInfo:
             type: object

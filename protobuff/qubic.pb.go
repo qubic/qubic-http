@@ -225,9 +225,8 @@ func (x *GetBalanceResponse) GetBalance() *Balance {
 
 // BroadcastTransactionRequest
 type BroadcastTransactionRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// base64 encoded binary transaction data
-	EncodedTransaction string `protobuf:"bytes,1,opt,name=encoded_transaction,json=encodedTransaction,proto3" json:"encoded_transaction,omitempty"`
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	EncodedTransaction string                 `protobuf:"bytes,1,opt,name=encoded_transaction,json=encodedTransaction,proto3" json:"encoded_transaction,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -2005,7 +2004,7 @@ func (x *GetIssuedAssetsByFilterRequest) GetAssetName() string {
 // GetOwnedAssetsByFilterRequest
 type GetOwnedAssetsByFilterRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Identity of the issuer (required). Defaults to the zero address (smart contract shares).
+	// Identity of the issuer. Defaults to the zero address (smart contract shares).
 	IssuerIdentity string `protobuf:"bytes,1,opt,name=issuer_identity,json=issuerIdentity,proto3" json:"issuer_identity,omitempty"`
 	// Name of the asset (required).
 	AssetName string `protobuf:"bytes,2,opt,name=asset_name,json=assetName,proto3" json:"asset_name,omitempty"`
@@ -2270,27 +2269,27 @@ var File_qubic_proto protoreflect.FileDescriptor
 
 const file_qubic_proto_rawDesc = "" +
 	"\n" +
-	"\vqubic.proto\x12\x13qubic.http.qubic.pb\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1bopenapiv3/annotations.proto\"\xb3\x03\n" +
-	"\aBalance\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\abalance\x18\x02 \x01(\x03R\abalance\x12$\n" +
-	"\x0evalid_for_tick\x18\x03 \x01(\rR\fvalidForTick\x12A\n" +
-	"\x1dlatest_incoming_transfer_tick\x18\x04 \x01(\rR\x1alatestIncomingTransferTick\x12A\n" +
-	"\x1dlatest_outgoing_transfer_tick\x18\x05 \x01(\rR\x1alatestOutgoingTransferTick\x12'\n" +
-	"\x0fincoming_amount\x18\x06 \x01(\x03R\x0eincomingAmount\x12'\n" +
-	"\x0foutgoing_amount\x18\a \x01(\x03R\x0eoutgoingAmount\x12?\n" +
-	"\x1cnumber_of_incoming_transfers\x18\b \x01(\rR\x19numberOfIncomingTransfers\x12?\n" +
-	"\x1cnumber_of_outgoing_transfers\x18\t \x01(\rR\x19numberOfOutgoingTransfers\"#\n" +
+	"\vqubic.proto\x12\x13qubic.http.qubic.pb\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1bopenapiv3/annotations.proto\"\x86\a\n" +
+	"\aBalance\x12<\n" +
+	"\x02id\x18\x01 \x01(\tB,\xbaG)\x92\x02&The identity relevant to this balance.R\x02id\x12G\n" +
+	"\abalance\x18\x02 \x01(\x03B-\xbaG*\x92\x02'The amount of funds the identity holds.R\abalance\x12T\n" +
+	"\x0evalid_for_tick\x18\x03 \x01(\rB.\xbaG+\x92\x02(The tick that this balance is valid for.R\fvalidForTick\x12\x8c\x01\n" +
+	"\x1dlatest_incoming_transfer_tick\x18\x04 \x01(\rBI\xbaGF\x92\x02CThe last tick when this identity received funds through a transfer.R\x1alatestIncomingTransferTick\x12\x88\x01\n" +
+	"\x1dlatest_outgoing_transfer_tick\x18\x05 \x01(\rBE\xbaGB\x92\x02?The last tick when this identity sent funds through a transfer.R\x1alatestOutgoingTransferTick\x12Y\n" +
+	"\x0fincoming_amount\x18\x06 \x01(\x03B0\xbaG-\x92\x02*The total sum of received funds over time.R\x0eincomingAmount\x12U\n" +
+	"\x0foutgoing_amount\x18\a \x01(\x03B,\xbaG)\x92\x02&The total sum of sent funds over time.R\x0eoutgoingAmount\x12h\n" +
+	"\x1cnumber_of_incoming_transfers\x18\b \x01(\rB'\xbaG$\x92\x02!The number of incoming transfers.R\x19numberOfIncomingTransfers\x12h\n" +
+	"\x1cnumber_of_outgoing_transfers\x18\t \x01(\rB'\xbaG$\x92\x02!The number of outgoing transfers.R\x19numberOfOutgoingTransfers\"#\n" +
 	"\x11GetBalanceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"L\n" +
 	"\x12GetBalanceResponse\x126\n" +
-	"\abalance\x18\x01 \x01(\v2\x1c.qubic.http.qubic.pb.BalanceR\abalance\"N\n" +
-	"\x1bBroadcastTransactionRequest\x12/\n" +
-	"\x13encoded_transaction\x18\x01 \x01(\tR\x12encodedTransaction\"\xa3\x01\n" +
-	"\x1cBroadcastTransactionResponse\x12+\n" +
-	"\x11peers_broadcasted\x18\x01 \x01(\x05R\x10peersBroadcasted\x12/\n" +
-	"\x13encoded_transaction\x18\x02 \x01(\tR\x12encodedTransaction\x12%\n" +
-	"\x0etransaction_id\x18\x03 \x01(\tR\rtransactionId\"s\n" +
+	"\abalance\x18\x01 \x01(\v2\x1c.qubic.http.qubic.pb.BalanceR\abalance\"}\n" +
+	"\x1bBroadcastTransactionRequest\x12^\n" +
+	"\x13encoded_transaction\x18\x01 \x01(\tB-\xbaG*\x92\x02'Base64 encoded binary transaction data.R\x12encodedTransaction\"\xdb\x02\n" +
+	"\x1cBroadcastTransactionResponse\x12z\n" +
+	"\x11peers_broadcasted\x18\x01 \x01(\x05BM\xbaGJ\x92\x02GThe number of Qubic node peers this transactions has been broadcast to.R\x10peersBroadcasted\x12o\n" +
+	"\x13encoded_transaction\x18\x02 \x01(\tB>\xbaG;\x92\x028The Base 64 encoded binary transaction from the request.R\x12encodedTransaction\x12N\n" +
+	"\x0etransaction_id\x18\x03 \x01(\tB'\xbaG$\x92\x02!The id / hash of the transaction.R\rtransactionId\"s\n" +
 	"\bTickInfo\x12\x12\n" +
 	"\x04tick\x18\x01 \x01(\rR\x04tick\x12\x1a\n" +
 	"\bduration\x18\x02 \x01(\rR\bduration\x12\x14\n" +
@@ -2354,9 +2353,9 @@ const file_qubic_proto_rawDesc = "" +
 	"input_type\x18\x02 \x01(\rR\tinputType\x12\x1d\n" +
 	"\n" +
 	"input_size\x18\x03 \x01(\rR\tinputSize\x12!\n" +
-	"\frequest_data\x18\x04 \x01(\tR\vrequestData\"A\n" +
-	"\x1aQuerySmartContractResponse\x12#\n" +
-	"\rresponse_data\x18\x05 \x01(\tR\fresponseData\"\xcd\x01\n" +
+	"\frequest_data\x18\x04 \x01(\tR\vrequestData\"\xa4\x01\n" +
+	"\x1aQuerySmartContractResponse\x12\x85\x01\n" +
+	"\rresponse_data\x18\x05 \x01(\tB`\xbaG]\x92\x02ZBinary data encoded as Base64. This data is returned directly from the called SC function.R\fresponseData\"\xcd\x01\n" +
 	"\x11AssetIssuanceData\x12'\n" +
 	"\x0fissuer_identity\x18\x01 \x01(\tR\x0eissuerIdentity\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\rR\x04type\x12\x12\n" +
