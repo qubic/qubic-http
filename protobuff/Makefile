@@ -21,7 +21,7 @@ PB = $(wildcard *.proto)
 GO = $(PB:.proto=.pb.go)
 PWD = $(pwd)
 
-all: $(GO) openapi
+all: $(GO) openapi-v3
 
 %.pb.go: %.proto
 		protoc -I=. --go-grpc_out=paths=source_relative:. \
@@ -31,10 +31,8 @@ all: $(GO) openapi
     --grpc-gateway_opt generate_unbound_methods=true $(OPT_ARGS)  \
 		--go_out=paths=source_relative:. *.proto
 
-openapi: *.proto
-		protoc --openapiv2_out=logtostderr=true:. \
-        			   *.proto
-#        			   --proto_path=.:/opt/homebrew/Cellar/protobuf/25.3_1/include \
+openapi-v3:
+		protoc -I=. --openapi_out=output_mode=source_relative,default_response=false:. *.proto
 
 clean:
 		rm -f *.pb.go
