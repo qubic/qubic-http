@@ -5,15 +5,22 @@ on:
     branches:
       - main
     paths:
-      - 'protobuff/qubic.swagger.json' # Only trigger if the swagger file changed
+      - 'protobuff/qubic.openapi.yaml' # Only trigger if the OpenAPI file changed
 
 jobs:
   api-docs-update-trigger:
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch Event
+      - name: Dispatch to Integration
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GH_PAT }}
           repository: qubic/integration
           event-type: api-docs-update
+
+      - name: Dispatch to Docs
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          repository: qubic/docs
+          event-type: live-api-update
