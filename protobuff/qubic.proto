@@ -10,7 +10,7 @@ import "openapiv3/annotations.proto";
 
 option (openapi.v3.document) = {
   info: {
-    title: "Qubic HTTP API"
+    title: "Qubic Live API"
     description: "Bridge service for Qubic network operations."
     version: "1.0.0"
   }
@@ -26,19 +26,24 @@ option (openapi.v3.document) = {
 
   tags: [
     {
-      name: "QubicLiveService"
-      description: "Query live data from the Qubic network"
-      external_docs: {
-        description: "GitHub repository"
-        url: "https://github.com/qubic/qubic-http/"
-      }
-      specification_extension: {
-        name: "x-displayName"
-        value: {
-          yaml: "Live API"
-
-        }
-      }
+      name: "Assets"
+      description: "Query and manage assets including issuances, ownerships, and possessions."
+    },
+    {
+      name: "Accounts"
+      description: "Check account balances and transfer history."
+    },
+    {
+      name: "Network"
+      description: "Network status and tick information."
+    },
+    {
+      name: "Transactions"
+      description: "Broadcast transactions to the network."
+    },
+    {
+      name: "Smart Contracts"
+      description: "Query smart contracts and view active IPOs."
     }
   ]
 };
@@ -321,6 +326,7 @@ service QubicLiveService {
 
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Accounts"]
       summary: "Get Balance"
       description: "Gets the balance of the specified identity."
     };
@@ -331,6 +337,7 @@ service QubicLiveService {
 
   rpc QuerySmartContract(QuerySmartContractRequest) returns (QuerySmartContractResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Smart Contracts"]
       summary: "Query Smart Contract"
       description: "Queries a smart contract function."
     };
@@ -342,6 +349,7 @@ service QubicLiveService {
 
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Transactions"]
       summary: "Broadcast Transaction"
       description: "Broadcasts a transaction to the network."
     };
@@ -353,6 +361,7 @@ service QubicLiveService {
 
   rpc GetTickInfo(google.protobuf.Empty) returns (GetTickInfoResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Network"]
       summary: "Get Tick Info"
       description: "Gets the current tick information."
     };
@@ -363,6 +372,7 @@ service QubicLiveService {
 
   rpc GetBlockHeight(google.protobuf.Empty) returns (GetBlockHeightResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Network"]
       summary: "Get Block Height"
       description: "Deprecated: use /tick-info instead."
       deprecated: true
@@ -374,6 +384,7 @@ service QubicLiveService {
 
   rpc GetIssuedAssets(IssuedAssetsRequest) returns (IssuedAssetsResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "List Issued Assets"
       description: "Gets assets issued by the specified identity."
     };
@@ -384,6 +395,7 @@ service QubicLiveService {
 
   rpc GetOwnedAssets(OwnedAssetsRequest) returns (OwnedAssetsResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "List Owned Assets"
       description: "Gets assets that are owned by the specified identity."
     };
@@ -395,6 +407,7 @@ service QubicLiveService {
 
   rpc GetPossessedAssets(PossessedAssetsRequest) returns (PossessedAssetsResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "List Possessed Assets"
       description: "Gets assets that are possessed by the specified identity."
     };
@@ -405,6 +418,7 @@ service QubicLiveService {
 
   rpc GetIssuedAssetsByFilter(GetIssuedAssetsByFilterRequest) returns (AssetIssuances) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Search Asset Issuances"
       description: "Returns a list of issued assets filtered by issuer identity and asset name."
     };
@@ -415,6 +429,7 @@ service QubicLiveService {
 
   rpc GetIssuedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetIssuance) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Get Asset Issuance By Index"
       description: "Returns an asset issuance by universe index."
     };
@@ -425,6 +440,7 @@ service QubicLiveService {
 
   rpc GetOwnedAssetsByFilter(GetOwnedAssetsByFilterRequest) returns (AssetOwnerships) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Search Asset Ownerships"
       description: "Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract."
     };
@@ -435,6 +451,7 @@ service QubicLiveService {
 
   rpc GetOwnedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetOwnership) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Get Asset Ownership By Index"
       description: "Returns an asset ownership by universe index."
     };
@@ -445,6 +462,7 @@ service QubicLiveService {
 
   rpc GetPossessedAssetsByFilter(GetPossessedAssetsByFilterRequest) returns (AssetPossessions) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Search Asset Possessions"
       description: "Returns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts."
     };
@@ -455,6 +473,7 @@ service QubicLiveService {
 
   rpc GetPossessedAssetByUniverseIndex(GetByUniverseIndexRequest) returns (AssetPossession) {
     option (openapi.v3.operation) = {
+      tags: ["Assets"]
       summary: "Get Asset Possession By Index"
       description: "Returns an asset possession by universe index."
     };
@@ -465,6 +484,7 @@ service QubicLiveService {
 
   rpc GetActiveIpos(google.protobuf.Empty) returns (GetActiveIposResponse) {
     option (openapi.v3.operation) = {
+      tags: ["Smart Contracts"]
       summary: "Get Active IPOs"
       description: "Returns a list of IPOs that are active in the current epoch."
     };
