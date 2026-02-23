@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"github.com/qubic/go-node-connector/types"
 	"github.com/qubic/qubic-http/protobuff"
@@ -77,4 +79,31 @@ func convertAssetPossession(source types.AssetPossession) (*protobuff.AssetPosse
 	}
 
 	return &assetPossession, nil
+}
+
+func convertContractIpo(source types.ContractIpo) (*protobuff.IpoBidData, error) {
+
+	ipoBidData := protobuff.IpoBidData{
+		ContractIndex: source.ContractIndex,
+		TickNumber:    source.TickNumber,
+		Bids:          make(map[int32]*protobuff.IpoBid),
+	}
+
+	for index := 0; index < types.NumberOfComputors; index++ {
+		if source.Prices[index] == 0 {
+			continue
+		}
+
+		identity, err := new(types.Identity).FromPubKey(source.PubKeys[index], false)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get identity for bid: %w", err)
+		}
+
+		ipoBidData.Bids[int32(index)] = &protobuff.IpoBid{
+			Identity: identity.String(),
+			Amount:   source.Prices[index],
+		}
+	}
+
+	return &ipoBidData, nil
 }

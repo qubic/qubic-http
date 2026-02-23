@@ -2265,6 +2265,206 @@ func (x *GetActiveIposResponse) GetIpos() []*Ipo {
 	return nil
 }
 
+type IpoBid struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Identity      string                 `protobuf:"bytes,1,opt,name=identity,proto3" json:"identity,omitempty"`
+	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IpoBid) Reset() {
+	*x = IpoBid{}
+	mi := &file_qubic_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IpoBid) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IpoBid) ProtoMessage() {}
+
+func (x *IpoBid) ProtoReflect() protoreflect.Message {
+	mi := &file_qubic_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IpoBid.ProtoReflect.Descriptor instead.
+func (*IpoBid) Descriptor() ([]byte, []int) {
+	return file_qubic_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *IpoBid) GetIdentity() string {
+	if x != nil {
+		return x.Identity
+	}
+	return ""
+}
+
+func (x *IpoBid) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type IpoBidData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContractIndex uint32                 `protobuf:"varint,1,opt,name=contract_index,json=contractIndex,proto3" json:"contract_index,omitempty"`
+	TickNumber    uint32                 `protobuf:"varint,2,opt,name=tick_number,json=tickNumber,proto3" json:"tick_number,omitempty"`
+	Bids          map[int32]*IpoBid      `protobuf:"bytes,3,rep,name=bids,proto3" json:"bids,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IpoBidData) Reset() {
+	*x = IpoBidData{}
+	mi := &file_qubic_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IpoBidData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IpoBidData) ProtoMessage() {}
+
+func (x *IpoBidData) ProtoReflect() protoreflect.Message {
+	mi := &file_qubic_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IpoBidData.ProtoReflect.Descriptor instead.
+func (*IpoBidData) Descriptor() ([]byte, []int) {
+	return file_qubic_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *IpoBidData) GetContractIndex() uint32 {
+	if x != nil {
+		return x.ContractIndex
+	}
+	return 0
+}
+
+func (x *IpoBidData) GetTickNumber() uint32 {
+	if x != nil {
+		return x.TickNumber
+	}
+	return 0
+}
+
+func (x *IpoBidData) GetBids() map[int32]*IpoBid {
+	if x != nil {
+		return x.Bids
+	}
+	return nil
+}
+
+type GetContractIpoBidsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContractIndex uint32                 `protobuf:"varint,1,opt,name=contract_index,json=contractIndex,proto3" json:"contract_index,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractIpoBidsRequest) Reset() {
+	*x = GetContractIpoBidsRequest{}
+	mi := &file_qubic_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractIpoBidsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractIpoBidsRequest) ProtoMessage() {}
+
+func (x *GetContractIpoBidsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_qubic_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractIpoBidsRequest.ProtoReflect.Descriptor instead.
+func (*GetContractIpoBidsRequest) Descriptor() ([]byte, []int) {
+	return file_qubic_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetContractIpoBidsRequest) GetContractIndex() uint32 {
+	if x != nil {
+		return x.ContractIndex
+	}
+	return 0
+}
+
+type GetContractIpoBidsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BidData       *IpoBidData            `protobuf:"bytes,1,opt,name=bid_data,json=bidData,proto3" json:"bid_data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractIpoBidsResponse) Reset() {
+	*x = GetContractIpoBidsResponse{}
+	mi := &file_qubic_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractIpoBidsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractIpoBidsResponse) ProtoMessage() {}
+
+func (x *GetContractIpoBidsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_qubic_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractIpoBidsResponse.ProtoReflect.Descriptor instead.
+func (*GetContractIpoBidsResponse) Descriptor() ([]byte, []int) {
+	return file_qubic_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *GetContractIpoBidsResponse) GetBidData() *IpoBidData {
+	if x != nil {
+		return x.BidData
+	}
+	return nil
+}
+
 var File_qubic_proto protoreflect.FileDescriptor
 
 const file_qubic_proto_rawDesc = "" +
@@ -2417,31 +2617,65 @@ const file_qubic_proto_rawDesc = "" +
 	"\n" +
 	"asset_name\x18\x02 \x01(\tR\tassetName\"E\n" +
 	"\x15GetActiveIposResponse\x12,\n" +
-	"\x04ipos\x18\x01 \x03(\v2\x18.qubic.http.qubic.pb.IpoR\x04ipos2\x8e\x1a\n" +
-	"\x10QubicLiveService\x12\xb2\x01\n" +
+	"\x04ipos\x18\x01 \x03(\v2\x18.qubic.http.qubic.pb.IpoR\x04ipos\"<\n" +
+	"\x06IpoBid\x12\x1a\n" +
+	"\bidentity\x18\x01 \x01(\tR\bidentity\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"\xe9\x01\n" +
 	"\n" +
-	"GetBalance\x12&.qubic.http.qubic.pb.GetBalanceRequest\x1a'.qubic.http.qubic.pb.GetBalanceResponse\"S\xbaG:\x12\vGet Balance\x1a+Gets the balance of the specified identity.\x82\xd3\xe4\x93\x02\x10\x12\x0e/balances/{id}\x12\xd2\x01\n" +
-	"\x12QuerySmartContract\x12..qubic.http.qubic.pb.QuerySmartContractRequest\x1a/.qubic.http.qubic.pb.QuerySmartContractResponse\"[\xbaG:\x12\x14Query Smart Contract\x1a\"Queries a smart contract function.\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/querySmartContract\x12\xe2\x01\n" +
-	"\x14BroadcastTransaction\x120.qubic.http.qubic.pb.BroadcastTransactionRequest\x1a1.qubic.http.qubic.pb.BroadcastTransactionResponse\"e\xbaGA\x12\x15Broadcast Transaction\x1a(Broadcasts a transaction to the network.\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/broadcast-transaction\x12\x99\x01\n" +
-	"\vGetTickInfo\x12\x16.google.protobuf.Empty\x1a(.qubic.http.qubic.pb.GetTickInfoResponse\"H\xbaG3\x12\rGet Tick Info\x1a\"Gets the current tick information.\x82\xd3\xe4\x93\x02\f\x12\n" +
-	"/tick-info\x12\xa8\x01\n" +
-	"\x0eGetBlockHeight\x12\x16.google.protobuf.Empty\x1a+.qubic.http.qubic.pb.GetBlockHeightResponse\"Q\xbaG9\x12\x10Get Block Height\x1a#Deprecated: use /tick-info instead.P\x01\x82\xd3\xe4\x93\x02\x0f\x12\r/block-height\x12\xcf\x01\n" +
-	"\x0fGetIssuedAssets\x12(.qubic.http.qubic.pb.IssuedAssetsRequest\x1a).qubic.http.qubic.pb.IssuedAssetsResponse\"g\xbaGC\x12\x12List Issued Assets\x1a-Gets assets issued by the specified identity.\x82\xd3\xe4\x93\x02\x1b\x12\x19/assets/{identity}/issued\x12\xd2\x01\n" +
-	"\x0eGetOwnedAssets\x12'.qubic.http.qubic.pb.OwnedAssetsRequest\x1a(.qubic.http.qubic.pb.OwnedAssetsResponse\"m\xbaGJ\x12\x11List Owned Assets\x1a5Gets assets that are owned by the specified identity.\x82\xd3\xe4\x93\x02\x1a\x12\x18/assets/{identity}/owned\x12\xea\x01\n" +
-	"\x12GetPossessedAssets\x12+.qubic.http.qubic.pb.PossessedAssetsRequest\x1a,.qubic.http.qubic.pb.PossessedAssetsResponse\"y\xbaGR\x12\x15List Possessed Assets\x1a9Gets assets that are possessed by the specified identity.\x82\xd3\xe4\x93\x02\x1e\x12\x1c/assets/{identity}/possessed\x12\xf7\x01\n" +
-	"\x17GetIssuedAssetsByFilter\x123.qubic.http.qubic.pb.GetIssuedAssetsByFilterRequest\x1a#.qubic.http.qubic.pb.AssetIssuances\"\x81\x01\xbaGe\x12\x16Search Asset Issuances\x1aKReturns a list of issued assets filtered by issuer identity and asset name.\x82\xd3\xe4\x93\x02\x13\x12\x11/assets/issuances\x12\xe4\x01\n" +
-	"\x1dGetIssuedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a\".qubic.http.qubic.pb.AssetIssuance\"o\xbaGK\x12\x1bGet Asset Issuance By Index\x1a,Returns an asset issuance by universe index.\x82\xd3\xe4\x93\x02\x1b\x12\x19/assets/issuances/{index}\x12\x8c\x02\n" +
-	"\x16GetOwnedAssetsByFilter\x122.qubic.http.qubic.pb.GetOwnedAssetsByFilterRequest\x1a$.qubic.http.qubic.pb.AssetOwnerships\"\x97\x01\xbaGz\x12\x17Search Asset Ownerships\x1a_Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract.\x82\xd3\xe4\x93\x02\x14\x12\x12/assets/ownerships\x12\xe7\x01\n" +
-	"\x1cGetOwnedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a#.qubic.http.qubic.pb.AssetOwnership\"r\xbaGM\x12\x1cGet Asset Ownership By Index\x1a-Returns an asset ownership by universe index.\x82\xd3\xe4\x93\x02\x1c\x12\x1a/assets/ownerships/{index}\x12\xa5\x02\n" +
-	"\x1aGetPossessedAssetsByFilter\x126.qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest\x1a%.qubic.http.qubic.pb.AssetPossessions\"\xa7\x01\xbaG\x88\x01\x12\x18Search Asset Possessions\x1alReturns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts.\x82\xd3\xe4\x93\x02\x15\x12\x13/assets/possessions\x12\xef\x01\n" +
-	" GetPossessedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a$.qubic.http.qubic.pb.AssetPossession\"u\xbaGO\x12\x1dGet Asset Possession By Index\x1a.Returns an asset possession by universe index.\x82\xd3\xe4\x93\x02\x1d\x12\x1b/assets/possessions/{index}\x12\xbb\x01\n" +
-	"\rGetActiveIpos\x12\x16.google.protobuf.Empty\x1a*.qubic.http.qubic.pb.GetActiveIposResponse\"f\xbaGO\x12\x0fGet Active IPOs\x1a<Returns a list of IPOs that are active in the current epoch.\x82\xd3\xe4\x93\x02\x0e\x12\f/ipos/activeB\xd8\x02\xbaG\xac\x02\x12E\n" +
-	"\x0eQubic HTTP API\x12,Bridge service for Qubic network operations.2\x051.0.0\x1a\x1f\n" +
-	"\x1dhttps://rpc.qubic.org/live/v1:\x92\x01\n" +
-	"\x10QubicLiveService\x12&Query live data from the Qubic network\x1a9\n" +
-	"\x11GitHub repository\x12$https://github.com/qubic/qubic-http/\"\x1b\n" +
-	"\rx-displayName\x12\n" +
-	"\x12\bLive APIB-\n" +
+	"IpoBidData\x12%\n" +
+	"\x0econtract_index\x18\x01 \x01(\rR\rcontractIndex\x12\x1f\n" +
+	"\vtick_number\x18\x02 \x01(\rR\n" +
+	"tickNumber\x12=\n" +
+	"\x04bids\x18\x03 \x03(\v2).qubic.http.qubic.pb.IpoBidData.BidsEntryR\x04bids\x1aT\n" +
+	"\tBidsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\x05R\x03key\x121\n" +
+	"\x05value\x18\x02 \x01(\v2\x1b.qubic.http.qubic.pb.IpoBidR\x05value:\x028\x01\"B\n" +
+	"\x19GetContractIpoBidsRequest\x12%\n" +
+	"\x0econtract_index\x18\x01 \x01(\rR\rcontractIndex\"X\n" +
+	"\x1aGetContractIpoBidsResponse\x12:\n" +
+	"\bbid_data\x18\x01 \x01(\v2\x1f.qubic.http.qubic.pb.IpoBidDataR\abidData2\xc2\x1d\n" +
+	"\x10QubicLiveService\x12\xbc\x01\n" +
+	"\n" +
+	"GetBalance\x12&.qubic.http.qubic.pb.GetBalanceRequest\x1a'.qubic.http.qubic.pb.GetBalanceResponse\"]\xbaGD\n" +
+	"\bAccounts\x12\vGet Balance\x1a+Gets the balance of the specified identity.\x82\xd3\xe4\x93\x02\x10\x12\x0e/balances/{id}\x12\xe3\x01\n" +
+	"\x12QuerySmartContract\x12..qubic.http.qubic.pb.QuerySmartContractRequest\x1a/.qubic.http.qubic.pb.QuerySmartContractResponse\"l\xbaGK\n" +
+	"\x0fSmart Contracts\x12\x14Query Smart Contract\x1a\"Queries a smart contract function.\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/querySmartContract\x12\xf0\x01\n" +
+	"\x14BroadcastTransaction\x120.qubic.http.qubic.pb.BroadcastTransactionRequest\x1a1.qubic.http.qubic.pb.BroadcastTransactionResponse\"s\xbaGO\n" +
+	"\fTransactions\x12\x15Broadcast Transaction\x1a(Broadcasts a transaction to the network.\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/broadcast-transaction\x12\xa2\x01\n" +
+	"\vGetTickInfo\x12\x16.google.protobuf.Empty\x1a(.qubic.http.qubic.pb.GetTickInfoResponse\"Q\xbaG<\n" +
+	"\aNetwork\x12\rGet Tick Info\x1a\"Gets the current tick information.\x82\xd3\xe4\x93\x02\f\x12\n" +
+	"/tick-info\x12\xb1\x01\n" +
+	"\x0eGetBlockHeight\x12\x16.google.protobuf.Empty\x1a+.qubic.http.qubic.pb.GetBlockHeightResponse\"Z\xbaGB\n" +
+	"\aNetwork\x12\x10Get Block Height\x1a#Deprecated: use /tick-info instead.P\x01\x82\xd3\xe4\x93\x02\x0f\x12\r/block-height\x12\xd7\x01\n" +
+	"\x0fGetIssuedAssets\x12(.qubic.http.qubic.pb.IssuedAssetsRequest\x1a).qubic.http.qubic.pb.IssuedAssetsResponse\"o\xbaGK\n" +
+	"\x06Assets\x12\x12List Issued Assets\x1a-Gets assets issued by the specified identity.\x82\xd3\xe4\x93\x02\x1b\x12\x19/assets/{identity}/issued\x12\xda\x01\n" +
+	"\x0eGetOwnedAssets\x12'.qubic.http.qubic.pb.OwnedAssetsRequest\x1a(.qubic.http.qubic.pb.OwnedAssetsResponse\"u\xbaGR\n" +
+	"\x06Assets\x12\x11List Owned Assets\x1a5Gets assets that are owned by the specified identity.\x82\xd3\xe4\x93\x02\x1a\x12\x18/assets/{identity}/owned\x12\xf3\x01\n" +
+	"\x12GetPossessedAssets\x12+.qubic.http.qubic.pb.PossessedAssetsRequest\x1a,.qubic.http.qubic.pb.PossessedAssetsResponse\"\x81\x01\xbaGZ\n" +
+	"\x06Assets\x12\x15List Possessed Assets\x1a9Gets assets that are possessed by the specified identity.\x82\xd3\xe4\x93\x02\x1e\x12\x1c/assets/{identity}/possessed\x12\xff\x01\n" +
+	"\x17GetIssuedAssetsByFilter\x123.qubic.http.qubic.pb.GetIssuedAssetsByFilterRequest\x1a#.qubic.http.qubic.pb.AssetIssuances\"\x89\x01\xbaGm\n" +
+	"\x06Assets\x12\x16Search Asset Issuances\x1aKReturns a list of issued assets filtered by issuer identity and asset name.\x82\xd3\xe4\x93\x02\x13\x12\x11/assets/issuances\x12\xec\x01\n" +
+	"\x1dGetIssuedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a\".qubic.http.qubic.pb.AssetIssuance\"w\xbaGS\n" +
+	"\x06Assets\x12\x1bGet Asset Issuance By Index\x1a,Returns an asset issuance by universe index.\x82\xd3\xe4\x93\x02\x1b\x12\x19/assets/issuances/{index}\x12\x95\x02\n" +
+	"\x16GetOwnedAssetsByFilter\x122.qubic.http.qubic.pb.GetOwnedAssetsByFilterRequest\x1a$.qubic.http.qubic.pb.AssetOwnerships\"\xa0\x01\xbaG\x82\x01\n" +
+	"\x06Assets\x12\x17Search Asset Ownerships\x1a_Returns a list of asset ownerships filtered by issuer, asset name, owner and managing contract.\x82\xd3\xe4\x93\x02\x14\x12\x12/assets/ownerships\x12\xef\x01\n" +
+	"\x1cGetOwnedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a#.qubic.http.qubic.pb.AssetOwnership\"z\xbaGU\n" +
+	"\x06Assets\x12\x1cGet Asset Ownership By Index\x1a-Returns an asset ownership by universe index.\x82\xd3\xe4\x93\x02\x1c\x12\x1a/assets/ownerships/{index}\x12\xad\x02\n" +
+	"\x1aGetPossessedAssetsByFilter\x126.qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest\x1a%.qubic.http.qubic.pb.AssetPossessions\"\xaf\x01\xbaG\x90\x01\n" +
+	"\x06Assets\x12\x18Search Asset Possessions\x1alReturns a list of asset possessions filtered by issuer, asset name, owner, possessor and managing contracts.\x82\xd3\xe4\x93\x02\x15\x12\x13/assets/possessions\x12\xf7\x01\n" +
+	" GetPossessedAssetByUniverseIndex\x12..qubic.http.qubic.pb.GetByUniverseIndexRequest\x1a$.qubic.http.qubic.pb.AssetPossession\"}\xbaGW\n" +
+	"\x06Assets\x12\x1dGet Asset Possession By Index\x1a.Returns an asset possession by universe index.\x82\xd3\xe4\x93\x02\x1d\x12\x1b/assets/possessions/{index}\x12\xcc\x01\n" +
+	"\rGetActiveIpos\x12\x16.google.protobuf.Empty\x1a*.qubic.http.qubic.pb.GetActiveIposResponse\"w\xbaG`\n" +
+	"\x0fSmart Contracts\x12\x0fGet Active IPOs\x1a<Returns a list of IPOs that are active in the current epoch.\x82\xd3\xe4\x93\x02\x0e\x12\f/ipos/active\x12\x9b\x02\n" +
+	"\x12GetContractIpoBids\x12..qubic.http.qubic.pb.GetContractIpoBidsRequest\x1a/.qubic.http.qubic.pb.GetContractIpoBidsResponse\"\xa3\x01\xbaG}\n" +
+	"\x0fSmart Contracts\x12 Get contract IPO bid information\x1aHReturns the bid information for a given IPO active in the current epoch.\x82\xd3\xe4\x93\x02\x1d\x12\x1b/ipos/{contract_index}/bidsB\xfb\x03\xbaG\xcf\x03\x12E\n" +
+	"\x0eQubic Live API\x12,Bridge service for Qubic network operations.2\x051.0.0\x1a\x1f\n" +
+	"\x1dhttps://rpc.qubic.org/live/v1:S\n" +
+	"\x06Assets\x12IQuery and manage assets including issuances, ownerships, and possessions.:8\n" +
+	"\bAccounts\x12,Check account balances and transfer history.:/\n" +
+	"\aNetwork\x12$Network status and tick information.:6\n" +
+	"\fTransactions\x12&Broadcast transactions to the network.:>\n" +
+	"\x0fSmart Contracts\x12+Query smart contracts and view active IPOs.B-\n" +
 	"\x06GitHub\x12#https://github.com/qubic/qubic-httpZ&github.com/qubic/qubic-http/protobuff/b\x06proto3"
 
 var (
@@ -2456,7 +2690,7 @@ func file_qubic_proto_rawDescGZIP() []byte {
 	return file_qubic_proto_rawDescData
 }
 
-var file_qubic_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
+var file_qubic_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
 var file_qubic_proto_goTypes = []any{
 	(*Balance)(nil),                           // 0: qubic.http.qubic.pb.Balance
 	(*GetBalanceRequest)(nil),                 // 1: qubic.http.qubic.pb.GetBalanceRequest
@@ -2496,7 +2730,12 @@ var file_qubic_proto_goTypes = []any{
 	(*GetPossessedAssetsByFilterRequest)(nil), // 35: qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest
 	(*Ipo)(nil),                               // 36: qubic.http.qubic.pb.Ipo
 	(*GetActiveIposResponse)(nil),             // 37: qubic.http.qubic.pb.GetActiveIposResponse
-	(*emptypb.Empty)(nil),                     // 38: google.protobuf.Empty
+	(*IpoBid)(nil),                            // 38: qubic.http.qubic.pb.IpoBid
+	(*IpoBidData)(nil),                        // 39: qubic.http.qubic.pb.IpoBidData
+	(*GetContractIpoBidsRequest)(nil),         // 40: qubic.http.qubic.pb.GetContractIpoBidsRequest
+	(*GetContractIpoBidsResponse)(nil),        // 41: qubic.http.qubic.pb.GetContractIpoBidsResponse
+	nil,                                       // 42: qubic.http.qubic.pb.IpoBidData.BidsEntry
+	(*emptypb.Empty)(nil),                     // 43: google.protobuf.Empty
 }
 var file_qubic_proto_depIdxs = []int32{
 	0,  // 0: qubic.http.qubic.pb.GetBalanceResponse.balance:type_name -> qubic.http.qubic.pb.Balance
@@ -2520,41 +2759,46 @@ var file_qubic_proto_depIdxs = []int32{
 	29, // 18: qubic.http.qubic.pb.AssetPossession.data:type_name -> qubic.http.qubic.pb.AssetPossessionData
 	30, // 19: qubic.http.qubic.pb.AssetPossessions.assets:type_name -> qubic.http.qubic.pb.AssetPossession
 	36, // 20: qubic.http.qubic.pb.GetActiveIposResponse.ipos:type_name -> qubic.http.qubic.pb.Ipo
-	1,  // 21: qubic.http.qubic.pb.QubicLiveService.GetBalance:input_type -> qubic.http.qubic.pb.GetBalanceRequest
-	21, // 22: qubic.http.qubic.pb.QubicLiveService.QuerySmartContract:input_type -> qubic.http.qubic.pb.QuerySmartContractRequest
-	3,  // 23: qubic.http.qubic.pb.QubicLiveService.BroadcastTransaction:input_type -> qubic.http.qubic.pb.BroadcastTransactionRequest
-	38, // 24: qubic.http.qubic.pb.QubicLiveService.GetTickInfo:input_type -> google.protobuf.Empty
-	38, // 25: qubic.http.qubic.pb.QubicLiveService.GetBlockHeight:input_type -> google.protobuf.Empty
-	11, // 26: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssets:input_type -> qubic.http.qubic.pb.IssuedAssetsRequest
-	15, // 27: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssets:input_type -> qubic.http.qubic.pb.OwnedAssetsRequest
-	19, // 28: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssets:input_type -> qubic.http.qubic.pb.PossessedAssetsRequest
-	33, // 29: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetIssuedAssetsByFilterRequest
-	32, // 30: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
-	34, // 31: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetOwnedAssetsByFilterRequest
-	32, // 32: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
-	35, // 33: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest
-	32, // 34: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
-	38, // 35: qubic.http.qubic.pb.QubicLiveService.GetActiveIpos:input_type -> google.protobuf.Empty
-	2,  // 36: qubic.http.qubic.pb.QubicLiveService.GetBalance:output_type -> qubic.http.qubic.pb.GetBalanceResponse
-	22, // 37: qubic.http.qubic.pb.QubicLiveService.QuerySmartContract:output_type -> qubic.http.qubic.pb.QuerySmartContractResponse
-	4,  // 38: qubic.http.qubic.pb.QubicLiveService.BroadcastTransaction:output_type -> qubic.http.qubic.pb.BroadcastTransactionResponse
-	6,  // 39: qubic.http.qubic.pb.QubicLiveService.GetTickInfo:output_type -> qubic.http.qubic.pb.GetTickInfoResponse
-	7,  // 40: qubic.http.qubic.pb.QubicLiveService.GetBlockHeight:output_type -> qubic.http.qubic.pb.GetBlockHeightResponse
-	12, // 41: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssets:output_type -> qubic.http.qubic.pb.IssuedAssetsResponse
-	16, // 42: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssets:output_type -> qubic.http.qubic.pb.OwnedAssetsResponse
-	20, // 43: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssets:output_type -> qubic.http.qubic.pb.PossessedAssetsResponse
-	25, // 44: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetIssuances
-	24, // 45: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetIssuance
-	28, // 46: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetOwnerships
-	27, // 47: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetOwnership
-	31, // 48: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetPossessions
-	30, // 49: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetPossession
-	37, // 50: qubic.http.qubic.pb.QubicLiveService.GetActiveIpos:output_type -> qubic.http.qubic.pb.GetActiveIposResponse
-	36, // [36:51] is the sub-list for method output_type
-	21, // [21:36] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	42, // 21: qubic.http.qubic.pb.IpoBidData.bids:type_name -> qubic.http.qubic.pb.IpoBidData.BidsEntry
+	39, // 22: qubic.http.qubic.pb.GetContractIpoBidsResponse.bid_data:type_name -> qubic.http.qubic.pb.IpoBidData
+	38, // 23: qubic.http.qubic.pb.IpoBidData.BidsEntry.value:type_name -> qubic.http.qubic.pb.IpoBid
+	1,  // 24: qubic.http.qubic.pb.QubicLiveService.GetBalance:input_type -> qubic.http.qubic.pb.GetBalanceRequest
+	21, // 25: qubic.http.qubic.pb.QubicLiveService.QuerySmartContract:input_type -> qubic.http.qubic.pb.QuerySmartContractRequest
+	3,  // 26: qubic.http.qubic.pb.QubicLiveService.BroadcastTransaction:input_type -> qubic.http.qubic.pb.BroadcastTransactionRequest
+	43, // 27: qubic.http.qubic.pb.QubicLiveService.GetTickInfo:input_type -> google.protobuf.Empty
+	43, // 28: qubic.http.qubic.pb.QubicLiveService.GetBlockHeight:input_type -> google.protobuf.Empty
+	11, // 29: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssets:input_type -> qubic.http.qubic.pb.IssuedAssetsRequest
+	15, // 30: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssets:input_type -> qubic.http.qubic.pb.OwnedAssetsRequest
+	19, // 31: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssets:input_type -> qubic.http.qubic.pb.PossessedAssetsRequest
+	33, // 32: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetIssuedAssetsByFilterRequest
+	32, // 33: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
+	34, // 34: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetOwnedAssetsByFilterRequest
+	32, // 35: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
+	35, // 36: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetsByFilter:input_type -> qubic.http.qubic.pb.GetPossessedAssetsByFilterRequest
+	32, // 37: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetByUniverseIndex:input_type -> qubic.http.qubic.pb.GetByUniverseIndexRequest
+	43, // 38: qubic.http.qubic.pb.QubicLiveService.GetActiveIpos:input_type -> google.protobuf.Empty
+	40, // 39: qubic.http.qubic.pb.QubicLiveService.GetContractIpoBids:input_type -> qubic.http.qubic.pb.GetContractIpoBidsRequest
+	2,  // 40: qubic.http.qubic.pb.QubicLiveService.GetBalance:output_type -> qubic.http.qubic.pb.GetBalanceResponse
+	22, // 41: qubic.http.qubic.pb.QubicLiveService.QuerySmartContract:output_type -> qubic.http.qubic.pb.QuerySmartContractResponse
+	4,  // 42: qubic.http.qubic.pb.QubicLiveService.BroadcastTransaction:output_type -> qubic.http.qubic.pb.BroadcastTransactionResponse
+	6,  // 43: qubic.http.qubic.pb.QubicLiveService.GetTickInfo:output_type -> qubic.http.qubic.pb.GetTickInfoResponse
+	7,  // 44: qubic.http.qubic.pb.QubicLiveService.GetBlockHeight:output_type -> qubic.http.qubic.pb.GetBlockHeightResponse
+	12, // 45: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssets:output_type -> qubic.http.qubic.pb.IssuedAssetsResponse
+	16, // 46: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssets:output_type -> qubic.http.qubic.pb.OwnedAssetsResponse
+	20, // 47: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssets:output_type -> qubic.http.qubic.pb.PossessedAssetsResponse
+	25, // 48: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetIssuances
+	24, // 49: qubic.http.qubic.pb.QubicLiveService.GetIssuedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetIssuance
+	28, // 50: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetOwnerships
+	27, // 51: qubic.http.qubic.pb.QubicLiveService.GetOwnedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetOwnership
+	31, // 52: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetsByFilter:output_type -> qubic.http.qubic.pb.AssetPossessions
+	30, // 53: qubic.http.qubic.pb.QubicLiveService.GetPossessedAssetByUniverseIndex:output_type -> qubic.http.qubic.pb.AssetPossession
+	37, // 54: qubic.http.qubic.pb.QubicLiveService.GetActiveIpos:output_type -> qubic.http.qubic.pb.GetActiveIposResponse
+	41, // 55: qubic.http.qubic.pb.QubicLiveService.GetContractIpoBids:output_type -> qubic.http.qubic.pb.GetContractIpoBidsResponse
+	40, // [40:56] is the sub-list for method output_type
+	24, // [24:40] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_qubic_proto_init() }
@@ -2568,7 +2812,7 @@ func file_qubic_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_qubic_proto_rawDesc), len(file_qubic_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   38,
+			NumMessages:   43,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
