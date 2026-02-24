@@ -322,6 +322,25 @@ message GetActiveIposResponse {
   repeated Ipo ipos = 1;
 }
 
+message IpoBid {
+  string identity = 1;
+  int64 amount = 2;
+}
+
+message IpoBidData {
+  uint32 contract_index = 1;
+  uint32 tick_number = 2;
+  map<int32,IpoBid> bids = 3;
+}
+
+message GetContractIpoBidsRequest {
+  uint32 contract_index = 1;
+}
+
+message GetContractIpoBidsResponse {
+  IpoBidData bid_data = 1;
+}
+
 service QubicLiveService {
 
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
@@ -490,6 +509,17 @@ service QubicLiveService {
     };
     option (google.api.http) = {
       get: "/ipos/active"
+    };
+  }
+
+  rpc GetContractIpoBids(GetContractIpoBidsRequest) returns (GetContractIpoBidsResponse) {
+    option (openapi.v3.operation) = {
+      tags: ["Smart Contracts"]
+      summary: "Get contract IPO bid information"
+      description: "Returns the bid information for a given IPO active in the current epoch."
+    };
+    option (google.api.http) = {
+      get: "/ipos/{contract_index}/bids"
     };
   }
 }

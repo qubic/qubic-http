@@ -35,6 +35,7 @@ const (
 	QubicLiveService_GetPossessedAssetsByFilter_FullMethodName       = "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetsByFilter"
 	QubicLiveService_GetPossessedAssetByUniverseIndex_FullMethodName = "/qubic.http.qubic.pb.QubicLiveService/GetPossessedAssetByUniverseIndex"
 	QubicLiveService_GetActiveIpos_FullMethodName                    = "/qubic.http.qubic.pb.QubicLiveService/GetActiveIpos"
+	QubicLiveService_GetContractIpoBids_FullMethodName               = "/qubic.http.qubic.pb.QubicLiveService/GetContractIpoBids"
 )
 
 // QubicLiveServiceClient is the client API for QubicLiveService service.
@@ -56,6 +57,7 @@ type QubicLiveServiceClient interface {
 	GetPossessedAssetsByFilter(ctx context.Context, in *GetPossessedAssetsByFilterRequest, opts ...grpc.CallOption) (*AssetPossessions, error)
 	GetPossessedAssetByUniverseIndex(ctx context.Context, in *GetByUniverseIndexRequest, opts ...grpc.CallOption) (*AssetPossession, error)
 	GetActiveIpos(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveIposResponse, error)
+	GetContractIpoBids(ctx context.Context, in *GetContractIpoBidsRequest, opts ...grpc.CallOption) (*GetContractIpoBidsResponse, error)
 }
 
 type qubicLiveServiceClient struct {
@@ -216,6 +218,16 @@ func (c *qubicLiveServiceClient) GetActiveIpos(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
+func (c *qubicLiveServiceClient) GetContractIpoBids(ctx context.Context, in *GetContractIpoBidsRequest, opts ...grpc.CallOption) (*GetContractIpoBidsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractIpoBidsResponse)
+	err := c.cc.Invoke(ctx, QubicLiveService_GetContractIpoBids_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QubicLiveServiceServer is the server API for QubicLiveService service.
 // All implementations must embed UnimplementedQubicLiveServiceServer
 // for forward compatibility.
@@ -235,6 +247,7 @@ type QubicLiveServiceServer interface {
 	GetPossessedAssetsByFilter(context.Context, *GetPossessedAssetsByFilterRequest) (*AssetPossessions, error)
 	GetPossessedAssetByUniverseIndex(context.Context, *GetByUniverseIndexRequest) (*AssetPossession, error)
 	GetActiveIpos(context.Context, *emptypb.Empty) (*GetActiveIposResponse, error)
+	GetContractIpoBids(context.Context, *GetContractIpoBidsRequest) (*GetContractIpoBidsResponse, error)
 	mustEmbedUnimplementedQubicLiveServiceServer()
 }
 
@@ -289,6 +302,9 @@ func (UnimplementedQubicLiveServiceServer) GetPossessedAssetByUniverseIndex(cont
 }
 func (UnimplementedQubicLiveServiceServer) GetActiveIpos(context.Context, *emptypb.Empty) (*GetActiveIposResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetActiveIpos not implemented")
+}
+func (UnimplementedQubicLiveServiceServer) GetContractIpoBids(context.Context, *GetContractIpoBidsRequest) (*GetContractIpoBidsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContractIpoBids not implemented")
 }
 func (UnimplementedQubicLiveServiceServer) mustEmbedUnimplementedQubicLiveServiceServer() {}
 func (UnimplementedQubicLiveServiceServer) testEmbeddedByValue()                          {}
@@ -581,6 +597,24 @@ func _QubicLiveService_GetActiveIpos_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QubicLiveService_GetContractIpoBids_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractIpoBidsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QubicLiveServiceServer).GetContractIpoBids(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QubicLiveService_GetContractIpoBids_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QubicLiveServiceServer).GetContractIpoBids(ctx, req.(*GetContractIpoBidsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QubicLiveService_ServiceDesc is the grpc.ServiceDesc for QubicLiveService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -647,6 +681,10 @@ var QubicLiveService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetActiveIpos",
 			Handler:    _QubicLiveService_GetActiveIpos_Handler,
+		},
+		{
+			MethodName: "GetContractIpoBids",
+			Handler:    _QubicLiveService_GetContractIpoBids_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

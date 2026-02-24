@@ -699,6 +699,28 @@ func (s *Server) GetActiveIpos(ctx context.Context, _ *emptypb.Empty) (*protobuf
 	return &protobuff.GetActiveIposResponse{Ipos: ipos}, nil
 }
 
+func (s *Server) GetContractIpoBids(ctx context.Context, request *protobuff.GetContractIpoBidsRequest) (*protobuff.GetContractIpoBidsResponse, error) {
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting connection from pool: %v", err)
+	}
+
+	nodeResponse, err := client.GetContractIpo(ctx, request.ContractIndex)
+	if err != nil {
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting contract ipo data: %v", err)
+	}
+	s.qPool.Put(client)
+
+	ipoBidData, err := convertContractIpo(nodeResponse)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "converting node response: %v", err)
+	}
+
+	return &protobuff.GetContractIpoBidsResponse{BidData: ipoBidData}, nil
+}
+
 func (s *Server) Start() error {
 	srv := grpc.NewServer(
 		grpc.MaxRecvMsgSize(600*1024*1024),
