@@ -23,7 +23,7 @@ cd protobuff && make
 Requires:
 - `protoc` with Go plugins (`protoc-gen-go`, `protoc-gen-go-grpc`, `protoc-gen-grpc-gateway`)
 - `protoc-gen-openapi` (`go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest`)
-- `yq` (`brew install yq`) - used for OpenAPI post-processing
+- `yq` - used for OpenAPI post-processing (`brew install yq` on macOS, `snap install yq` on Linux, `choco install yq` on Windows, or [GitHub releases](https://github.com/mikefarah/yq/releases))
 
 ## Running the service
 
