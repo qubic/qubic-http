@@ -786,6 +786,7 @@ tags:
     - name: Network
       description: Network status and tick information.
     - name: QubicLiveService
+      x-scalar-ignore: true
     - name: Smart Contracts
       description: Query smart contracts and view active IPOs.
     - name: Transactions

@@ -34,7 +34,7 @@ all: $(GO) openapi-v3
 openapi-v3:
 		protoc -I=. --openapi_out=output_mode=source_relative,default_response=false:. *.proto
 		@# Add x-scalar-ignore to auto-generated QubicLiveService tag
-		yq -i '(.tags[] | select(.name == "QubicLiveService")).x-scalar-ignore = true' qubic.openapi.yaml
+		yq -i --indent 4 '(.tags[] | select(.name == "QubicLiveService")).x-scalar-ignore = true' qubic.openapi.yaml
 
 clean:
 		rm -f *.pb.go

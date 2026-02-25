@@ -14,6 +14,17 @@ Some of its features include:
 go build -o "server" "./app/grpc_server"
 ```
 
+### Regenerating protobuf and OpenAPI files
+
+```shell
+cd protobuff && make
+```
+
+Requires:
+- `protoc` with Go plugins (`protoc-gen-go`, `protoc-gen-go-grpc`, `protoc-gen-grpc-gateway`)
+- `protoc-gen-openapi` (`go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest`)
+- `yq` (`brew install yq`) - used for OpenAPI post-processing
+
 ## Running the service
 
 `qubic-http` requires an instance of [qubic-nodes](https://github.com/qubic/go-qubic-nodes) for fetching reliable node addresses.
