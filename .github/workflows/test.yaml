@@ -23,3 +23,27 @@ jobs:
         with:
           go-version: 1.25.x
       - run: go test ./...
+
+  check-openapi:
+    name: Check OpenAPI spec is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 1.25.x
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: '28.x'
+      - name: Install protoc-gen-openapi
+        run: go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
+      - name: Regenerate OpenAPI spec
+        working-directory: protobuff
+        run: make openapi-v3
+      - name: Check for differences
+        run: |
+          if ! git diff --exit-code protobuff/qubic.openapi.yaml; then
+            echo "::error::OpenAPI spec is out of date. Run 'make openapi-v3' in protobuff/ and commit the result."
+            exit 1
+          fi
