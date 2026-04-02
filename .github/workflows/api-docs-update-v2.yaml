@@ -6,18 +6,50 @@ on:
     branches:
       - main
     paths:
-      - 'protobuff/qubic.openapi.yaml' # Only trigger if the OpenAPI file changed
+      - 'protobuff/*.proto'
 
 jobs:
   api-docs-update-trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.26.x
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Install protoc-gen-openapi
+        run: go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
+
+      - name: Generate OpenAPI spec
+        working-directory: protobuff
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          make openapi-v3
+
+      - name: Apply OpenAPI adjustments
+        run: |
+          cd protobuff
+          yq -i '(.tags[] | select(.name == "QubicLiveService")).x-scalar-ignore = true' qubic.openapi.yaml
+
+      - name: Encode spec
+        id: encode
+        run: |
+          CONTENT=$(base64 -w 0 protobuff/qubic.openapi.yaml)
+          echo "spec_base64=$CONTENT" >> "$GITHUB_OUTPUT"
+
       - name: Dispatch to Integration
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GH_PAT }}
           repository: qubic/integration
-          event-type: api-docs-update
+          event-type: live-api-update
+          client-payload: '{"openapi_spec_base64": "${{ steps.encode.outputs.spec_base64 }}"}'
 
       - name: Dispatch to Docs
         uses: peter-evans/repository-dispatch@v3
@@ -25,3 +57,4 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           repository: qubic/docs
           event-type: live-api-update
+          client-payload: '{"openapi_spec_base64": "${{ steps.encode.outputs.spec_base64 }}"}'
