@@ -341,6 +341,11 @@ message GetContractIpoBidsResponse {
   IpoBidData bid_data = 1;
 }
 
+// HealthResponse
+message HealthResponse {
+  string status = 1 [(openapi.v3.property) = {description:"Health status information."}];
+}
+
 service QubicLiveService {
 
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
@@ -522,4 +527,15 @@ service QubicLiveService {
       get: "/ipos/{contract_index}/bids"
     };
   }
+
+  rpc GetHealth(google.protobuf.Empty) returns (HealthResponse) {
+    option (openapi.v3.operation) = {
+      summary: "Get Health"
+      description: "Health check. This is for internal use only and can change any time. Do not rely on this endpoint."
+    };
+    option (google.api.http) = {
+      get: "/health"
+    };
+  }
+
 }
