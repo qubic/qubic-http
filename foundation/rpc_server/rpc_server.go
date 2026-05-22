@@ -721,6 +721,12 @@ func (s *Server) GetContractIpoBids(ctx context.Context, request *protobuff.GetC
 	return &protobuff.GetContractIpoBidsResponse{BidData: ipoBidData}, nil
 }
 
+func (s *Server) GetHealth(context.Context, *emptypb.Empty) (*protobuff.HealthResponse, error) {
+	return &protobuff.HealthResponse{
+		Status: "UP",
+	}, nil
+}
+
 func (s *Server) Start() error {
 	srv := grpc.NewServer(
 		grpc.MaxRecvMsgSize(600*1024*1024),
