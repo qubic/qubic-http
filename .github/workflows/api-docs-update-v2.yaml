@@ -6,22 +6,24 @@ on:
     branches:
       - main
     paths:
-      - 'protobuff/qubic.openapi.yaml' # Only trigger if the OpenAPI file changed
+      - 'protobuff/*.proto'
 
 jobs:
   api-docs-update-trigger:
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch to Integration
+      - name: Dispatch to qubic/integration
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GH_PAT }}
           repository: qubic/integration
-          event-type: api-docs-update
+          event-type: live-api-update
+          client-payload: '{"ref": "${{ github.sha }}"}'
 
-      - name: Dispatch to Docs
+      - name: Dispatch to qubic/docs
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GH_PAT }}
           repository: qubic/docs
           event-type: live-api-update
+          client-payload: '{"ref": "${{ github.sha }}"}'
