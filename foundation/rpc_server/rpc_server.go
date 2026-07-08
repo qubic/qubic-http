@@ -11,7 +11,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
-	"github.com/qubic/go-node-connector/types"
+	"github.com/qubic/go-node-connector/v2/types"
 	"github.com/qubic/go-schnorrq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -24,7 +24,7 @@ import (
 	"log"
 	"net/http"
 
-	qubic "github.com/qubic/go-node-connector"
+	qubic "github.com/qubic/go-node-connector/v2"
 	"github.com/qubic/qubic-http/protobuff"
 )
 

@@ -1,10 +1,11 @@
 package rpc
 
 import (
-	"github.com/qubic/go-node-connector/types"
+	"testing"
+
+	"github.com/qubic/go-node-connector/v2/types"
 	"github.com/qubic/qubic-http/protobuff"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestAssetConverter_convertAssetIssuance(t *testing.T) {
