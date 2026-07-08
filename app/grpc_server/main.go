@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	qubic "github.com/qubic/go-node-connector"
+	qubic "github.com/qubic/go-node-connector/v2"
 	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
 
 	"github.com/ardanlabs/conf"
