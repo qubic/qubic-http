@@ -190,6 +190,23 @@ message PossessedAssetsResponse {
   repeated PossessedAsset possessed_assets = 1;
 }
 
+// GetAssetsForIdentitiesRequest
+message GetAssetsForIdentitiesRequest {
+  repeated string identities = 1;
+}
+
+// IdentityAssets holds the assets owned and possessed by a single identity.
+message IdentityAssets {
+  string identity = 1;
+  repeated OwnedAsset owned_assets = 2;
+  repeated PossessedAsset possessed_assets = 3;
+}
+
+// GetAssetsForIdentitiesResponse
+message GetAssetsForIdentitiesResponse {
+  repeated IdentityAssets assets = 1;
+}
+
 // QuerySmartContractRequest
 message QuerySmartContractRequest {
   // identifies the smart contract
@@ -437,6 +454,18 @@ service QubicLiveService {
     };
     option (google.api.http) = {
       get: "/assets/{identity}/possessed"
+    };
+  };
+
+  rpc GetAssetsForIdentities(GetAssetsForIdentitiesRequest) returns (GetAssetsForIdentitiesResponse) {
+    option (openapi.v3.operation) = {
+      tags: ["Assets"]
+      summary: "List Owned And Possessed Assets For Multiple Identities"
+      description: "Gets the assets owned and possessed by each of the given identities. The requests are pipelined over a single node connection, so one call costs roughly one round trip regardless of how many identities are requested. Results are returned in the order the identities were given."
+    };
+    option (google.api.http) = {
+      post: "/assets"
+      body: "*"
     };
   };
 

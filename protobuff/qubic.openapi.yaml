@@ -9,6 +9,27 @@ info:
 servers:
     - url: https://rpc.qubic.org/live/v1
 paths:
+    /assets:
+        post:
+            tags:
+                - QubicLiveService
+                - Assets
+            summary: List Owned And Possessed Assets For Multiple Identities
+            description: Gets the assets owned and possessed by each of the given identities. The requests are pipelined over a single node connection, so one call costs roughly one round trip regardless of how many identities are requested. Results are returned in the order the identities were given.
+            operationId: QubicLiveService_GetAssetsForIdentities
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetAssetsForIdentitiesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAssetsForIdentitiesResponse'
     /assets/issuances:
         get:
             tags:
@@ -599,6 +620,22 @@ components:
                     items:
                         $ref: '#/components/schemas/Ipo'
             description: GetActiveIposResponse
+        GetAssetsForIdentitiesRequest:
+            type: object
+            properties:
+                identities:
+                    type: array
+                    items:
+                        type: string
+            description: GetAssetsForIdentitiesRequest
+        GetAssetsForIdentitiesResponse:
+            type: object
+            properties:
+                assets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IdentityAssets'
+            description: GetAssetsForIdentitiesResponse
         GetBalanceResponse:
             type: object
             properties:
@@ -629,6 +666,20 @@ components:
                     type: string
                     description: Health status information.
             description: HealthResponse
+        IdentityAssets:
+            type: object
+            properties:
+                identity:
+                    type: string
+                ownedAssets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/OwnedAsset'
+                possessedAssets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PossessedAsset'
+            description: IdentityAssets holds the assets owned and possessed by a single identity.
         Ipo:
             type: object
             properties:
