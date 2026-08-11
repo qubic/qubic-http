@@ -38,6 +38,7 @@ QUBIC_API_SIDECAR_POOL_NODE_FETCHER_URL:      "http://127.0.0.1:8080/status"
 QUBIC_API_SIDECAR_SERVER_READ_TIMEOUT:        (default: 5s)
 QUBIC_API_SIDECAR_SERVER_WRITE_TIMEOUT:       (default: 5s)
 QUBIC_API_SIDECAR_SERVER_SHUTDOWN_TIMEOUT:    (default: 5s)
+QUBIC_API_SIDECAR_SERVER_MAX_BATCH_IDENTITIES: (default: 15)
 
 QUBIC_API_SIDECAR_POOL_NODE_FETCHER_TIMEOUT:  (default: 2s)
 QUBIC_API_SIDECAR_POOL_INITIAL_CAP:           (default: 5)
@@ -316,7 +317,7 @@ curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCB
         "numberOfUnits": "2",
         "ownedAsset": {
           "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
-          "type": 3,
+          "type": 2,
           "padding": 0,
           "managingContractIndex": 1,
           "issuanceIndex": 9707976,
@@ -345,7 +346,7 @@ curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCB
         "numberOfUnits": "1",
         "ownedAsset": {
           "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
-          "type": 3,
+          "type": 2,
           "padding": 0,
           "managingContractIndex": 1,
           "issuanceIndex": 9707978,
@@ -374,7 +375,7 @@ curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCB
         "numberOfUnits": "186685601",
         "ownedAsset": {
           "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
-          "type": 3,
+          "type": 2,
           "padding": 0,
           "managingContractIndex": 1,
           "issuanceIndex": 9707980,
@@ -403,7 +404,7 @@ curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCB
         "numberOfUnits": "10",
         "ownedAsset": {
           "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
-          "type": 3,
+          "type": 2,
           "padding": 0,
           "managingContractIndex": 1,
           "issuanceIndex": 9707982,
@@ -421,6 +422,87 @@ curl localhost:8000/assets/IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCB
         "tick": 14057759,
         "universeIndex": 0
       }
+    }
+  ]
+}
+```
+#### /assets (batch)
+
+Fetches the assets owned and possessed by several identities at once. The requests are
+pipelined over a single node connection, so one call costs roughly one round trip for the
+whole set instead of one per identity. Prefer this over calling
+`/assets/{identity}/owned` and `/assets/{identity}/possessed` in a loop.
+
+Results are returned in the order the identities were given, and every requested identity
+appears in the response, with empty lists if it holds no assets. The list must contain
+between 1 and `QUBIC_API_SIDECAR_SERVER_MAX_BATCH_IDENTITIES` (default 15) identities,
+with no duplicates. All identities are validated before any node call, so a single
+malformed entry fails the whole request without fetching anything.
+
+```shell
+curl -X POST localhost:8000/assets \
+  -H 'Content-Type: application/json' \
+  -d '{"identities":["IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC"]}'
+```
+```json
+{
+  "assets": [
+    {
+      "identity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+      "ownedAssets": [
+        {
+          "data": {
+            "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+            "type": 2,
+            "padding": 0,
+            "managingContractIndex": 1,
+            "issuanceIndex": 9707976,
+            "numberOfUnits": "2",
+            "issuedAsset": {
+              "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+              "type": 1,
+              "name": "RANDOM",
+              "numberOfDecimalPlaces": 0,
+              "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+            }
+          },
+          "info": {
+            "tick": 14057759,
+            "universeIndex": 0
+          }
+        }
+      ],
+      "possessedAssets": [
+        {
+          "data": {
+            "possessorIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+            "type": 3,
+            "padding": 0,
+            "managingContractIndex": 1,
+            "issuanceIndex": 9707976,
+            "numberOfUnits": "2",
+            "ownedAsset": {
+              "ownerIdentity": "IGJQYTMFLVNIMEAKLANHKGNGZPFCFJGSMVOWMNGLWCZWKFHANHGCBYODMKBC",
+              "type": 2,
+              "padding": 0,
+              "managingContractIndex": 1,
+              "issuanceIndex": 9707976,
+              "numberOfUnits": "2",
+              "issuedAsset": {
+                "issuerIdentity": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXIB",
+                "type": 1,
+                "name": "RANDOM",
+                "numberOfDecimalPlaces": 0,
+                "unitOfMeasurement": [0, 0, 0, 0, 0, 0, 0]
+              }
+            }
+          },
+          "info": {
+            "tick": 14057759,
+            "universeIndex": 0
+          }
+        }
+      ]
     }
   ]
 }
