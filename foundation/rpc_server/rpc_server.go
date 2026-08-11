@@ -30,22 +30,32 @@ import (
 
 var _ protobuff.QubicLiveServiceServer = &Server{}
 
+// defaultMaxBatchIdentities caps how many identities a single batch asset request may
+// ask for, used when no limit is configured.
+const defaultMaxBatchIdentities = 15
+
 type Server struct {
 	protobuff.UnimplementedQubicLiveServiceServer
-	logger          *log.Logger
-	listenAddrGRPC  string
-	listenAddrHTTP  string
-	qPool           *qubic.Pool
-	maxTickFetchUrl string
+	logger             *log.Logger
+	listenAddrGRPC     string
+	listenAddrHTTP     string
+	qPool              nodePool
+	maxTickFetchUrl    string
+	maxBatchIdentities int
 }
 
-func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string) *Server {
+func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, maxBatchIdentities int) *Server {
+	if maxBatchIdentities <= 0 {
+		maxBatchIdentities = defaultMaxBatchIdentities
+	}
+
 	return &Server{
-		listenAddrGRPC:  listenAddrGRPC,
-		listenAddrHTTP:  listenAddrHTTP,
-		logger:          logger,
-		qPool:           qPool,
-		maxTickFetchUrl: maxTickFetchUrl,
+		listenAddrGRPC:     listenAddrGRPC,
+		listenAddrHTTP:     listenAddrHTTP,
+		logger:             logger,
+		qPool:              newQubicNodePool(qPool),
+		maxTickFetchUrl:    maxTickFetchUrl,
+		maxBatchIdentities: maxBatchIdentities,
 	}
 }
 
@@ -244,7 +254,7 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 	}, nil
 }
 
-func broadcastTxToMultiple(ctx context.Context, pool *qubic.Pool, decodedTx []byte) int {
+func broadcastTxToMultiple(ctx context.Context, pool nodePool, decodedTx []byte) int {
 	nrSuccess := 0
 	for i := 0; i < 3; i++ {
 		func() {
@@ -302,36 +312,9 @@ func (s *Server) GetIssuedAssets(ctx context.Context, req *protobuff.IssuedAsset
 
 	s.qPool.Put(client)
 
-	issuedAssets := make([]*protobuff.IssuedAsset, 0)
-
-	for _, asset := range assets {
-
-		iAsset := asset.Data
-		var iAssetIdentity types.Identity
-		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
-		}
-
-		data := protobuff.IssuedAssetData{
-			IssuerIdentity:        iAssetIdentity.String(),
-			Type:                  uint32(iAsset.Type),
-			Name:                  int8ArrayToString(iAsset.Name[:]),
-			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
-		}
-
-		info := protobuff.AssetInfo{
-			Tick:          asset.Info.Tick,
-			UniverseIndex: asset.Info.UniverseIndex,
-		}
-
-		issuedAsset := protobuff.IssuedAsset{
-			Data: &data,
-			Info: &info,
-		}
-
-		issuedAssets = append(issuedAssets, &issuedAsset)
+	issuedAssets, err := convertIssuedAssets(assets)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "converting node response: %v", err)
 	}
 
 	return &protobuff.IssuedAssetsResponse{IssuedAssets: issuedAssets}, nil
@@ -351,54 +334,9 @@ func (s *Server) GetOwnedAssets(ctx context.Context, req *protobuff.OwnedAssetsR
 
 	s.qPool.Put(client)
 
-	ownedAssets := make([]*protobuff.OwnedAsset, 0)
-
-	for _, asset := range assets {
-
-		iAsset := asset.Data.IssuedAsset
-
-		var iAssetIdentity types.Identity
-		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
-		}
-
-		issuedAsset := protobuff.IssuedAssetData{
-			IssuerIdentity:        iAssetIdentity.String(),
-			Type:                  uint32(iAsset.Type),
-			Name:                  int8ArrayToString(iAsset.Name[:]),
-			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
-		}
-
-		var oAssetIdentity types.Identity
-		oAssetIdentity, err = oAssetIdentity.FromPubKey(asset.Data.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for owned asset public key")
-		}
-
-		data := protobuff.OwnedAssetData{
-			OwnerIdentity:         oAssetIdentity.String(),
-			Type:                  uint32(asset.Data.Type),
-			Padding:               int32(asset.Data.Padding[0]),
-			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
-			IssuanceIndex:         asset.Data.IssuanceIndex,
-			NumberOfUnits:         asset.Data.NumberOfUnits,
-			IssuedAsset:           &issuedAsset,
-		}
-
-		info := protobuff.AssetInfo{
-			Tick:          asset.Info.Tick,
-			UniverseIndex: asset.Info.UniverseIndex,
-		}
-
-		ownedAsset := protobuff.OwnedAsset{
-			Data: &data,
-			Info: &info,
-		}
-
-		ownedAssets = append(ownedAssets, &ownedAsset)
-
+	ownedAssets, err := convertOwnedAssets(assets)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "converting node response: %v", err)
 	}
 
 	return &protobuff.OwnedAssetsResponse{OwnedAssets: ownedAssets}, nil
@@ -418,73 +356,71 @@ func (s *Server) GetPossessedAssets(ctx context.Context, req *protobuff.Possesse
 
 	s.qPool.Put(client)
 
-	possessedAssets := make([]*protobuff.PossessedAsset, 0)
-
-	for _, asset := range assets {
-
-		oAsset := asset.Data.OwnedAsset
-		var oAssetIdentity types.Identity
-		oAssetIdentity, err = oAssetIdentity.FromPubKey(oAsset.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for owned asset public key")
-		}
-
-		iAsset := oAsset.IssuedAsset
-		var iAssetIdentity types.Identity
-		iAssetIdentity, err = iAssetIdentity.FromPubKey(iAsset.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
-		}
-
-		issuedAsset := protobuff.IssuedAssetData{
-			IssuerIdentity:        iAssetIdentity.String(),
-			Type:                  uint32(iAsset.Type),
-			Name:                  int8ArrayToString(iAsset.Name[:]),
-			NumberOfDecimalPlaces: int32(iAsset.NumberOfDecimalPlaces),
-			UnitOfMeasurement:     int8ArrayToInt32Array(iAsset.UnitOfMeasurement[:]),
-		}
-
-		ownedAsset := protobuff.OwnedAssetData{
-			OwnerIdentity:         oAssetIdentity.String(),
-			Type:                  uint32(asset.Data.Type),
-			Padding:               int32(asset.Data.Padding[0]),
-			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
-			IssuanceIndex:         asset.Data.IssuanceIndex,
-			NumberOfUnits:         asset.Data.NumberOfUnits,
-			IssuedAsset:           &issuedAsset,
-		}
-
-		var pAssetIdentity types.Identity
-		pAssetIdentity, err = pAssetIdentity.FromPubKey(asset.Data.PublicKey, false)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get identity for possessed asset public key")
-		}
-
-		data := protobuff.PossessedAssetData{
-			PossessorIdentity:     pAssetIdentity.String(),
-			Type:                  uint32(asset.Data.Type),
-			Padding:               int32(asset.Data.Padding[0]),
-			ManagingContractIndex: uint32(asset.Data.ManagingContractIndex),
-			IssuanceIndex:         asset.Data.IssuanceIndex,
-			NumberOfUnits:         asset.Data.NumberOfUnits,
-			OwnedAsset:            &ownedAsset,
-		}
-
-		info := protobuff.AssetInfo{
-			Tick:          asset.Info.Tick,
-			UniverseIndex: asset.Info.UniverseIndex,
-		}
-
-		possessedAsset := protobuff.PossessedAsset{
-			Data: &data,
-			Info: &info,
-		}
-
-		possessedAssets = append(possessedAssets, &possessedAsset)
-
+	possessedAssets, err := convertPossessedAssets(assets)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "converting node response: %v", err)
 	}
 
 	return &protobuff.PossessedAssetsResponse{PossessedAssets: possessedAssets}, nil
+}
+
+// GetAssetsForIdentities fetches the owned and possessed assets of several identities in
+// one pipelined batch, costing roughly one round trip for the whole set instead of one
+// per identity.
+func (s *Server) GetAssetsForIdentities(ctx context.Context, req *protobuff.GetAssetsForIdentitiesRequest) (*protobuff.GetAssetsForIdentitiesResponse, error) {
+	if err := s.validateBatchIdentities(req.Identities); err != nil {
+		return nil, err
+	}
+
+	client, err := s.qPool.Get()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "getting pool connection :%v", err)
+	}
+
+	assets, err := client.PrefetchOwnedAndPossessedAssets(ctx, req.Identities)
+	if err != nil {
+		// a failed batch leaves the connection unusable, so it must be discarded
+		// instead of returned to the pool
+		s.qPool.Close(client)
+		return nil, status.Errorf(codes.Internal, "getting owned and possessed assets from node %v", err)
+	}
+
+	s.qPool.Put(client)
+
+	identityAssets, err := convertAddressAssets(assets)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "converting node response: %v", err)
+	}
+
+	return &protobuff.GetAssetsForIdentitiesResponse{Assets: identityAssets}, nil
+}
+
+// validateBatchIdentities checks a batch request before any node connection is taken.
+// Validating up front means malformed input can never fail mid batch and cost us a
+// pooled connection.
+func (s *Server) validateBatchIdentities(identities []string) error {
+	if len(identities) == 0 {
+		return status.Error(codes.InvalidArgument, "identities must not be empty")
+	}
+
+	if len(identities) > s.maxBatchIdentities {
+		return status.Errorf(codes.InvalidArgument, "too many identities: %d requested, maximum is %d", len(identities), s.maxBatchIdentities)
+	}
+
+	seen := make(map[string]struct{}, len(identities))
+	for _, identity := range identities {
+		id := types.Identity(identity)
+		if _, err := id.ToPubKey(false); err != nil {
+			return status.Errorf(codes.InvalidArgument, "invalid identity %q: %v", identity, err)
+		}
+
+		if _, duplicate := seen[identity]; duplicate {
+			return status.Errorf(codes.InvalidArgument, "duplicate identity %q", identity)
+		}
+		seen[identity] = struct{}{}
+	}
+
+	return nil
 }
 
 const assetIssuanceType = 1
