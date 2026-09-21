@@ -2,12 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	grpcProm "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector/v2"
 	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
@@ -44,6 +48,10 @@ func run(logger *log.Logger) error {
 			MaxIdle            int           `conf:"default:20"`
 			MaxCap             int           `conf:"default:30"`
 			IdleTimeout        time.Duration `conf:"default:15s"`
+		}
+		Metrics struct {
+			Namespace string `conf:"default:live_service"`
+			Port      int    `conf:"default:9999"`
 		}
 	}
 
@@ -86,7 +94,13 @@ func run(logger *log.Logger) error {
 		return errors.Wrap(err, "creating qubic pool")
 	}
 
-	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl, cfg.Server.MaxBatchIdentities)
+	srvMetrics := grpcProm.NewServerMetrics(
+		grpcProm.WithServerCounterOptions(grpcProm.WithConstLabels(prometheus.Labels{"namespace": cfg.Metrics.Namespace})),
+	)
+	reg := prometheus.DefaultRegisterer
+	reg.MustRegister(srvMetrics)
+
+	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl, cfg.Server.MaxBatchIdentities, srvMetrics)
 	err = rpcServer.Start()
 	if err != nil {
 		return errors.Wrap(err, "starting rpc server")
@@ -95,10 +109,19 @@ func run(logger *log.Logger) error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
+	webServerErr := make(chan error, 1)
+	go func() {
+		log.Printf("main: Starting metrics endpoint on port [%d]\n", cfg.Metrics.Port)
+		http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{EnableOpenMetrics: true}))
+		webServerErr <- http.ListenAndServe(fmt.Sprintf(":%d", cfg.Metrics.Port), nil) //nolint:gosec
+	}()
+
 	for {
 		select {
 		case <-shutdown:
 			return errors.New("shutting down...")
+		case err := <-webServerErr:
+			return fmt.Errorf("web server error: %w", err)
 		}
 	}
 }

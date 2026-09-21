@@ -9,6 +9,7 @@ import (
 	"math"
 	"net"
 
+	grpcProm "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
 	"github.com/qubic/go-node-connector/v2/types"
@@ -42,9 +43,12 @@ type Server struct {
 	qPool              nodePool
 	maxTickFetchUrl    string
 	maxBatchIdentities int
+	srvMetrics         *grpcProm.ServerMetrics
 }
 
-func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, maxBatchIdentities int) *Server {
+// NewServer builds the live service server. A nil srvMetrics leaves the gRPC server
+// uninstrumented.
+func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool *qubic.Pool, maxTickFetchUrl string, maxBatchIdentities int, srvMetrics *grpcProm.ServerMetrics) *Server {
 	if maxBatchIdentities <= 0 {
 		maxBatchIdentities = defaultMaxBatchIdentities
 	}
@@ -56,6 +60,7 @@ func NewServer(listenAddrGRPC, listenAddrHTTP string, logger *log.Logger, qPool 
 		qPool:              newQubicNodePool(qPool),
 		maxTickFetchUrl:    maxTickFetchUrl,
 		maxBatchIdentities: maxBatchIdentities,
+		srvMetrics:         srvMetrics,
 	}
 }
 
@@ -664,12 +669,27 @@ func (s *Server) GetHealth(context.Context, *emptypb.Empty) (*protobuff.HealthRe
 }
 
 func (s *Server) Start() error {
-	srv := grpc.NewServer(
-		grpc.MaxRecvMsgSize(600*1024*1024),
-		grpc.MaxSendMsgSize(600*1024*1024),
-	)
+	opts := []grpc.ServerOption{
+		grpc.MaxRecvMsgSize(600 * 1024 * 1024),
+		grpc.MaxSendMsgSize(600 * 1024 * 1024),
+	}
+
+	if s.srvMetrics != nil {
+		opts = append(opts,
+			grpc.ChainUnaryInterceptor(s.srvMetrics.UnaryServerInterceptor()),
+			grpc.ChainStreamInterceptor(s.srvMetrics.StreamServerInterceptor()),
+		)
+	}
+
+	srv := grpc.NewServer(opts...)
 	protobuff.RegisterQubicLiveServiceServer(srv, s)
 	reflection.Register(srv)
+
+	if s.srvMetrics != nil {
+		// pre-seed a zero valued series for every registered method, so a method that
+		// has not been called yet reports 0 instead of being missing from /metrics
+		s.srvMetrics.InitializeMetrics(srv)
+	}
 
 	lis, err := net.Listen("tcp", s.listenAddrGRPC)
 	if err != nil {
