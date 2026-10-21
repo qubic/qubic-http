@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"math"
 	"net"
 
 	grpcProm "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/pkg/errors"
 	"github.com/qubic/go-node-connector/v2/types"
 	"github.com/qubic/go-schnorrq"
 	"google.golang.org/grpc"
@@ -167,23 +168,23 @@ type maxTickResponse struct {
 func fetchMaxTick(ctx context.Context, maxTickFetchUrl string) (uint32, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, maxTickFetchUrl, nil)
 	if err != nil {
-		return 0, errors.Wrap(err, "creating new request")
+		return 0, fmt.Errorf("creating new request: %w", err)
 	}
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return 0, errors.Wrap(err, "performing request")
+		return 0, fmt.Errorf("performing request: %w", err)
 	}
 	defer res.Body.Close()
 
 	var resp maxTickResponse
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return 0, errors.Wrap(err, "reading response body")
+		return 0, fmt.Errorf("reading response body: %w", err)
 	}
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
-		return 0, errors.Wrap(err, "unmarshalling response")
+		return 0, fmt.Errorf("unmarshalling response: %w", err)
 	}
 
 	tick := resp.MaxTick
@@ -237,13 +238,13 @@ func (s *Server) BroadcastTransaction(ctx context.Context, req *protobuff.Broadc
 	var sourceID types.Identity
 	sourceID, err = sourceID.FromPubKey(transaction.SourcePublicKey, false)
 	if err != nil {
-		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting source ID").Error())
+		return nil, status.Error(codes.Internal, fmt.Errorf("getting source ID: %w", err).Error())
 	}
 
 	var destID types.Identity
 	destID, err = destID.FromPubKey(transaction.DestinationPublicKey, false)
 	if err != nil {
-		return nil, status.Error(codes.Internal, errors.Wrap(err, "getting dest ID").Error())
+		return nil, status.Error(codes.Internal, fmt.Errorf("getting dest ID: %w", err).Error())
 	}
 
 	peersBroadcasted := broadcastTxToMultiple(ctx, s.qPool, decodedTx)
@@ -450,7 +451,7 @@ func (s *Server) GetIssuedAssetByUniverseIndex(ctx context.Context, request *pro
 
 		converted, err := convertAssetIssuance(assets[0])
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 		return converted, nil
 
@@ -479,7 +480,7 @@ func (s *Server) GetOwnedAssetByUniverseIndex(ctx context.Context, request *prot
 
 		converted, err := convertAssetOwnership(assets[0])
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 		return converted, nil
 
@@ -508,7 +509,7 @@ func (s *Server) GetPossessedAssetByUniverseIndex(ctx context.Context, request *
 
 		converted, err := convertAssetPossession(assets[0])
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 		return converted, nil
 
@@ -537,7 +538,7 @@ func (s *Server) GetIssuedAssetsByFilter(ctx context.Context, request *protobuff
 	for _, asset := range assets {
 		assetIssuance, err := convertAssetIssuance(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 		assetIssuances = append(assetIssuances, assetIssuance)
 	}
@@ -569,7 +570,7 @@ func (s *Server) GetOwnedAssetsByFilter(ctx context.Context, request *protobuff.
 	for _, asset := range assets {
 		assetOwnership, err := convertAssetOwnership(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 
 		assetOwnerships = append(assetOwnerships, assetOwnership)
@@ -607,7 +608,7 @@ func (s *Server) GetPossessedAssetsByFilter(ctx context.Context, request *protob
 	for _, asset := range assets {
 		assetPossession, err := convertAssetPossession(asset)
 		if err != nil {
-			return nil, errors.Wrap(err, "converting response")
+			return nil, fmt.Errorf("converting response: %w", err)
 		}
 		assetPossessions = append(assetPossessions, assetPossession)
 	}
@@ -693,7 +694,7 @@ func (s *Server) Start() error {
 
 	lis, err := net.Listen("tcp", s.listenAddrGRPC)
 	if err != nil {
-		return errors.Wrap(err, "listening gRPC")
+		return fmt.Errorf("listening gRPC: %w", err)
 	}
 
 	go func() {

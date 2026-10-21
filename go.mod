@@ -7,7 +7,6 @@ require (
 	github.com/google/gnostic v0.7.1
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
-	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.25.0
 	github.com/qubic/go-node-connector/v2 v2.4.0
 	github.com/qubic/go-schnorrq v1.2.0
