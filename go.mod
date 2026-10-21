@@ -9,8 +9,8 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.25.0
-	github.com/qubic/go-node-connector/v2 v2.3.0
-	github.com/qubic/go-schnorrq v1.1.3
+	github.com/qubic/go-node-connector/v2 v2.4.0
+	github.com/qubic/go-schnorrq v1.2.0
 	github.com/stretchr/testify v1.12.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20261019180522-ce908d29299b
 	google.golang.org/grpc v1.84.0
@@ -19,10 +19,10 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bits-and-blooms/bitset v1.24.4 // indirect
+	github.com/bits-and-blooms/bitset v1.26.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/cloudflare/circl v1.6.3 // indirect
-	github.com/consensys/gnark-crypto v0.20.1 // indirect
+	github.com/cloudflare/circl v1.6.5 // indirect
+	github.com/consensys/gnark-crypto v0.22.0 // indirect
 	github.com/google/gnostic-models v0.7.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
 	github.com/linckode/circl v1.3.72 // indirect
