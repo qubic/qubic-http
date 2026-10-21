@@ -3,7 +3,6 @@ package rpc
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector/v2"
 	"github.com/qubic/go-node-connector/v2/types"
 	"github.com/qubic/qubic-http/protobuff"
@@ -20,7 +19,7 @@ func convertIssuedAssetData(source types.IssuedAssetData) (*protobuff.IssuedAsse
 	var issuer types.Identity
 	issuer, err := issuer.FromPubKey(source.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for issued asset public key")
+		return nil, fmt.Errorf("failed to get identity for issued asset public key: %w", err)
 	}
 
 	return &protobuff.IssuedAssetData{
@@ -36,12 +35,12 @@ func convertOwnedAssetData(source types.OwnedAssetData) (*protobuff.OwnedAssetDa
 	var owner types.Identity
 	owner, err := owner.FromPubKey(source.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for owned asset public key")
+		return nil, fmt.Errorf("failed to get identity for owned asset public key: %w", err)
 	}
 
 	issuedAsset, err := convertIssuedAssetData(source.IssuedAsset)
 	if err != nil {
-		return nil, errors.Wrap(err, "converting issued asset")
+		return nil, fmt.Errorf("converting issued asset: %w", err)
 	}
 
 	return &protobuff.OwnedAssetData{
@@ -59,14 +58,14 @@ func convertPossessedAssetData(source types.PossessedAssetData) (*protobuff.Poss
 	var possessor types.Identity
 	possessor, err := possessor.FromPubKey(source.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for possessed asset public key")
+		return nil, fmt.Errorf("failed to get identity for possessed asset public key: %w", err)
 	}
 
 	// the nested ownership record is converted from its own data, not from the
 	// possession record that contains it
 	ownedAsset, err := convertOwnedAssetData(source.OwnedAsset)
 	if err != nil {
-		return nil, errors.Wrap(err, "converting owned asset")
+		return nil, fmt.Errorf("converting owned asset: %w", err)
 	}
 
 	return &protobuff.PossessedAssetData{
@@ -153,12 +152,12 @@ func convertAddressAssets(source []qubic.AddressAssets) ([]*protobuff.IdentityAs
 	for _, addressAssets := range source {
 		owned, err := convertOwnedAssets(addressAssets.Owned)
 		if err != nil {
-			return nil, errors.Wrapf(err, "converting owned assets for identity %s", addressAssets.Identity)
+			return nil, fmt.Errorf("converting owned assets for identity %s: %w", addressAssets.Identity, err)
 		}
 
 		possessed, err := convertPossessedAssets(addressAssets.Possessed)
 		if err != nil {
-			return nil, errors.Wrapf(err, "converting possessed assets for identity %s", addressAssets.Identity)
+			return nil, fmt.Errorf("converting possessed assets for identity %s: %w", addressAssets.Identity, err)
 		}
 
 		converted = append(converted, &protobuff.IdentityAssets{
@@ -175,7 +174,7 @@ func convertAssetIssuance(source types.AssetIssuance) (*protobuff.AssetIssuance,
 	var issuerIdentity types.Identity
 	issuerIdentity, err := issuerIdentity.FromPubKey(source.Asset.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for public key")
+		return nil, fmt.Errorf("failed to get identity for public key: %w", err)
 	}
 
 	issuedAsset := protobuff.AssetIssuanceData{
@@ -199,7 +198,7 @@ func convertAssetOwnership(source types.AssetOwnership) (*protobuff.AssetOwnersh
 	var owner types.Identity
 	owner, err := owner.FromPubKey(source.Asset.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for public key")
+		return nil, fmt.Errorf("failed to get identity for public key: %w", err)
 	}
 
 	ownedAsset := protobuff.AssetOwnershipData{
@@ -224,7 +223,7 @@ func convertAssetPossession(source types.AssetPossession) (*protobuff.AssetPosse
 	var possessor types.Identity
 	possessor, err := possessor.FromPubKey(source.Asset.PublicKey, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get identity for public key")
+		return nil, fmt.Errorf("failed to get identity for public key: %w", err)
 	}
 
 	possessedAsset := protobuff.AssetPossessionData{

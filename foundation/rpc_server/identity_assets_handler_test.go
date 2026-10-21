@@ -2,9 +2,9 @@ package rpc
 
 import (
 	"context"
+	"errors"
 	"testing"
 
-	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector/v2"
 	"github.com/qubic/go-node-connector/v2/types"
 	"github.com/qubic/qubic-http/protobuff"

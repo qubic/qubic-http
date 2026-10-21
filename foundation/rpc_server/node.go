@@ -2,8 +2,8 @@ package rpc
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector/v2"
 	"github.com/qubic/go-node-connector/v2/types"
 )
@@ -64,7 +64,7 @@ func (p *qubicNodePool) Get() (nodeClient, error) {
 func (p *qubicNodePool) Put(client nodeClient) error {
 	c, ok := client.(*qubic.Client)
 	if !ok {
-		return errors.Errorf("putting back unexpected client type %T", client)
+		return fmt.Errorf("putting back unexpected client type %T", client)
 	}
 	return p.pool.Put(c)
 }
@@ -72,7 +72,7 @@ func (p *qubicNodePool) Put(client nodeClient) error {
 func (p *qubicNodePool) Close(client nodeClient) error {
 	c, ok := client.(*qubic.Client)
 	if !ok {
-		return errors.Errorf("closing unexpected client type %T", client)
+		return fmt.Errorf("closing unexpected client type %T", client)
 	}
 	return p.pool.Close(c)
 }

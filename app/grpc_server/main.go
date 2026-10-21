@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -12,7 +13,6 @@ import (
 	"time"
 
 	grpcProm "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
-	"github.com/pkg/errors"
 	qubic "github.com/qubic/go-node-connector/v2"
 	rpc "github.com/qubic/qubic-http/foundation/rpc_server"
 
@@ -60,24 +60,24 @@ func run(logger *log.Logger) error {
 		case conf.ErrHelpWanted:
 			usage, err := conf.Usage(prefix, &cfg)
 			if err != nil {
-				return errors.Wrap(err, "generating config usage")
+				return fmt.Errorf("generating config usage: %w", err)
 			}
 			fmt.Println(usage)
 			return nil
 		case conf.ErrVersionWanted:
 			version, err := conf.VersionString(prefix, &cfg)
 			if err != nil {
-				return errors.Wrap(err, "generating config version")
+				return fmt.Errorf("generating config version: %w", err)
 			}
 			fmt.Println(version)
 			return nil
 		}
-		return errors.Wrap(err, "parsing config")
+		return fmt.Errorf("parsing config: %w", err)
 	}
 
 	out, err := conf.String(&cfg)
 	if err != nil {
-		return errors.Wrap(err, "generating config for output")
+		return fmt.Errorf("generating config for output: %w", err)
 	}
 	logger.Printf("main: Config :\n%v\n", out)
 
@@ -91,7 +91,7 @@ func run(logger *log.Logger) error {
 		NodePort:           cfg.Pool.NodePort,
 	})
 	if err != nil {
-		return errors.Wrap(err, "creating qubic pool")
+		return fmt.Errorf("creating qubic pool: %w", err)
 	}
 
 	srvMetrics := grpcProm.NewServerMetrics(
@@ -103,7 +103,7 @@ func run(logger *log.Logger) error {
 	rpcServer := rpc.NewServer(cfg.Server.GrpcHost, cfg.Server.HttpHost, logger, pool, cfg.Server.MaxTickFetchUrl, cfg.Server.MaxBatchIdentities, srvMetrics)
 	err = rpcServer.Start()
 	if err != nil {
-		return errors.Wrap(err, "starting rpc server")
+		return fmt.Errorf("starting rpc server: %w", err)
 	}
 
 	shutdown := make(chan os.Signal, 1)
